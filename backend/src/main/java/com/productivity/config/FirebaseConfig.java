@@ -34,14 +34,12 @@ public class FirebaseConfig {
                 FirebaseOptions.Builder optionsBuilder = FirebaseOptions.builder()
                         .setProjectId(projectId);
 
-                // Check for environment variable first (Cloud/Render deployment)
                 String envCredentials = System.getenv("FIREBASE_CREDENTIALS");
                 if (envCredentials != null && !envCredentials.isEmpty()) {
                     log.info("Loading Firebase credentials from Environment Variable");
                     optionsBuilder.setCredentials(GoogleCredentials.fromStream(
                             new java.io.ByteArrayInputStream(envCredentials.getBytes())));
                 } else {
-                    // Fallback to file path (Local development)
                     log.info("Loading Firebase credentials from file: {}", serviceAccountPath);
                     FileInputStream serviceAccount = new FileInputStream(serviceAccountPath);
                     optionsBuilder.setCredentials(GoogleCredentials.fromStream(serviceAccount));
@@ -51,7 +49,7 @@ public class FirebaseConfig {
                 log.info("Firebase initialized successfully for project: {}", projectId);
             }
         } catch (IOException e) {
-            log.error("Failed to initialize Firebase: {}", e.getMessage());
+            log.error("CRITICAL: Failed to initialize Firebase: {}. Ensure firebase-service-account.json exists or FIREBASE_CREDENTIALS is set.", e.getMessage());
             throw new RuntimeException("Firebase initialization failed", e);
         }
     }
