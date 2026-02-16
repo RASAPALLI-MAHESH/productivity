@@ -71,6 +71,38 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success(data, "Account created. Please verify OTP."));
     }
 
+    // ─── Resend OTP ─────────────────────────────────────────────────────────
+    @PostMapping("/resend-otp")
+    @Operation(summary = "Resend a new OTP to the user's email")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> resendOtp(@RequestBody Map<String, String> body) 
+            throws ExecutionException, InterruptedException {
+        String email = body.get("email");
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error("Email is required"));
+        }
+
+        User user = userService.findByEmail(email);
+        if (user == null) {
+            // Log warning but return success to prevent email enumeration
+            log.warn("Resend OTP requested for non-existent email: {}", email);
+            return ResponseEntity.ok(ApiResponse.success(Map.of(
+                "maskedEmail", maskEmail(email),
+                "expiresInSeconds", 300
+            ), "If account exists, a new code has been sent."));
+        }
+
+        // Generate and send new OTP
+        String otp = otpService.generateOtp(email);
+        log.info("New OTP generated for: {}", email);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("maskedEmail", maskEmail(email));
+        data.put("expiresInSeconds", 300);
+
+        return ResponseEntity.ok(ApiResponse.success(data, "A fresh verification code has been sent."));
+    }
+
     // ─── Verify OTP ─────────────────────────────────────────────────────────
     @PostMapping("/verify-otp")
     @Operation(summary = "Step 2: Verify OTP & Login")
