@@ -48,15 +48,15 @@ export function Signup() {
         <div className="auth-container">
             {/* Left — Branding */}
             <div className="auth-branding">
-                <div>
-                    <div style={{ fontSize: '3.5rem', marginBottom: 'var(--space-4)' }}>🚀</div>
-                    <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: 'var(--space-3)' }}>
-                        Join Productiv
+                <div className="animate-up">
+                    <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)', filter: 'drop-shadow(0 0 20px rgba(99, 102, 241, 0.6))' }}>✨</div>
+                    <h1 className="glow-text" style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: 'var(--space-2)' }}>
+                        Join the Adventure
                     </h1>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--font-size-lg)', lineHeight: 1.6 }}>
-                        Your free productivity<br />
-                        workspace — built for<br />
-                        people who ship.
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '1.25rem', lineHeight: 1.6 }}>
+                        Step into a workspace<br />
+                        designed for clarity,<br />
+                        speed, and <span style={{ color: 'var(--secondary)', fontWeight: 600 }}>focus.</span>
                     </p>
                 </div>
             </div>

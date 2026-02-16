@@ -4,6 +4,7 @@ import { useAuthStore } from './store/authStore';
 import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { VibeBackground } from './components/VibeBackground';
 
 // Lazy-loaded pages for code splitting
 const Login = lazy(() => import('./pages/Login').then((m) => ({ default: m.Login })));
@@ -43,6 +44,7 @@ function App() {
     return (
         <ErrorBoundary>
             <BrowserRouter>
+                <VibeBackground />
                 <Suspense fallback={<AppLoader />}>
                     <Routes>
                         {/* Public auth routes */}

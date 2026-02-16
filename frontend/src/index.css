@@ -1,37 +1,35 @@
 /* ============================================
-   PRODUCTIVITY APP — PIXEL-PERFECT DESIGN SYSTEM
-   Modern SaaS Style (Light/Clean)
+   PRODUCTIVITY APP — PRODUCTIVITY ADVENTURE
+   Alive & Animated Dark Theme (Space/Launch Focus)
    ============================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-    /* 1. Core Color Palette (SaaS Style) */
-    --primary: #4F46E5;
-    --primary-hover: #4338CA;
-    --bg-primary: #F9FAFB;
-    --bg-secondary: #F3F4F6;
-    --bg-card: #FFFFFF;
-    --bg-input: #FFFFFF;
-    --border: #E5E7EB;
-    --border-hover: #D1D5DB;
-    --text-primary: #111827;
-    --text-secondary: #6B7280;
-    --text-muted: #9CA3AF;
-    --error: #EF4444;
-    --success: #22C55E;
-    --warning: #F59E0B;
+    /* 1. Galaxy Color Palette */
+    --primary: #818CF8;
+    /* Indigo-400 */
+    --primary-glow: #6366F1;
+    /* Indigo-500 */
+    --secondary: #C084FC;
+    /* Purple-400 */
+    --bg-primary: #020617;
+    /* Deepest Slate */
+    --bg-secondary: #0F172A;
+    /* Slate-900 */
+    --bg-glass: rgba(30, 41, 59, 0.45);
+    --border-glass: rgba(255, 255, 255, 0.08);
 
-    /* Primary shadows & focus */
-    --focus-ring: 2px solid #4F46E5;
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.04);
-    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --text-muted: #64748B;
 
-    /* 2. Base Unit System (4px) */
+    --success: #34D399;
+    --error: #FB7185;
+    --warning: #FBBF24;
+
+    /* 2. Spacing & Units (8pt Grid) */
     --unit: 4px;
-
-    /* 3. 8-Point Grid Scale */
     --space-1: 8px;
     --space-2: 16px;
     --space-3: 24px;
@@ -41,34 +39,18 @@
     --space-8: 64px;
     --space-10: 80px;
 
-    /* 4. Radius Scale */
-    --radius-sm: 6px;
+    /* 3. Radius & Shadows */
+    --radius-sm: 8px;
     --radius-md: 12px;
-    --radius-lg: 20px;
+    --radius-lg: 24px;
     --radius-full: 999px;
 
-    /* 5. Typography Spec */
-    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
 
-    /* Font Sizes */
-    --h1-size: 40px;
-    --h1-lh: 48px;
-    --h2-size: 32px;
-    --h2-lh: 40px;
-    --h3-size: 24px;
-    --h3-lh: 32px;
-    --body-lg-size: 18px;
-    --body-lg-lh: 28px;
-    --body-size: 16px;
-    --body-lh: 24px;
-    --small-size: 14px;
-    --small-lh: 20px;
-
-    /* Layout Constant */
-    --max-width: 1200px;
-    --max-width-lg: 1440px;
-    --gutter: 24px;
-    --sidebar-width: 260px;
+    /* 4. Layout Constants */
+    --sidebar-width: 280px;
 }
 
 /* ============================================
@@ -86,45 +68,46 @@ html {
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
 }
 
 body {
-    font-family: var(--font-family);
+    font-family: 'Inter', sans-serif;
     background: var(--bg-primary);
     color: var(--text-primary);
-    line-height: var(--body-lh);
+    line-height: 1.6;
     overflow-x: hidden;
+    min-height: 100vh;
 }
 
 h1 {
-    font-size: var(--h1-size);
-    line-height: var(--h1-lh);
+    font-size: 40px;
     font-weight: 700;
-    margin-bottom: var(--space-4);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
 }
 
 h2 {
-    font-size: var(--h2-size);
-    line-height: var(--h2-lh);
+    font-size: 32px;
     font-weight: 600;
-    margin-bottom: var(--space-3);
+    margin-bottom: 8px;
 }
 
 h3 {
-    font-size: var(--h3-size);
-    line-height: var(--h3-lh);
+    font-size: 24px;
     font-weight: 600;
-    margin-bottom: var(--space-2);
+    margin-bottom: 8px;
 }
 
 a {
     color: var(--primary);
     text-decoration: none;
-    transition: color 0.15s ease;
+    transition: all 0.2s ease;
 }
 
 a:hover {
-    color: var(--primary-hover);
+    color: var(--primary-glow);
+    text-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
 }
 
 ::selection {
@@ -133,8 +116,83 @@ a:hover {
 }
 
 /* ============================================
-   LAYOUT
+   ANIMATED BACKGROUND (THE "ALIVE" BASE)
    ============================================ */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 90%, rgba(192, 132, 252, 0.1) 0%, transparent 40%);
+    z-index: -2;
+}
+
+/* Drifting stars container - to be added in Layout */
+.bg-vibe {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: drift linear infinite;
+}
+
+@keyframes drift {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-100vh);
+    }
+}
+
+/* Productivity Orbs */
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: pulse 8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.3;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.5;
+    }
+}
+
+/* Glassmorphism Surface */
+.glass-panel {
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-glass);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
 /* ============================================
    LAYOUT
    ============================================ */
@@ -153,7 +211,7 @@ a:hover {
 }
 
 /* ============================================
-   SIDEBAR
+   SIDEBAR (Control Center)
    ============================================ */
 .sidebar {
     width: var(--sidebar-width);
@@ -161,8 +219,9 @@ a:hover {
     position: fixed;
     left: 0;
     top: 0;
-    background: white;
-    border-right: 1px solid var(--border);
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid var(--border-glass);
     display: flex;
     flex-direction: column;
     padding: var(--space-6);
@@ -200,25 +259,50 @@ a:hover {
     padding: 12px 16px;
     border-radius: var(--radius-md);
     color: var(--text-secondary);
-    font-size: var(--small-size);
+    font-size: 14px;
     font-weight: 500;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    border: none;
-    background: none;
-    width: 100%;
-    text-align: left;
+    transition: all 0.2s;
+    margin-bottom: 4px;
 }
 
 .sidebar-link:hover {
-    background: var(--bg-secondary);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--text-primary);
 }
 
 .sidebar-link.active {
-    background: #EEF2FF;
-    /* Primary light tint */
+    background: rgba(99, 102, 241, 0.15);
     color: var(--primary);
+    box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.3);
+}
+
+/* ============================================
+   BADGES & STATUS
+   ============================================ */
+.badge {
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-glass);
+}
+
+.badge-high {
+    color: var(--error);
+    border-color: rgba(251, 113, 133, 0.3);
+}
+
+.badge-medium {
+    color: var(--warning);
+    border-color: rgba(251, 191, 36, 0.3);
+}
+
+.badge-low {
+    color: var(--success);
+    border-color: rgba(52, 211, 153, 0.3);
 }
 
 .sidebar-footer {
@@ -325,19 +409,20 @@ a:hover {
 }
 
 .stat-card {
-    background: white;
-    border: 1px solid var(--border);
+    background: var(--bg-glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-glass);
     border-radius: var(--radius-md);
     padding: var(--space-3);
     display: flex;
     flex-direction: column;
     gap: 8px;
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 .stat-card:hover {
-    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .stat-label {
@@ -605,27 +690,21 @@ input[type="time"].input {
 /* ============================================
    TASK LIST
    ============================================ */
-.task-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
 .task-item {
     display: flex;
     align-items: center;
     gap: 16px;
     padding: 16px 20px;
-    background: white;
-    border: 1px solid var(--border);
+    background: var(--bg-glass);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-glass);
     border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
     transition: all 0.2s ease;
 }
 
 .task-item:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateX(4px);
 }
 
 .task-checkbox {
@@ -726,54 +805,132 @@ input[type="time"].input {
 }
 
 /* ============================================
-   AUTH PAGES
-   ============================================ */
-/* ============================================
-   AUTH PAGES
+   AUTH PAGES & SPLIT LAYOUT
    ============================================ */
 .auth-container {
     min-height: 100vh;
     display: flex;
+    align-items: stretch;
+}
+
+.auth-branding {
+    flex: 1.2;
+    padding: var(--space-4);
+    display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--space-3);
-    background: var(--bg-primary);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(2, 6, 23, 0) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+@media (max-width: 900px) {
+    .auth-branding {
+        display: none;
+    }
 }
 
 .auth-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    /* 20px */
-    padding: var(--space-10);
-    /* 80px as per vertical rhythm */
-    width: 100%;
-    max-width: 440px;
-    box-shadow: var(--shadow-lg);
-    text-align: center;
+    flex: 0.8;
+    background: var(--bg-secondary);
+    padding: 80px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-left: 1px solid var(--border-glass);
+    box-shadow: -20px 0 40px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 10;
+}
+
+@media (max-width: 900px) {
+    .auth-container {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .auth-card {
+        flex: 1;
+        max-width: 480px;
+        padding: 40px 24px;
+        border: 1px solid var(--border-glass);
+        border-radius: var(--radius-lg);
+        margin: 24px;
+        height: auto;
+        background: var(--bg-glass);
+        backdrop-filter: blur(16px);
+    }
 }
 
 .auth-card h1 {
-    font-size: var(--h2-size);
+    font-size: 32px;
     font-weight: 700;
-    color: var(--text-primary);
     margin-bottom: 8px;
+    color: var(--text-primary);
 }
 
 .auth-card p {
     color: var(--text-secondary);
-    font-size: var(--body-size);
+    font-size: 16px;
+    margin-bottom: var(--space-6);
+}
+
+/* ============================================
+   INPUTS & BUTTONS
+   ============================================ */
+.input-group {
     margin-bottom: var(--space-4);
 }
 
-.auth-error {
-    background: #FEF2F2;
-    border: 1px solid rgba(239, 68, 68, 0.2);
+.input-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-glass);
+    color: white;
+    padding: 14px 16px;
     border-radius: var(--radius-md);
-    padding: 12px;
-    margin-bottom: 24px;
-    font-size: var(--small-size);
-    color: var(--error);
+    font-size: 15px;
+    outline: none;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.input:focus {
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-glow) 0%, var(--secondary) 100%);
+    color: white;
+    box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.39);
+    border: none;
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    opacity: 0.6;
+    color: white;
 }
 
 /* ============================================

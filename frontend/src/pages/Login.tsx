@@ -32,15 +32,15 @@ export function Login() {
         <div className="auth-container">
             {/* Left — Branding (desktop only) */}
             <div className="auth-branding">
-                <div>
-                    <div style={{ fontSize: '3.5rem', marginBottom: 'var(--space-4)' }}>⚡</div>
-                    <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: 'var(--space-3)' }}>
+                <div className="animate-up">
+                    <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)', filter: 'drop-shadow(0 0 20px rgba(99, 102, 241, 0.6))' }}>🚀</div>
+                    <h1 className="glow-text" style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: 'var(--space-2)' }}>
                         Productiv
                     </h1>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--font-size-lg)', lineHeight: 1.6 }}>
-                        Master your habits.<br />
-                        Crush your tasks.<br />
-                        Own your day.
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '1.25rem', lineHeight: 1.6 }}>
+                        The launchpad for<br />
+                        your biggest goals.<br />
+                        <span style={{ color: 'var(--primary)', fontWeight: 600 }}>Master your day.</span>
                     </p>
                 </div>
             </div>
