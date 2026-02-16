@@ -31,12 +31,23 @@ public class FirebaseConfig {
     public void initialize() {
         try {
             if (FirebaseApp.getApps().isEmpty()) {
-                FileInputStream serviceAccount = new FileInputStream(serviceAccountPath);
-                FirebaseOptions options = FirebaseOptions.builder()
-                        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                        .setProjectId(projectId)
-                        .build();
-                FirebaseApp.initializeApp(options);
+                FirebaseOptions.Builder optionsBuilder = FirebaseOptions.builder()
+                        .setProjectId(projectId);
+
+                // Check for environment variable first (Cloud/Render deployment)
+                String envCredentials = System.getenv("FIREBASE_CREDENTIALS");
+                if (envCredentials != null && !envCredentials.isEmpty()) {
+                    log.info("Loading Firebase credentials from Environment Variable");
+                    optionsBuilder.setCredentials(GoogleCredentials.fromStream(
+                            new java.io.ByteArrayInputStream(envCredentials.getBytes())));
+                } else {
+                    // Fallback to file path (Local development)
+                    log.info("Loading Firebase credentials from file: {}", serviceAccountPath);
+                    FileInputStream serviceAccount = new FileInputStream(serviceAccountPath);
+                    optionsBuilder.setCredentials(GoogleCredentials.fromStream(serviceAccount));
+                }
+
+                FirebaseApp.initializeApp(optionsBuilder.build());
                 log.info("Firebase initialized successfully for project: {}", projectId);
             }
         } catch (IOException e) {
