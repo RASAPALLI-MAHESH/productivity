@@ -1,12 +1,18 @@
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState, FormEvent, useCallback } from 'react';
 import { useAppStore } from '../store/appStore';
 import type { Task } from '../types';
+import { TaskRow } from '../components/TaskRow';
+import { Select } from '../components/Select';
 
 export function Tasks() {
     const { tasks, taskLoading, totalPages, fetchTasks, createTask, updateTask, deleteTask } = useAppStore();
     const [showModal, setShowModal] = useState(false);
     const [editingTask, setEditingTask] = useState<Task | null>(null);
     const [page, setPage] = useState(0);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+
+    // Filters
     const [filterStatus, setFilterStatus] = useState('');
     const [filterPriority, setFilterPriority] = useState('');
     const [sortBy, setSortBy] = useState('createdAt');
@@ -39,189 +45,267 @@ export function Tasks() {
         setShowModal(true);
     };
 
-    const openEdit = (task: Task) => {
+    const openEdit = useCallback((task: Task) => {
         setEditingTask(task);
         setTitle(task.title);
         setDescription(task.description || '');
         setPriority(task.priority);
         setStatus(task.status);
-        // Extract YYYY-MM-DD from ISO string for date input
         setDeadline(task.deadline ? task.deadline.slice(0, 10) : '');
         setShowModal(true);
-    };
+    }, []);
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        const taskData: Record<string, unknown> = {
-            title,
-            description,
-            priority,
-            status,
-        };
+        const taskData: Record<string, unknown> = { title, description, priority, status };
 
         if (deadline) {
-            // Send as ISO 8601 string with end-of-day time
             taskData.deadline = new Date(deadline + 'T23:59:59').toISOString();
         } else {
             taskData.deadline = null;
         }
 
-        if (editingTask) {
-            await updateTask(editingTask.id, taskData);
-        } else {
-            await createTask(taskData);
+        try {
+            if (editingTask) {
+                await updateTask(editingTask.id, taskData);
+            } else {
+                await createTask(taskData);
+            }
+            setShowModal(false);
+        } catch (error) {
+            console.error('Failed to save task:', error);
+            // Ideally use a toast here. For now, we'll rely on the console 
+            // and maybe a future toast implementation could go here.
+            alert("Failed to save task. Please try again.");
         }
-        setShowModal(false);
     };
 
-    const handleStatusToggle = async (task: Task) => {
+    const handleStatusToggle = useCallback(async (task: Task) => {
         const newStatus = task.status === 'done' ? 'todo' : 'done';
         await updateTask(task.id, { ...task, status: newStatus });
+    }, [updateTask]);
+
+    const handleDelete = useCallback(async (id: string) => {
+        await deleteTask(id);
+    }, [deleteTask]);
+
+    // Client-side filtering for search query (since backend doesn't support it yet)
+    const filteredTasks = tasks.filter(task => {
+        if (!searchQuery) return true;
+        const query = searchQuery.toLowerCase();
+        return task.title.toLowerCase().includes(query) ||
+            (task.description && task.description.toLowerCase().includes(query));
+    });
+
+    // const paginatedTasks = filteredTasks; // With backend pagination, this is tricky. 
+    // Ideally we'd search on backend. For now, we search within the loaded page.
+    // NOTE: This searches only CURRENT PAGE if backend paging is active. 
+    // If the user wants global search, backend update is needed. 
+    // Assuming user wants immediate feedback on loaded tasks for now.
+
+    const handleSearchClose = () => {
+        setSearchQuery('');
+        setIsMobileSearchOpen(false);
     };
 
     return (
-        <div>
-            <div className="page-header">
-                <div>
-                    <h1 className="page-title">Tasks</h1>
-                    <p className="page-subtitle">Manage your tasks efficiently</p>
-                </div>
-                <button className="btn btn-primary" onClick={openCreate}>+ New Task</button>
-            </div>
+        <div className="tasks-page">
+            {/* Header with Search Mode Logic */}
+            <div className={`page-header ${isMobileSearchOpen ? 'search-active' : ''}`}>
+                {!isMobileSearchOpen && (
+                    <div>
+                        <h1 className="page-title">Tasks</h1>
+                        <p className="page-subtitle">Manage your daily work</p>
+                    </div>
+                )}
 
-            {/* Filters */}
-            <div className="filter-bar">
-                <select className="input" value={filterStatus} onChange={(e) => { setFilterStatus(e.target.value); setPage(0); }}>
-                    <option value="">All Status</option>
-                    <option value="todo">To Do</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="done">Done</option>
-                </select>
-                <select className="input" value={filterPriority} onChange={(e) => { setFilterPriority(e.target.value); setPage(0); }}>
-                    <option value="">All Priority</option>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="critical">Critical</option>
-                </select>
-                <select className="input" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                    <option value="createdAt">Date Created</option>
-                    <option value="deadline">Deadline</option>
-                    <option value="priority">Priority</option>
-                </select>
-            </div>
-
-            {/* Task List */}
-            {taskLoading && !tasks.length ? (
-                <div className="loader"><div className="spinner" /></div>
-            ) : tasks.length ? (
-                <>
-                    <div className="task-list">
-                        {tasks.map((task) => (
-                            <div key={task.id} className="task-item">
-                                <button
-                                    className={`task-checkbox ${task.status === 'done' ? 'checked' : ''}`}
-                                    onClick={() => handleStatusToggle(task)}
-                                >
-                                    {task.status === 'done' ? '✓' : ''}
+                <div className="tasks-header-actions">
+                    {/* Search Container */}
+                    <div className="task-search-container">
+                        <div className="search-input-wrapper">
+                            <span className="material-symbols-outlined search-icon">search</span>
+                            <input
+                                type="text"
+                                className="search-input"
+                                placeholder="Search tasks..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                autoFocus={isMobileSearchOpen}
+                            />
+                            {isMobileSearchOpen && (
+                                <button className="search-close-btn" onClick={handleSearchClose}>
+                                    <span className="material-symbols-outlined">close</span>
                                 </button>
-                                <div className="task-info">
-                                    <div className={`task-title ${task.status === 'done' ? 'completed' : ''}`}>
-                                        {task.title}
-                                    </div>
-                                    <div className="task-meta">
-                                        <span className={`badge badge-${task.priority}`}>{task.priority}</span>
-                                        <span className={`badge badge-${task.status}`}>{task.status}</span>
-                                        {task.deadline && (() => {
-                                            const deadlineDate = new Date(task.deadline);
-                                            const daysLeft = Math.ceil((deadlineDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-                                            const isOverdue = daysLeft < 0;
-                                            return (
-                                                <span style={{ color: isOverdue ? 'var(--accent-critical)' : daysLeft <= 2 ? 'var(--accent-warning)' : 'var(--text-muted)' }}>
-                                                    📅 {deadlineDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                                    {isOverdue ? ` (${Math.abs(daysLeft)}d overdue)` : daysLeft === 0 ? ' (today)' : ` (${daysLeft}d left)`}
-                                                </span>
-                                            );
-                                        })()}
-                                    </div>
-                                </div>
-                                <div className="task-actions">
-                                    <button className="btn btn-ghost btn-sm" onClick={() => openEdit(task)}>✏️</button>
-                                    <button className="btn btn-ghost btn-sm" onClick={() => deleteTask(task.id)}>🗑️</button>
-                                </div>
-                            </div>
-                        ))}
+                            )}
+                        </div>
                     </div>
 
-                    {/* Pagination */}
-                    {totalPages > 1 && (
-                        <div className="pagination">
-                            <button className="pagination-btn" disabled={page === 0} onClick={() => setPage(p => p - 1)}>←  Prev</button>
-                            {Array.from({ length: totalPages }, (_, i) => (
-                                <button key={i} className={`pagination-btn ${page === i ? 'active' : ''}`} onClick={() => setPage(i)}>
-                                    {i + 1}
-                                </button>
-                            ))}
-                            <button className="pagination-btn" disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)}>Next  →</button>
-                        </div>
+                    {/* Mobile Search Trigger */}
+                    {!isMobileSearchOpen && (
+                        <button
+                            className="mobile-search-trigger"
+                            onClick={() => setIsMobileSearchOpen(true)}
+                            aria-label="Search"
+                        >
+                            <span className="material-symbols-outlined">search</span>
+                        </button>
                     )}
-                </>
-            ) : (
-                <div className="empty-state">
-                    <div className="empty-icon">📝</div>
-                    <h3>No tasks yet</h3>
-                    <p>Create your first task to get started</p>
-                    <button className="btn btn-primary" style={{ marginTop: 'var(--space-4)' }} onClick={openCreate}>
-                        + Create Task
+
+                    {/* New Task Button - Hidden when search is open on mobile */}
+                    <button
+                        className="btn btn-primary"
+                        onClick={openCreate}
+                        style={{ display: isMobileSearchOpen ? 'none' : 'flex' }}
+                    >
+                        <span className="material-symbols-outlined icon-sm">add</span>
+                        <span className="btn-text">New Task</span>
                     </button>
                 </div>
-            )}
+            </div>
 
-            {/* Modal */}
-            {showModal && (
-                <div className="modal-overlay" onClick={() => setShowModal(false)}>
-                    <div className="modal" onClick={(e) => e.stopPropagation()}>
-                        <h2 className="modal-title">{editingTask ? 'Edit Task' : 'New Task'}</h2>
-                        <form onSubmit={handleSubmit}>
-                            <div className="input-group">
-                                <label className="input-label">Title</label>
-                                <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="What needs to be done?" />
-                            </div>
-                            <div className="input-group" style={{ marginTop: 'var(--space-4)' }}>
-                                <label className="input-label">Description</label>
-                                <textarea className="input" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Add details..." />
-                            </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginTop: 'var(--space-4)' }}>
-                                <div className="input-group">
-                                    <label className="input-label">Priority</label>
-                                    <select className="input" value={priority} onChange={(e) => setPriority(e.target.value as Task['priority'])}>
-                                        <option value="low">Low</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="high">High</option>
-                                        <option value="critical">Critical</option>
-                                    </select>
-                                </div>
-                                <div className="input-group">
-                                    <label className="input-label">Status</label>
-                                    <select className="input" value={status} onChange={(e) => setStatus(e.target.value as Task['status'])}>
-                                        <option value="todo">To Do</option>
-                                        <option value="in-progress">In Progress</option>
-                                        <option value="done">Done</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="input-group" style={{ marginTop: 'var(--space-4)' }}>
-                                <label className="input-label">Deadline</label>
-                                <input type="date" className="input" value={deadline} onChange={(e) => setDeadline(e.target.value)} min={new Date().toISOString().split('T')[0]} />
-                            </div>
-                            <div className="modal-actions">
-                                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
-                                <button type="submit" className="btn btn-primary">{editingTask ? 'Save Changes' : 'Create Task'}</button>
-                            </div>
-                        </form>
+            <div className="filter-toolbar">
+                <Select
+                    label="Status"
+                    value={filterStatus}
+                    onChange={(val) => { setFilterStatus(val); setPage(0); }}
+                    options={[
+                        { value: '', label: 'All Status' },
+                        { value: 'todo', label: 'To Do' },
+                        { value: 'in-progress', label: 'In Progress' },
+                        { value: 'done', label: 'Done' }
+                    ]}
+                />
+                <Select
+                    label="Priority"
+                    value={filterPriority}
+                    onChange={(val) => { setFilterPriority(val); setPage(0); }}
+                    options={[
+                        { value: '', label: 'All Priority' },
+                        { value: 'low', label: 'Low' },
+                        { value: 'medium', label: 'Medium' },
+                        { value: 'high', label: 'High' },
+                        { value: 'critical', label: 'Critical' }
+                    ]}
+                />
+                <Select
+                    label="Sort By"
+                    value={sortBy}
+                    onChange={setSortBy}
+                    options={[
+                        { value: 'createdAt', label: 'Date Created' },
+                        { value: 'deadline', label: 'Deadline' },
+                        { value: 'priority', label: 'Priority' }
+                    ]}
+                />
+            </div>
+
+            {/* Search could be added here in future following the same pattern */}
+
+            <div style={{ padding: '0 24px' }}>
+                {/* Task List */}
+                {taskLoading ? (
+                    <div className="loader">
+                        <div className="spinner"></div>
                     </div>
-                </div>
-            )}
+                ) : filteredTasks.length > 0 ? (
+                    <>
+                        <div className="task-list" style={{ marginTop: 'var(--space-2)' }}>
+                            {filteredTasks.map((task) => (
+                                <TaskRow
+                                    key={task.id}
+                                    task={task}
+                                    onToggle={handleStatusToggle}
+                                    onEdit={openEdit}
+                                    onDelete={handleDelete}
+                                />
+                            ))}
+                        </div>
+
+                        {/* Pagination */}
+                        {totalPages > 1 && (
+                            <div className="pagination" style={{ marginTop: 'var(--space-6)', paddingBottom: 'var(--space-8)' }}>
+                                <button className="pagination-btn" disabled={page === 0} onClick={() => setPage(p => p - 1)}>
+                                    <span className="material-symbols-outlined icon-sm">chevron_left</span>
+                                </button>
+                                {Array.from({ length: totalPages }, (_, i) => (
+                                    <button key={i} className={`pagination-btn ${page === i ? 'active' : ''}`} onClick={() => setPage(i)}>
+                                        {i + 1}
+                                    </button>
+                                ))}
+                                <button className="pagination-btn" disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)}>
+                                    <span className="material-symbols-outlined icon-sm">chevron_right</span>
+                                </button>
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <div className="empty-state" style={{ padding: '80px 0' }}>
+                        <div className="empty-icon" style={{ background: 'var(--bg-tertiary)', width: '64px', height: '64px', borderRadius: '16px' }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '32px' }}>
+                                {searchQuery ? 'search_off' : 'edit_note'}
+                            </span>
+                        </div>
+                        <h3 style={{ marginTop: '24px', fontSize: '18px' }}>
+                            {searchQuery ? `No tasks found for "${searchQuery}"` : 'No tasks yet'}
+                        </h3>
+                        <p style={{ color: 'var(--text-muted)', maxWidth: '300px', margin: '8px auto 24px' }}>
+                            {searchQuery ? 'Try a different search term.' : 'Stay organized by adding your first task. Everything starts with a single step.'}
+                        </p>
+                        {!searchQuery && (
+                            <button className="btn btn-primary" onClick={openCreate} style={{ height: '40px' }}>
+                                <span className="material-symbols-outlined icon-sm">add</span>
+                                Create Task
+                            </button>
+                        )}
+                    </div>
+                )}
+
+                {/* Modal */}
+                {showModal && (
+                    <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                        <div className="modal" onClick={(e) => e.stopPropagation()}>
+                            <h2 className="modal-title">{editingTask ? 'Edit Task' : 'New Task'}</h2>
+                            <form onSubmit={handleSubmit}>
+                                <div className="input-group">
+                                    <label className="input-label">Title</label>
+                                    <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="What needs to be done?" />
+                                </div>
+                                <div className="input-group" style={{ marginTop: 'var(--space-4)' }}>
+                                    <label className="input-label">Description</label>
+                                    <textarea className="input" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Add details..." />
+                                </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginTop: 'var(--space-4)' }}>
+                                    <div className="input-group">
+                                        <label className="input-label">Priority</label>
+                                        <select className="input" value={priority} onChange={(e) => setPriority(e.target.value as Task['priority'])}>
+                                            <option value="low">Low</option>
+                                            <option value="medium">Medium</option>
+                                            <option value="high">High</option>
+                                            <option value="critical">Critical</option>
+                                        </select>
+                                    </div>
+                                    <div className="input-group">
+                                        <label className="input-label">Status</label>
+                                        <select className="input" value={status} onChange={(e) => setStatus(e.target.value as Task['status'])}>
+                                            <option value="todo">To Do</option>
+                                            <option value="in-progress">In Progress</option>
+                                            <option value="done">Done</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="input-group" style={{ marginTop: 'var(--space-4)' }}>
+                                    <label className="input-label">Deadline</label>
+                                    <input type="date" className="input" value={deadline} onChange={(e) => setDeadline(e.target.value)} min={new Date().toISOString().split('T')[0]} />
+                                </div>
+                                <div className="modal-actions">
+                                    <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
+                                    <button type="submit" className="btn btn-primary">{editingTask ? 'Save Changes' : 'Create Task'}</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

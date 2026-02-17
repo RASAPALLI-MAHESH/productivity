@@ -32,7 +32,9 @@ export function EmailNotVerified() {
     return (
         <div className="auth-container">
             <div className="auth-card" style={{ maxWidth: 440, textAlign: 'center' }}>
-                <div style={{ fontSize: '3.5rem', marginBottom: 'var(--space-4)' }}>📧</div>
+                <div style={{ marginBottom: 'var(--space-2)' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'var(--text-secondary)' }}>email</span>
+                </div>
                 <h1>Verify your email</h1>
                 <p>
                     Your email address hasn't been verified yet. Please verify to access your dashboard.
@@ -58,13 +60,18 @@ export function EmailNotVerified() {
                     <div style={{
                         marginTop: 'var(--space-6)',
                         padding: 'var(--space-3) var(--space-4)',
-                        background: 'rgba(16, 185, 129, 0.1)',
-                        border: '1px solid rgba(16, 185, 129, 0.2)',
+                        background: 'var(--success-light)',
+                        border: '1px solid rgba(52, 211, 153, 0.2)',
                         borderRadius: 'var(--radius-md)',
                         color: 'var(--success)',
                         fontSize: 'var(--font-size-sm)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 'var(--space-1)',
+                        justifyContent: 'center',
                     }}>
-                        ✅ Verification code sent! Redirecting…
+                        <span className="material-symbols-outlined icon-sm icon-filled">check_circle</span>
+                        Verification code sent! Redirecting…
                     </div>
                 ) : (
                     <button

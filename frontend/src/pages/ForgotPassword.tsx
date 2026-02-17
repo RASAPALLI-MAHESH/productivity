@@ -21,7 +21,9 @@ export function ForgotPassword() {
     return (
         <div className="auth-container">
             <div className="auth-card" style={{ maxWidth: 440, textAlign: 'center' }}>
-                <div style={{ fontSize: '3.5rem', marginBottom: 'var(--space-4)' }}>🔑</div>
+                <div style={{ marginBottom: 'var(--space-2)' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'var(--text-secondary)' }}>key</span>
+                </div>
                 <h1>Forgot password?</h1>
                 <p>No worries. Enter your email and we'll send you a reset code.</p>
 

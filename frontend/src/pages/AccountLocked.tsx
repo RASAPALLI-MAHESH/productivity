@@ -14,11 +14,8 @@ export function AccountLocked() {
     return (
         <div className="auth-container">
             <div className="auth-card" style={{ maxWidth: 440, textAlign: 'center' }}>
-                <div style={{
-                    fontSize: '3.5rem', marginBottom: 'var(--space-4)',
-                    animation: 'shake 500ms ease-in-out',
-                }}>
-                    🔒
+                <div style={{ marginBottom: 'var(--space-2)' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'var(--error)' }}>lock</span>
                 </div>
                 <h1>Account temporarily locked</h1>
                 <p style={{ marginBottom: 'var(--space-4)' }}>
@@ -26,8 +23,8 @@ export function AccountLocked() {
                 </p>
 
                 <div style={{
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                    background: 'var(--error-light)',
+                    border: '1px solid rgba(248, 113, 113, 0.2)',
                     borderRadius: 'var(--radius-lg)',
                     padding: 'var(--space-4)',
                     marginBottom: 'var(--space-6)',

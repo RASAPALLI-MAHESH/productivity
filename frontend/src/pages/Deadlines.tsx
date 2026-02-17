@@ -36,12 +36,13 @@ export function Deadlines() {
         return days > 3;
     });
 
-    const renderGroup = (label: string, items: typeof tasksWithDeadlines, emoji: string) => {
+    const renderGroup = (label: string, items: typeof tasksWithDeadlines, icon: string) => {
         if (!items.length) return null;
         return (
             <div style={{ marginBottom: 'var(--space-8)' }}>
-                <h2 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 600, marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                    {emoji} {label}
+                <h2 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 600, marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-1)' }}>
+                    <span className="material-symbols-outlined icon-sm">{icon}</span>
+                    {label}
                     <span className="badge badge-medium" style={{ marginLeft: 'var(--space-2)' }}>{items.length}</span>
                 </h2>
                 <div className="task-list">
@@ -71,7 +72,10 @@ export function Deadlines() {
                                     <div className="task-meta">
                                         <span className={`badge badge-${task.priority}`}>{task.priority}</span>
                                         <span className={`badge badge-${task.status}`}>{task.status}</span>
-                                        <span>📅 {new Date(task.deadline!).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+                                        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                            <span className="material-symbols-outlined icon-sm">event</span>
+                                            {new Date(task.deadline!).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -97,14 +101,14 @@ export function Deadlines() {
 
             {tasksWithDeadlines.length ? (
                 <>
-                    {renderGroup('Overdue', overdue, '🚨')}
-                    {renderGroup('Due Today', dueToday, '⚡')}
-                    {renderGroup('Due Soon (1-3 days)', dueSoon, '⏳')}
-                    {renderGroup('Upcoming', upcoming, '📅')}
+                    {renderGroup('Overdue', overdue, 'error')}
+                    {renderGroup('Due Today', dueToday, 'bolt')}
+                    {renderGroup('Due Soon (1-3 days)', dueSoon, 'hourglass_top')}
+                    {renderGroup('Upcoming', upcoming, 'event')}
                 </>
             ) : (
                 <div className="empty-state">
-                    <div className="empty-icon">⏰</div>
+                    <div className="empty-icon"><span className="material-symbols-outlined">schedule</span></div>
                     <h3>No active deadlines</h3>
                     <p>Add deadlines to your tasks to track them here</p>
                 </div>

@@ -36,15 +36,15 @@ export function Onboarding() {
                             width: i === STEPS.indexOf(step) ? 32 : 10,
                             height: 4,
                             borderRadius: 'var(--radius-full)',
-                            background: i <= STEPS.indexOf(step) ? 'var(--accent)' : 'var(--border)',
-                            transition: 'all 300ms cubic-bezier(0.16, 1, 0.3, 1)',
+                            background: i <= STEPS.indexOf(step) ? 'var(--primary)' : 'var(--border)',
+                            transition: 'all 150ms ease',
                         }} />
                     ))}
                 </div>
 
                 {step === 'welcome' && (
-                    <div style={{ animation: 'modalSlideUp 400ms cubic-bezier(0.16, 1, 0.3, 1)' }}>
-                        <div style={{ fontSize: '3.5rem', marginBottom: 'var(--space-4)' }}>⚡</div>
+                    <div style={{ animation: 'modalSlideUp 150ms ease' }}>
+                        <div style={{ marginBottom: 'var(--space-2)' }}><span className="material-symbols-outlined" style={{ fontSize: 40, color: 'var(--primary)' }}>bolt</span></div>
                         <h1>Welcome, {displayName}!</h1>
                         <p style={{ marginBottom: 'var(--space-6)' }}>
                             Let's set up your productivity workspace in 30 seconds.
@@ -60,8 +60,8 @@ export function Onboarding() {
                 )}
 
                 {step === 'bio' && (
-                    <div style={{ animation: 'modalSlideUp 400ms cubic-bezier(0.16, 1, 0.3, 1)' }}>
-                        <div style={{ fontSize: '3.5rem', marginBottom: 'var(--space-4)' }}>🎯</div>
+                    <div style={{ animation: 'modalSlideUp 150ms ease' }}>
+                        <div style={{ marginBottom: 'var(--space-2)' }}><span className="material-symbols-outlined" style={{ fontSize: 40, color: 'var(--primary)' }}>target</span></div>
                         <h1>What drives you?</h1>
                         <p>Tell us about your goals so we can personalize your experience.</p>
 
@@ -105,8 +105,8 @@ export function Onboarding() {
                 )}
 
                 {step === 'ready' && (
-                    <div style={{ animation: 'bounceIn 500ms cubic-bezier(0.16, 1, 0.3, 1)' }}>
-                        <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)' }}>🎉</div>
+                    <div style={{ animation: 'modalSlideUp 150ms ease' }}>
+                        <div style={{ marginBottom: 'var(--space-2)' }}><span className="material-symbols-outlined icon-filled" style={{ fontSize: 40, color: 'var(--success)' }}>check_circle</span></div>
                         <h1>You're all set!</h1>
                         <p style={{ marginBottom: 'var(--space-6)' }}>
                             Your workspace is ready. Start by creating your first task or building a daily habit.
@@ -116,7 +116,7 @@ export function Onboarding() {
                             onClick={() => navigate('/')}
                             style={{ width: '100%' }}
                         >
-                            Go to Dashboard 🚀
+                            Go to Dashboard →
                         </button>
                     </div>
                 )}

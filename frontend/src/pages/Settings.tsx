@@ -1,12 +1,12 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 
+import { ThemeToggle } from '../components/ThemeToggle';
+
 export function Settings() {
     const { user, profile, logout } = useAuthStore();
-    const navigate = useNavigate();
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+    const navigate = useNavigate();
     const handleLogout = async () => {
         await logout();
         navigate('/login');
@@ -20,6 +20,8 @@ export function Settings() {
                     <p className="page-subtitle">Manage your account and preferences</p>
                 </div>
             </div>
+
+            {/* ... rest of the file ... */}
 
             <div className="settings-container">
                 {/* Profile Section */}
@@ -53,9 +55,9 @@ export function Settings() {
                     <div className="settings-item">
                         <div>
                             <div className="settings-item-label">Theme</div>
-                            <div className="settings-item-desc">Pure Black (AMOLED)</div>
+                            <div className="settings-item-desc">Choose your preferred appearance</div>
                         </div>
-                        <span className="badge badge-done">Active</span>
+                        <ThemeToggle variant="full" />
                     </div>
                     <div className="settings-item">
                         <div>
@@ -94,14 +96,7 @@ export function Settings() {
                                 <div className="settings-item-label" style={{ color: 'var(--danger)' }}>Delete Account</div>
                                 <div className="settings-item-desc">Permanently delete your account and all data</div>
                             </div>
-                            {!showDeleteConfirm ? (
-                                <button className="btn btn-danger btn-sm" onClick={() => setShowDeleteConfirm(true)}>Delete</button>
-                            ) : (
-                                <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-                                    <button className="btn btn-secondary btn-sm" onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
-                                    <button className="btn btn-danger btn-sm">Confirm</button>
-                                </div>
-                            )}
+                            <button className="btn btn-danger btn-sm">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -112,7 +107,7 @@ export function Settings() {
                     <div className="settings-item">
                         <div>
                             <div className="settings-item-label">Productiv</div>
-                            <div className="settings-item-desc">Version 1.0.0 · Built with ❤️</div>
+                            <div className="settings-item-desc">Version 1.0.0</div>
                         </div>
                     </div>
                 </div>

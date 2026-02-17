@@ -33,14 +33,13 @@ export function Login() {
             {/* Left — Branding (desktop only) */}
             <div className="auth-branding">
                 <div className="animate-up">
-                    <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)', filter: 'drop-shadow(0 0 20px rgba(99, 102, 241, 0.6))' }}>🚀</div>
-                    <h1 className="glow-text" style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: 'var(--space-2)' }}>
+                    <h1 style={{ fontSize: '2rem', fontWeight: 600, marginBottom: 8 }}>
                         Productiv
                     </h1>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '1.25rem', lineHeight: 1.6 }}>
-                        The launchpad for<br />
-                        your biggest goals.<br />
-                        <span style={{ color: 'var(--primary)', fontWeight: 600 }}>Master your day.</span>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', lineHeight: 1.6 }}>
+                        Plan, track, and ship<br />
+                        your most important work.<br />
+                        <span style={{ color: 'var(--primary)', fontWeight: 600 }}>Every day.</span>
                     </p>
                 </div>
             </div>
@@ -48,7 +47,7 @@ export function Login() {
             {/* Right — Auth Card */}
             <div className="auth-card">
                 <h1>Welcome back</h1>
-                <p>Sign in to continue your productivity streak</p>
+                <p>Sign in to continue to Productiv</p>
 
                 {error && <div className="auth-error">{error}</div>}
 
@@ -81,7 +80,7 @@ export function Login() {
                                 required
                                 minLength={8}
                                 autoComplete="current-password"
-                                style={{ paddingRight: 48 }}
+                                style={{ paddingRight: 40 }}
                             />
                             <button
                                 type="button"
@@ -89,18 +88,18 @@ export function Login() {
                                 className="password-toggle"
                                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                             >
-                                {showPassword ? '🙈' : '👁️'}
+                                <span className="material-symbols-outlined">{showPassword ? 'visibility_off' : 'visibility'}</span>
                             </button>
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-2)' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', cursor: 'pointer' }}>
                             <input
                                 type="checkbox"
                                 checked={rememberMe}
                                 onChange={(e) => setRememberMe(e.target.checked)}
-                                style={{ accentColor: 'var(--accent)' }}
+                                style={{ accentColor: 'var(--primary)' }}
                             />
                             Remember me
                         </label>
@@ -110,7 +109,7 @@ export function Login() {
                     </div>
 
                     <button type="submit" className="btn btn-primary btn-lg" disabled={loading}>
-                        {loading ? 'Signing in...' : 'Sign In'}
+                        {loading ? 'Signing in...' : 'Sign in'}
                     </button>
                 </form>
 

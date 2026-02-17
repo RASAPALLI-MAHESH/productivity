@@ -68,8 +68,38 @@ export const useAppStore = create<AppState>((set, get) => ({
         await get().fetchTasks();
     },
     updateTask: async (id, task) => {
-        await client.put(`/tasks/${id}`, task);
-        await get().fetchTasks();
+        // Optimistic update
+        const prevTasks = get().tasks;
+        const prevDashboard = get().dashboard;
+
+        // Update tasks list
+        set({
+            tasks: prevTasks.map((t) => (t.id === id ? { ...t, ...task } : t)),
+        });
+
+        // Update dashboard if present
+        if (prevDashboard) {
+            set({
+                dashboard: {
+                    ...prevDashboard,
+                    todayTasks: prevDashboard.todayTasks?.map((t) => (t.id === id ? { ...t, ...task } : t)) || [],
+                    overdueTodayTasks: prevDashboard.overdueTodayTasks?.map((t) => (t.id === id ? { ...t, ...task } : t)) || [],
+                },
+            });
+        }
+
+        try {
+            await client.put(`/tasks/${id}`, task);
+            // We can optionally refetch to ensure consistency, but for status toggles, we pretty much know the result.
+            // A background fetch is safer to keep totalPages/stats in sync without flickering.
+            get().fetchTasks(get().fetchTasks.length > 0 ? undefined : {}); // Re-fetch with current params if possible? 
+            // Actually, simply re-fetching might cause a flicker if the optimistic state matches the server state but network lag delays it.
+            // Let's rely on the optimistic update for the immediate feedback.
+            // Any "side effects" (like stats updating) will happen on next fetch or navigation.
+        } catch {
+            // Rollback
+            set({ tasks: prevTasks, dashboard: prevDashboard });
+        }
     },
     deleteTask: async (id) => {
         // Optimistic update
@@ -113,8 +143,36 @@ export const useAppStore = create<AppState>((set, get) => ({
         }
     },
     completeHabit: async (id) => {
-        await client.post(`/habits/${id}/complete`);
-        await get().fetchHabits();
+        const today = new Date().toISOString().split('T')[0];
+        const prevHabits = get().habits;
+        const prevLogs = get().habitLogs;
+
+        // Optimistic update
+        set({
+            habits: prevHabits.map((h) => {
+                if (h.id === id) {
+                    return {
+                        ...h,
+                        currentStreak: h.currentStreak + 1,
+                        lastCompletedDate: today,
+                    };
+                }
+                return h;
+            }),
+            habitLogs: {
+                ...prevLogs,
+                [id]: [
+                    ...(prevLogs[id] || []),
+                    { date: today, completed: true, completedAt: new Date().toISOString() },
+                ],
+            },
+        });
+
+        try {
+            await client.post(`/habits/${id}/complete`);
+        } catch {
+            set({ habits: prevHabits, habitLogs: prevLogs });
+        }
     },
     fetchHabitLogs: async (habitId, startDate, endDate) => {
         try {

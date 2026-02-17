@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
+import { useThemeStore } from './store/themeStore';
 import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -31,11 +32,17 @@ function AppLoader() {
 
 function App() {
     const { initAuth, initialized, user, profile } = useAuthStore();
+    const { theme } = useThemeStore(); // Initialize theme
 
     useEffect(() => {
         const unsubscribe = initAuth();
         return () => unsubscribe();
     }, [initAuth]);
+
+    // Apply theme to document
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+    }, [theme]);
 
     if (!initialized) {
         return <AppLoader />;

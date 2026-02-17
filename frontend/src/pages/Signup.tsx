@@ -10,9 +10,9 @@ function getPasswordStrength(password: string): { score: number; label: string; 
     if (/[0-9]/.test(password)) score++;
     if (/[^A-Za-z0-9]/.test(password)) score++;
 
-    if (score <= 1) return { score, label: 'Weak', color: 'var(--critical)' };
+    if (score <= 1) return { score, label: 'Weak', color: 'var(--error)' };
     if (score <= 2) return { score, label: 'Fair', color: 'var(--warning)' };
-    if (score <= 3) return { score, label: 'Good', color: 'var(--accent)' };
+    if (score <= 3) return { score, label: 'Good', color: 'var(--info)' };
     return { score, label: 'Strong', color: 'var(--success)' };
 }
 
@@ -49,14 +49,13 @@ export function Signup() {
             {/* Left — Branding */}
             <div className="auth-branding">
                 <div className="animate-up">
-                    <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)', filter: 'drop-shadow(0 0 20px rgba(99, 102, 241, 0.6))' }}>✨</div>
-                    <h1 className="glow-text" style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: 'var(--space-2)' }}>
-                        Join the Adventure
+                    <h1 style={{ fontSize: '2rem', fontWeight: 600, marginBottom: 8 }}>
+                        Productiv
                     </h1>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '1.25rem', lineHeight: 1.6 }}>
-                        Step into a workspace<br />
-                        designed for clarity,<br />
-                        speed, and <span style={{ color: 'var(--secondary)', fontWeight: 600 }}>focus.</span>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', lineHeight: 1.6 }}>
+                        The workspace designed<br />
+                        for clarity, speed, and<br />
+                        <span style={{ color: 'var(--primary)', fontWeight: 600 }}>deep focus.</span>
                     </p>
                 </div>
             </div>
@@ -64,13 +63,13 @@ export function Signup() {
             {/* Right — Form */}
             <div className="auth-card">
                 <h1>Create your account</h1>
-                <p>Start your productivity journey today</p>
+                <p>Get started with Productiv — it's free.</p>
 
                 {error && <div className="auth-error">{error}</div>}
 
                 <form onSubmit={handleSubmit}>
                     <div className="input-group">
-                        <label className="input-label" htmlFor="displayName">Full Name</label>
+                        <label className="input-label" htmlFor="displayName">Full name</label>
                         <input
                             id="displayName"
                             type="text"
@@ -110,7 +109,7 @@ export function Signup() {
                                 required
                                 minLength={8}
                                 autoComplete="new-password"
-                                style={{ paddingRight: 48 }}
+                                style={{ paddingRight: 40 }}
                             />
                             <button
                                 type="button"
@@ -118,23 +117,23 @@ export function Signup() {
                                 className="password-toggle"
                                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                             >
-                                {showPassword ? '🙈' : '👁️'}
+                                <span className="material-symbols-outlined">{showPassword ? 'visibility_off' : 'visibility'}</span>
                             </button>
                         </div>
-                        {/* Strength Meter */}
+                        {/* Strength Meter — Minimal bar */}
                         {password && (
-                            <div style={{ marginTop: 'var(--space-2)' }}>
-                                <div style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
+                            <div style={{ marginTop: 6 }}>
+                                <div style={{ display: 'flex', gap: 3 }}>
                                     {[1, 2, 3, 4, 5].map((i) => (
                                         <div key={i} style={{
                                             flex: 1, height: 3,
                                             borderRadius: 'var(--radius-full)',
                                             background: i <= strength.score ? strength.color : 'var(--border)',
-                                            transition: 'all 200ms ease',
+                                            transition: 'background 100ms ease',
                                         }} />
                                     ))}
                                 </div>
-                                <span style={{ fontSize: 'var(--font-size-xs)', color: strength.color }}>
+                                <span style={{ fontSize: 'var(--font-size-xs)', color: strength.color, marginTop: 2, display: 'inline-block' }}>
                                     {strength.label}
                                 </span>
                             </div>
@@ -142,7 +141,7 @@ export function Signup() {
                     </div>
 
                     <div className="input-group">
-                        <label className="input-label" htmlFor="confirmPassword">Confirm Password</label>
+                        <label className="input-label" htmlFor="confirmPassword">Confirm password</label>
                         <input
                             id="confirmPassword"
                             type={showPassword ? 'text' : 'password'}
@@ -152,26 +151,26 @@ export function Signup() {
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             required
                             autoComplete="new-password"
-                            style={{ borderColor: !passwordsMatch ? 'var(--critical)' : undefined }}
+                            style={{ borderColor: !passwordsMatch ? 'var(--error)' : undefined }}
                         />
                         {!passwordsMatch && (
-                            <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--critical)', marginTop: 'var(--space-1)' }}>
+                            <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--error)' }}>
                                 Passwords do not match
                             </span>
                         )}
                     </div>
 
                     <label style={{
-                        display: 'flex', alignItems: 'flex-start', gap: 'var(--space-2)',
+                        display: 'flex', alignItems: 'flex-start', gap: 8,
                         fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)',
-                        cursor: 'pointer', marginBottom: 'var(--space-4)',
+                        cursor: 'pointer', marginBottom: 'var(--space-2)',
                     }}>
                         <input
                             type="checkbox"
                             checked={acceptTerms}
                             onChange={(e) => setAcceptTerms(e.target.checked)}
                             required
-                            style={{ accentColor: 'var(--accent)', marginTop: 2 }}
+                            style={{ accentColor: 'var(--primary)', marginTop: 2 }}
                         />
                         I agree to the Terms of Service and Privacy Policy
                     </label>
@@ -181,7 +180,7 @@ export function Signup() {
                         className="btn btn-primary btn-lg"
                         disabled={loading || !acceptTerms || !passwordsMatch}
                     >
-                        {loading ? 'Creating account...' : 'Create Account'}
+                        {loading ? 'Creating account...' : 'Create account'}
                     </button>
                 </form>
 

@@ -49,7 +49,9 @@ export function ResetPassword() {
         return (
             <div className="auth-container">
                 <div className="auth-card" style={{ maxWidth: 440, textAlign: 'center' }}>
-                    <div style={{ fontSize: '3.5rem', marginBottom: 'var(--space-4)', animation: 'bounceIn 500ms cubic-bezier(0.16, 1, 0.3, 1)' }}>✅</div>
+                    <div style={{ marginBottom: 'var(--space-2)' }}>
+                        <span className="material-symbols-outlined icon-filled" style={{ fontSize: 40, color: 'var(--success)' }}>check_circle</span>
+                    </div>
                     <h1>Password reset!</h1>
                     <p>Your password has been updated successfully. You can now sign in with your new password.</p>
                     <button
@@ -67,7 +69,9 @@ export function ResetPassword() {
     return (
         <div className="auth-container">
             <div className="auth-card" style={{ maxWidth: 440, textAlign: 'center' }}>
-                <div style={{ fontSize: '3.5rem', marginBottom: 'var(--space-4)' }}>🔒</div>
+                <div style={{ marginBottom: 'var(--space-2)' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'var(--text-secondary)' }}>lock</span>
+                </div>
                 <h1>Set new password</h1>
                 <p>Choose a strong password to secure your account</p>
 
@@ -96,7 +100,7 @@ export function ResetPassword() {
                                 className="password-toggle"
                                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                             >
-                                {showPassword ? '🙈' : '👁️'}
+                                <span className="material-symbols-outlined">{showPassword ? 'visibility_off' : 'visibility'}</span>
                             </button>
                         </div>
                         {/* Strength Meter */}

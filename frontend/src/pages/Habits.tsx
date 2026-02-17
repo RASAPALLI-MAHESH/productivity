@@ -15,7 +15,6 @@ export function Habits() {
         fetchHabits();
     }, [fetchHabits]);
 
-    // Fetch logs for heatmap when a habit is selected
     useEffect(() => {
         if (selectedHabitId) {
             const end = new Date().toISOString().split('T')[0];
@@ -34,7 +33,6 @@ export function Habits() {
 
     const todayStr = new Date().toISOString().split('T')[0];
 
-    // Generate last 28 days for heatmap
     const generateHeatmapDays = () => {
         const days = [];
         for (let i = 27; i >= 0; i--) {
@@ -53,7 +51,10 @@ export function Habits() {
                     <h1 className="page-title">Habits</h1>
                     <p className="page-subtitle">Build consistency, track your streaks</p>
                 </div>
-                <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ New Habit</button>
+                <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+                    <span className="material-symbols-outlined icon-sm">add</span>
+                    New Habit
+                </button>
             </div>
 
             {habitLoading && !habits.length ? (
@@ -76,7 +77,10 @@ export function Habits() {
                                             </div>
                                         )}
                                     </div>
-                                    <div className="habit-streak">🔥 {habit.currentStreak}</div>
+                                    <div className="habit-streak">
+                                        <span className="material-symbols-outlined icon-sm">local_fire_department</span>
+                                        {habit.currentStreak}
+                                    </div>
                                 </div>
 
                                 <div style={{ display: 'flex', gap: 'var(--space-4)', marginBottom: 'var(--space-4)', fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)' }}>
@@ -105,11 +109,17 @@ export function Habits() {
                                     disabled={completedToday}
                                     style={{ marginTop: 'var(--space-4)' }}
                                 >
-                                    {completedToday ? '✓ Done today' : '○ Mark complete'}
+                                    {completedToday ? (
+                                        <><span className="material-symbols-outlined icon-sm" style={{ verticalAlign: 'text-bottom' }}>check_circle</span> Done today</>
+                                    ) : (
+                                        <><span className="material-symbols-outlined icon-sm" style={{ verticalAlign: 'text-bottom' }}>radio_button_unchecked</span> Mark complete</>
+                                    )}
                                 </button>
 
                                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'var(--space-3)' }}>
-                                    <button className="btn btn-ghost btn-sm" onClick={() => deleteHabit(habit.id)}>🗑️ Delete</button>
+                                    <button className="btn-icon" onClick={() => deleteHabit(habit.id)} style={{ color: 'var(--text-muted)' }}>
+                                        <span className="material-symbols-outlined icon-sm">delete</span>
+                                    </button>
                                 </div>
                             </div>
                         );
@@ -117,11 +127,12 @@ export function Habits() {
                 </div>
             ) : (
                 <div className="empty-state">
-                    <div className="empty-icon">💪</div>
+                    <div className="empty-icon"><span className="material-symbols-outlined">fitness_center</span></div>
                     <h3>Build momentum</h3>
                     <p>Start with one small daily habit. Consistency beats intensity.</p>
                     <button className="btn btn-primary" style={{ marginTop: 'var(--space-4)' }} onClick={() => setShowModal(true)}>
-                        + Create your first habit
+                        <span className="material-symbols-outlined icon-sm">add</span>
+                        Create your first habit
                     </button>
                 </div>
             )}
