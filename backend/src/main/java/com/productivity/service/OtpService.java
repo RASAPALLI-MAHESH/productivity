@@ -24,23 +24,15 @@ public class OtpService {
     private static final int OTP_LENGTH = 6;
     private static final int OTP_EXPIRATION_MINUTES = 5;
     
-    @Value("${otp.api.url}")
-    private String apiUrl;
-    
-    @Value("${otp.api.key}")
-    private String apiKey;
-
-    @Value("${otp.api.sender}")
-    private String senderId;
-
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final EmailService emailService;
     
     // In-memory store for now (ConcurrentHashMap). Replace with Redis in production.
     // Key: email, Value: OtpData
     private final Map<String, OtpData> otpStore = new ConcurrentHashMap<>();
     private final ScheduledExecutorService cleanupExecutor = Executors.newSingleThreadScheduledExecutor();
 
-    public OtpService() {
+    public OtpService(EmailService emailService) {
+        this.emailService = emailService;
         // Periodic cleanup every minute
         cleanupExecutor.scheduleAtFixedRate(this::removeExpiredOtps, 1, 1, TimeUnit.MINUTES);
     }
@@ -50,63 +42,17 @@ public class OtpService {
         long expiryTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(OTP_EXPIRATION_MINUTES);
         otpStore.put(email, new OtpData(otp, expiryTime));
         
-        // Try sending via API
+        // Send via EmailService
+        String subject = "Your Verification Code: " + otp;
+        String htmlContent = "<html><body><h1>Your code is " + otp + "</h1><p>This code expires in 5 minutes.</p></body></html>";
+        
         try {
-            sendOtpViaApi(email, otp);
+            emailService.sendHtmlMessage(email, subject, htmlContent);
         } catch (Exception e) {
-            log.error("Failed to send OTP via API: {}", e.getMessage());
-            // Fallback to log for dev/test
-            log.info("--------------------------------------------------");
-            log.info("OTP for {}: {}", email, otp);
-            log.info("--------------------------------------------------");
+            log.error("Failed to send OTP email: {}", e.getMessage());
         }
         
         return otp;
-    }
-
-    private void sendOtpViaApi(String email, String otp) {
-        if (apiUrl == null || apiUrl.contains("example.com")) {
-            // Auto-detect Brevo URL if key is present
-            if (apiKey != null && apiKey.startsWith("xkeysib")) {
-                apiUrl = "https://api.brevo.com/v3/smtp/email";
-                log.info("Auto-detected Brevo API Key. Using Brevo URL: {}", apiUrl);
-            } else {
-                log.info("OTP API URL not configured, skipping external call. OTP: {}", otp);
-                return;
-            }
-        }
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("api-key", apiKey);
-
-        // Construct Brevo-compliant Payload
-        Map<String, Object> body = new HashMap<>();
-        
-        // Sender
-        Map<String, String> sender = new HashMap<>();
-        sender.put("name", senderId != null ? senderId : "ProductivApp");
-        sender.put("email", "no-reply@productiv.app"); // Brevo requires a sender email
-        body.put("sender", sender);
-
-        // To
-        Map<String, String> to = new HashMap<>();
-        to.put("email", email);
-        body.put("to", java.util.Collections.singletonList(to));
-
-        // Subject & Content
-        body.put("subject", "Your Verification Code: " + otp);
-        body.put("htmlContent", "<html><body><h1>Your code is " + otp + "</h1><p>This code expires in 5 minutes.</p></body></html>");
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-        
-        try {
-            restTemplate.postForObject(apiUrl, request, String.class);
-            log.info("OTP sent to {} via Brevo API", email);
-        } catch (Exception e) {
-            log.error("Error calling OTP API: {}", e.getMessage());
-            throw e; 
-        }
     }
 
     public boolean validateOtp(String email, String otp) {
