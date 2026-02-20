@@ -116,7 +116,7 @@ export function Onboarding() {
                             onClick={() => navigate('/')}
                             style={{ width: '100%' }}
                         >
-                            Go to Dashboard →
+                            Start Managing Tasks →
                         </button>
                     </div>
                 )}

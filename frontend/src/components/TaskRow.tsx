@@ -13,6 +13,11 @@ export const TaskRow = memo(({ task, onToggle, onEdit, onDelete }: TaskRowProps)
     const deadlineDate = task.deadline ? new Date(task.deadline) : null;
     const isOverdue = deadlineDate && deadlineDate < new Date() && !isDone;
 
+    // Subtask progress
+    const totalSubtasks = task.subtasks?.length || 0;
+    const completedSubtasks = task.subtasks?.filter(s => s.completed).length || 0;
+    const hasSubtasks = totalSubtasks > 0;
+
     // Format date: "Oct 24" or "Today" or "Tom"
     const formatDate = (date: Date) => {
         const today = new Date();
@@ -25,7 +30,7 @@ export const TaskRow = memo(({ task, onToggle, onEdit, onDelete }: TaskRowProps)
     };
 
     return (
-        <div className={`task-row ${isDone ? 'completed' : ''}`}>
+        <div className={`task-row ${isDone ? 'completed' : ''} priority-${task.priority}`}>
             {/* Checkbox */}
             <div className="task-col-checkbox">
                 <button
@@ -38,40 +43,74 @@ export const TaskRow = memo(({ task, onToggle, onEdit, onDelete }: TaskRowProps)
                     role="checkbox"
                     aria-label={`Mark ${task.title} as ${isDone ? 'incomplete' : 'complete'}`}
                 >
-                    {isDone && <span className="material-symbols-outlined icon-xs">check</span>}
+                    <span className="material-symbols-outlined check-icon">check</span>
                 </button>
             </div>
 
-            {/* Title */}
-            <div className="task-col-title" onClick={() => onEdit(task)}>
-                <span className="task-text">{task.title}</span>
-                {task.description && <span className="material-symbols-outlined icon-xs task-desc-icon">description</span>}
-            </div>
-
-            {/* Meta */}
-            <div className="task-col-meta">
-                {/* Deadline */}
-                {deadlineDate && (
-                    <div className={`meta-tag ${isOverdue ? 'overdue' : ''}`}>
-                        <span className="material-symbols-outlined icon-xs">event</span>
-                        {formatDate(deadlineDate)}
+            {/* Content Section */}
+            <div className="task-col-main" onClick={() => onEdit(task)}>
+                <div className="task-title-row">
+                    <span className="task-text">{task.title}</span>
+                </div>
+                {task.description && (
+                    <div className="task-desc-preview">
+                        {task.description}
                     </div>
                 )}
 
-                {/* Priority */}
-                <div className={`badge badge-${task.priority} badge-sm`}>
-                    {task.priority}
+                {/* Meta Row (Internal) */}
+                <div className="task-meta-inline">
+                    {/* Deadline */}
+                    {deadlineDate && (
+                        <div className={`meta-item ${isOverdue ? 'overdue' : ''}`}>
+                            <span className="material-symbols-outlined icon-xs">event</span>
+                            <span>{formatDate(deadlineDate)}</span>
+                        </div>
+                    )}
+
+                    {/* Subtasks Progress */}
+                    {hasSubtasks && (
+                        <div className="meta-item subtasks-badge">
+                            <span className="material-symbols-outlined icon-xs">account_tree</span>
+                            <span>{completedSubtasks}/{totalSubtasks}</span>
+                        </div>
+                    )}
+
+                    {/* Energy Level */}
+                    {task.energyLevel && (
+                        <div className={`meta-item energy-${task.energyLevel}`}>
+                            <span className="material-symbols-outlined icon-xs">
+                                {task.energyLevel === 'low' ? 'battery_low' : task.energyLevel === 'medium' ? 'battery_50' : 'battery_full'}
+                            </span>
+                            <span>{task.energyLevel}</span>
+                        </div>
+                    )}
+
+                    {/* Estimate */}
+                    {task.estimatedMinutes && (
+                        <div className="meta-item estimate-tag">
+                            <span className="material-symbols-outlined icon-xs">schedule</span>
+                            <span>{task.estimatedMinutes}m</span>
+                        </div>
+                    )}
                 </div>
             </div>
 
-            {/* Actions */}
-            <div className="task-col-actions">
-                <button className="btn-icon btn-sm" onClick={(e) => { e.stopPropagation(); onEdit(task); }}>
-                    <span className="material-symbols-outlined icon-sm">edit</span>
-                </button>
-                <button className="btn-icon btn-sm" onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}>
-                    <span className="material-symbols-outlined icon-sm">delete</span>
-                </button>
+            {/* Right Meta (Visible Actions & Priority) */}
+            <div className="task-col-right">
+                <div className={`priority-indicator priority-${task.priority}`}>
+                    <span className="priority-dot"></span>
+                    <span className="priority-label">{task.priority}</span>
+                </div>
+
+                <div className="task-actions-hover">
+                    <button className="btn-icon-xs" title="Edit Task" onClick={(e) => { e.stopPropagation(); onEdit(task); }}>
+                        <span className="material-symbols-outlined icon-sm">edit_note</span>
+                    </button>
+                    <button className="btn-icon-xs delete-hover" title="Delete Task" onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}>
+                        <span className="material-symbols-outlined icon-sm">delete</span>
+                    </button>
+                </div>
             </div>
         </div>
     );

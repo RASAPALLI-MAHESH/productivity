@@ -23,6 +23,11 @@ export function Tasks() {
     const [priority, setPriority] = useState<Task['priority']>('medium');
     const [status, setStatus] = useState<Task['status']>('todo');
     const [deadline, setDeadline] = useState('');
+    const [estimatedMinutes, setEstimatedMinutes] = useState<number | ''>('');
+    const [energyLevel, setEnergyLevel] = useState<Task['energyLevel']>('medium');
+    const [context, setContext] = useState<string[]>([]);
+    const [subtasks, setSubtasks] = useState<{ id: string; title: string; completed: boolean }[]>([]);
+    const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
 
     useEffect(() => {
         fetchTasks({
@@ -42,6 +47,10 @@ export function Tasks() {
         setPriority('medium');
         setStatus('todo');
         setDeadline('');
+        setEstimatedMinutes('');
+        setEnergyLevel('medium');
+        setContext([]);
+        setSubtasks([]);
         setShowModal(true);
     };
 
@@ -52,12 +61,25 @@ export function Tasks() {
         setPriority(task.priority);
         setStatus(task.status);
         setDeadline(task.deadline ? task.deadline.slice(0, 10) : '');
+        setEstimatedMinutes(task.estimatedMinutes || '');
+        setEnergyLevel(task.energyLevel || 'medium');
+        setContext(task.context || []);
+        setSubtasks(task.subtasks || []);
         setShowModal(true);
     }, []);
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        const taskData: Record<string, unknown> = { title, description, priority, status };
+        const taskData: Record<string, unknown> = {
+            title,
+            description,
+            priority,
+            status,
+            estimatedMinutes: estimatedMinutes === '' ? null : Number(estimatedMinutes),
+            energyLevel,
+            context,
+            subtasks
+        };
 
         if (deadline) {
             taskData.deadline = new Date(deadline + 'T23:59:59').toISOString();
@@ -293,10 +315,107 @@ export function Tasks() {
                                         </select>
                                     </div>
                                 </div>
-                                <div className="input-group" style={{ marginTop: 'var(--space-4)' }}>
-                                    <label className="input-label">Deadline</label>
-                                    <input type="date" className="input" value={deadline} onChange={(e) => setDeadline(e.target.value)} min={new Date().toISOString().split('T')[0]} />
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginTop: 'var(--space-4)' }}>
+                                    <div className="input-group">
+                                        <label className="input-label">Deadline</label>
+                                        <input type="date" className="input" value={deadline} onChange={(e) => setDeadline(e.target.value)} min={new Date().toISOString().split('T')[0]} />
+                                    </div>
+                                    <div className="input-group">
+                                        <label className="input-label">Estimate (mins)</label>
+                                        <input type="number" className="input" value={estimatedMinutes} onChange={(e) => setEstimatedMinutes(e.target.value === '' ? '' : Number(e.target.value))} placeholder="e.g. 30" />
+                                    </div>
                                 </div>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)', marginTop: 'var(--space-4)' }}>
+                                    <div className="input-group">
+                                        <label className="input-label">Energy Level</label>
+                                        <div className="energy-selector">
+                                            {(['low', 'medium', 'high'] as const).map(level => (
+                                                <button
+                                                    key={level}
+                                                    type="button"
+                                                    className={`energy-btn ${energyLevel === level ? 'active' : ''}`}
+                                                    onClick={() => setEnergyLevel(level)}
+                                                    title={`${level.charAt(0).toUpperCase() + level.slice(1)} Energy`}
+                                                >
+                                                    <span className="material-symbols-outlined">
+                                                        {level === 'low' ? 'battery_low' : level === 'medium' ? 'battery_50' : 'battery_full'}
+                                                    </span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="input-group">
+                                        <label className="input-label">Context</label>
+                                        <div className="context-chips">
+                                            {['Home', 'Office', 'Mobile', 'Laptop'].map(c => (
+                                                <button
+                                                    key={c}
+                                                    type="button"
+                                                    className={`context-chip ${context.includes(c) ? 'active' : ''}`}
+                                                    onClick={() => {
+                                                        setContext(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]);
+                                                    }}
+                                                >
+                                                    {c}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="input-group" style={{ marginTop: 'var(--space-4)' }}>
+                                    <label className="input-label">Subtasks</label>
+                                    <div className="subtask-input-row">
+                                        <input
+                                            className="input"
+                                            value={newSubtaskTitle}
+                                            onChange={(e) => setNewSubtaskTitle(e.target.value)}
+                                            placeholder="Add a subtask..."
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    if (newSubtaskTitle.trim()) {
+                                                        setSubtasks([...subtasks, { id: crypto.randomUUID(), title: newSubtaskTitle.trim(), completed: false }]);
+                                                        setNewSubtaskTitle('');
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="btn btn-secondary"
+                                            onClick={() => {
+                                                if (newSubtaskTitle.trim()) {
+                                                    setSubtasks([...subtasks, { id: crypto.randomUUID(), title: newSubtaskTitle.trim(), completed: false }]);
+                                                    setNewSubtaskTitle('');
+                                                }
+                                            }}
+                                        >
+                                            Add
+                                        </button>
+                                    </div>
+                                    <div className="subtasks-list">
+                                        {subtasks.map(st => (
+                                            <div key={st.id} className="subtask-item">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={st.completed}
+                                                    onChange={() => setSubtasks(subtasks.map(s => s.id === st.id ? { ...s, completed: !s.completed } : s))}
+                                                />
+                                                <span className={st.completed ? 'completed' : ''}>{st.title}</span>
+                                                <button
+                                                    type="button"
+                                                    className="btn-icon"
+                                                    onClick={() => setSubtasks(subtasks.filter(s => s.id !== st.id))}
+                                                >
+                                                    <span className="material-symbols-outlined icon-xs">delete</span>
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
                                 <div className="modal-actions">
                                     <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
                                     <button type="submit" className="btn btn-primary">{editingTask ? 'Save Changes' : 'Create Task'}</button>

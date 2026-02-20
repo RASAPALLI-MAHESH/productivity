@@ -15,7 +15,6 @@ const ForgotPassword = lazy(() => import('./pages/ForgotPassword').then((m) => (
 const ResetPassword = lazy(() => import('./pages/ResetPassword').then((m) => ({ default: m.ResetPassword })));
 const AccountLocked = lazy(() => import('./pages/AccountLocked').then((m) => ({ default: m.AccountLocked })));
 const EmailNotVerified = lazy(() => import('./pages/EmailNotVerified').then((m) => ({ default: m.EmailNotVerified })));
-const Dashboard = lazy(() => import('./pages/Dashboard').then((m) => ({ default: m.Dashboard })));
 const Tasks = lazy(() => import('./pages/Tasks').then((m) => ({ default: m.Tasks })));
 const Habits = lazy(() => import('./pages/Habits').then((m) => ({ default: m.Habits })));
 const Deadlines = lazy(() => import('./pages/Deadlines').then((m) => ({ default: m.Deadlines })));
@@ -65,7 +64,7 @@ function App() {
 
                         {/* Protected routes */}
                         <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-                            <Route index element={profile && !profile.onboarded ? <Navigate to="/onboarding" replace /> : <Dashboard />} />
+                            <Route index element={profile && !profile.onboarded ? <Navigate to="/onboarding" replace /> : <Tasks />} />
                             <Route path="tasks" element={profile && !profile.onboarded ? <Navigate to="/onboarding" replace /> : <Tasks />} />
                             <Route path="habits" element={profile && !profile.onboarded ? <Navigate to="/onboarding" replace /> : <Habits />} />
                             <Route path="deadlines" element={profile && !profile.onboarded ? <Navigate to="/onboarding" replace /> : <Deadlines />} />

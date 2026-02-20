@@ -36,9 +36,7 @@ export function EmailNotVerified() {
                     <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'var(--text-secondary)' }}>email</span>
                 </div>
                 <h1>Verify your email</h1>
-                <p>
-                    Your email address hasn't been verified yet. Please verify to access your dashboard.
-                </p>
+                Your email address hasn't been verified yet. Please verify to access your workspace.
 
                 {pendingEmail && (
                     <div style={{

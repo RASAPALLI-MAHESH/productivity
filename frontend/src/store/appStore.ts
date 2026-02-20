@@ -1,12 +1,8 @@
 import { create } from 'zustand';
 import client from '../api/client';
-import type { Task, Habit, DashboardData, ApiResponse, HabitLog } from '../types';
+import type { Task, Habit, ApiResponse, HabitLog } from '../types';
 
 interface AppState {
-    // Dashboard
-    dashboard: DashboardData | null;
-    dashboardLoading: boolean;
-    fetchDashboard: () => Promise<void>;
 
     // Tasks
     tasks: Task[];
@@ -31,18 +27,6 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
-    // Dashboard
-    dashboard: null,
-    dashboardLoading: false,
-    fetchDashboard: async () => {
-        set({ dashboardLoading: true });
-        try {
-            const res = await client.get<ApiResponse<DashboardData>>('/dashboard');
-            set({ dashboard: res.data.data, dashboardLoading: false });
-        } catch {
-            set({ dashboardLoading: false });
-        }
-    },
 
     // Tasks
     tasks: [],
@@ -70,23 +54,12 @@ export const useAppStore = create<AppState>((set, get) => ({
     updateTask: async (id, task) => {
         // Optimistic update
         const prevTasks = get().tasks;
-        const prevDashboard = get().dashboard;
 
         // Update tasks list
         set({
             tasks: prevTasks.map((t) => (t.id === id ? { ...t, ...task } : t)),
         });
 
-        // Update dashboard if present
-        if (prevDashboard) {
-            set({
-                dashboard: {
-                    ...prevDashboard,
-                    todayTasks: prevDashboard.todayTasks?.map((t) => (t.id === id ? { ...t, ...task } : t)) || [],
-                    overdueTodayTasks: prevDashboard.overdueTodayTasks?.map((t) => (t.id === id ? { ...t, ...task } : t)) || [],
-                },
-            });
-        }
 
         try {
             await client.put(`/tasks/${id}`, task);
@@ -98,7 +71,7 @@ export const useAppStore = create<AppState>((set, get) => ({
             // Any "side effects" (like stats updating) will happen on next fetch or navigation.
         } catch {
             // Rollback
-            set({ tasks: prevTasks, dashboard: prevDashboard });
+            set({ tasks: prevTasks });
         }
     },
     deleteTask: async (id) => {

@@ -249,24 +249,40 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     // ─── Init (try refresh on app load) ─────────────
     initAuth: () => {
-        // On app start, try to restore session via refresh token cookie
+        let isCancelled = false;
+        
         const init = async () => {
+            const { initialized } = get();
+            if (initialized) return;
+
+            // Safety timeout to prevent infinite loading if backend is hanging
+            const timeoutId = setTimeout(() => {
+                if (!isCancelled) {
+                    console.warn('Auth initialization timed out, forcing initialized state');
+                    set({ initialized: true });
+                }
+            }, 12000); 
+
             try {
                 const res = await client.post<ApiResponse<AuthResponse>>('/auth/refresh', {});
+                if (isCancelled) return;
+
                 const { user, tokens } = res.data.data;
                 setAccessToken(tokens.accessToken);
                 set({ user, profile: user, initialized: true });
-            } catch {
+            } catch (err) {
+                if (isCancelled) return;
                 // No valid session — user needs to log in
                 clearTokens();
                 set({ initialized: true });
+            } finally {
+                clearTimeout(timeoutId);
             }
         };
 
         init();
 
-        // Return cleanup (no-op for custom JWT, no Firebase listener)
-        return () => { };
+        return () => { isCancelled = true; };
     },
 
     // ─── Fetch Profile ──────────────────────────────

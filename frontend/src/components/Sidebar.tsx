@@ -17,7 +17,6 @@ export function Sidebar({ isOpen, onToggle, isMobile }: SidebarProps) {
     };
 
     const navItems = [
-        { to: '/', icon: 'dashboard', label: 'Dashboard' },
         { to: '/tasks', icon: 'task_alt', label: 'Tasks' },
         { to: '/habits', icon: 'local_fire_department', label: 'Habits' },
         { to: '/deadlines', icon: 'schedule', label: 'Deadlines' },

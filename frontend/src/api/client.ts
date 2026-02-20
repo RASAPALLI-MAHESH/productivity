@@ -22,6 +22,7 @@ const client = axios.create({
     baseURL: `${API_URL}/api/v1`,
     headers: { 'Content-Type': 'application/json' },
     withCredentials: true, // send httpOnly refresh cookie
+    timeout: 15000, // 15 seconds timeout
 });
 
 // ─── Request Interceptor: Attach Access Token ────────────────

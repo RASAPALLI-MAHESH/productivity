@@ -6,6 +6,15 @@ export interface Task {
     priority: 'low' | 'medium' | 'high' | 'critical';
     status: 'todo' | 'in-progress' | 'done';
     deadline: string | null;
+    estimatedMinutes?: number;           // How long will this take?
+    energyLevel?: 'low' | 'medium' | 'high'; // Deep work / Light work
+    context?: string[];                   // Home / Office / Laptop / Mobile
+    recurring?: string;                   // Daily / Weekly / Custom CRON
+    subtasks?: {
+        id: string;
+        title: string;
+        completed: boolean;
+    }[];
     createdAt: string;
     updatedAt: string;
 }
@@ -15,8 +24,11 @@ export interface Habit {
     id: string;
     name: string;
     description: string;
+    difficulty: number;            // 1-5 scale
+    frequency: string;             // Daily, Weekly, Custom
     currentStreak: number;
     longestStreak: number;
+    streakFreezeAvailable: number; // Gamified recovery
     lastCompletedDate: string | null;
     createdAt: string;
 }
@@ -27,23 +39,6 @@ export interface HabitLog {
     completedAt: string | null;
 }
 
-// ─── Dashboard ───────────────────────────────────
-export interface DashboardData {
-    totalTasks: number;
-    completedTasks: number;
-    overdueTasks: number;
-    inProgressTasks: number;
-    todayTasks: Task[];
-    overdueTodayTasks: Task[];
-    habits: Habit[];
-    totalStreakDays: number;
-    upcomingDeadlines: Task[];
-    weeklyStats: {
-        tasksCompleted: number;
-        habitsCompleted: number;
-        streakDays: number;
-    };
-}
 
 // ─── User & Auth ─────────────────────────────────
 export interface User {
@@ -57,6 +52,10 @@ export interface User {
     verified: boolean;
     loginAttempts: number;
     lockedUntil: string | null;
+    xp: number;                // Gamification: XP points
+    level: number;             // Gamification: Rank/Tier
+    totalTasksCompleted: number;
+    streakBest: number;
     createdAt: string;
     lastLogin: string | null;
 }
