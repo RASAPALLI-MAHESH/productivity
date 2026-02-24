@@ -36,92 +36,69 @@ export const TaskRow = memo(({ task, onToggle, onEdit, onDelete }: TaskRowProps)
     };
 
     return (
-        <div
-            className={`task-card ${isDone ? 'task-card--done' : ''} task-card--${task.priority}`}
-            style={{ '--priority-color': pc.color, '--priority-glow': pc.glow } as React.CSSProperties}
-        >
-            {/* Priority left border accent */}
-            <div className="task-card__accent" />
+        <div className={`elite-row ${isDone ? 'elite-row--done' : ''}`}>
+            {/* Action Bar (Revealed on hover) */}
+            <div className="elite-row__actions">
+                <button
+                    className="elite-row__action-btn"
+                    title="Edit"
+                    onClick={(e) => { e.stopPropagation(); onEdit?.(task); }}
+                >
+                    <span className="material-symbols-outlined">edit_note</span>
+                </button>
+                <button
+                    className="elite-row__action-btn elite-row__action-btn--delete"
+                    title="Delete"
+                    onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}
+                >
+                    <span className="material-symbols-outlined">delete</span>
+                </button>
+            </div>
 
             {/* Checkbox */}
             <button
-                className={`task-card__check ${isDone ? 'task-card__check--checked' : ''}`}
+                className={`elite-row__checkbox ${isDone ? 'elite-row__checkbox--checked' : ''}`}
                 onClick={(e) => { e.stopPropagation(); onToggle(task); }}
                 aria-checked={isDone}
                 role="checkbox"
                 aria-label={`Mark ${task.title} as ${isDone ? 'incomplete' : 'complete'}`}
-                style={{ '--priority-color': pc.color } as React.CSSProperties}
+                style={{ '--accent-color': pc.color } as React.CSSProperties}
             >
-                <span className="material-symbols-outlined task-card__check-icon">check</span>
+                <span className="material-symbols-outlined elite-row__check-icon">check</span>
             </button>
 
-            {/* Main content */}
-            <div className="task-card__body" onClick={() => onEdit?.(task)}>
-                <div className="task-card__title-row">
-                    <span className="task-card__title">{task.title}</span>
+            {/* Content Body */}
+            <div className="elite-row__body" onClick={() => onEdit?.(task)}>
+                <div className="elite-row__main">
+                    <span className="elite-row__title">{task.title}</span>
+                    {task.description && (
+                        <p className="elite-row__desc">{task.description}</p>
+                    )}
                 </div>
 
-                {task.description && (
-                    <p className="task-card__desc">{task.description}</p>
-                )}
-
-                {/* Meta chips */}
-                <div className="task-card__meta">
+                {/* Meta Tags */}
+                <div className="elite-row__meta">
                     {deadlineDate && (
-                        <span className={`task-chip ${isOverdue ? 'task-chip--overdue' : 'task-chip--date'}`}>
-                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>event</span>
+                        <span className={`elite-tag ${isOverdue ? 'elite-tag--overdue' : ''}`}>
+                            <span className="material-symbols-outlined">event</span>
                             {formatDate(deadlineDate)}
                         </span>
                     )}
-                    {hasSubtasks && (
-                        <span className="task-chip task-chip--subtask">
-                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>account_tree</span>
-                            {completedSubtasks}/{totalSubtasks}
-                        </span>
-                    )}
                     {task.energyLevel && (
-                        <span className={`task-chip task-chip--energy task-chip--energy-${task.energyLevel}`}>
-                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                        <span className={`elite-tag elite-tag--energy-${task.energyLevel}`}>
+                            <span className="material-symbols-outlined">
                                 {task.energyLevel === 'low' ? 'battery_low' : task.energyLevel === 'medium' ? 'battery_50' : 'battery_full'}
                             </span>
                             {task.energyLevel}
                         </span>
                     )}
-                    {task.estimatedMinutes && (
-                        <span className="task-chip task-chip--estimate">
-                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>schedule</span>
-                            {task.estimatedMinutes}m
-                        </span>
-                    )}
                 </div>
             </div>
 
-            {/* Right side */}
-            <div className="task-card__right">
-                <span
-                    className="task-card__priority-badge"
-                    style={{ color: pc.color, background: `${pc.color}18`, borderColor: `${pc.color}30` }}
-                >
-                    <span className="task-card__priority-dot" style={{ background: pc.color, boxShadow: `0 0 6px ${pc.color}` }} />
-                    {pc.label}
-                </span>
-
-                <div className="task-card__actions">
-                    <button
-                        className="task-card__action-btn"
-                        title="Edit"
-                        onClick={(e) => { e.stopPropagation(); onEdit?.(task); }}
-                    >
-                        <span className="material-symbols-outlined" style={{ fontSize: 17 }}>edit_note</span>
-                    </button>
-                    <button
-                        className="task-card__action-btn task-card__action-btn--delete"
-                        title="Delete"
-                        onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}
-                    >
-                        <span className="material-symbols-outlined" style={{ fontSize: 17 }}>delete</span>
-                    </button>
-                </div>
+            {/* Priority Indicator */}
+            <div className="elite-row__priority">
+                <span className="elite-row__priority-dot" style={{ background: pc.color }} />
+                <span className="elite-row__priority-label">{pc.label}</span>
             </div>
         </div>
     );

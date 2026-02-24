@@ -118,34 +118,43 @@ export function Tasks() {
     return (
         <div className="tasks-page">
 
+            {/* ── Momentum Bar (Top) ── */}
+            <div className="momentum-container">
+                <div
+                    className="momentum-bar"
+                    style={{ width: `${(completedCount / (tasks.length || 1)) * 100}%` }}
+                />
+            </div>
+
             {/* ── Page Header ── */}
-            <div className="page-header" style={{ paddingBottom: 0 }}>
+            <header className="page-header--elite">
                 <div className="page-title-group">
                     <h1 className="page-title">Tasks</h1>
                     {tasks.length > 0 && (
-                        <p className="page-subtitle-stats">
-                            {completedCount} of {tasks.length} completed
+                        <p className="page-subtitle--elite">
+                            {completedCount} of {tasks.length} tasks completed
                         </p>
                     )}
                 </div>
-            </div>
+            </header>
 
-            {/* ── Filter Toolbar ── */}
-            <div className="task-filters-unified-v2">
-                <div className="task-search-minimal">
-                    <span className="material-symbols-outlined search-icon-v2">
+            {/* ── Command Bar (Search & Filter) ── */}
+            <div className="command-bar--elite">
+                <div className="search-group--elite">
+                    <span className="material-symbols-outlined search-icon--elite">
                         {isSearching ? 'sync' : 'search'}
                     </span>
                     <input
                         type="text"
-                        className="search-input-v2"
-                        placeholder="Search tasks... (/)"
+                        className="search-input--elite"
+                        placeholder="Search or filter... (/)"
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
                     />
+                    <kbd className="kbd-hint">/</kbd>
                 </div>
 
-                <div className="filter-group-minimal">
+                <div className="filter-group--elite">
                     <Select
                         label="Priority"
                         value={filterPriority}
@@ -162,18 +171,20 @@ export function Tasks() {
             </div>
 
             {/* ── Body ── */}
-            <div style={{ padding: '16px 32px 0' }}>
+            <div className="tasks-content--elite">
 
-                {/* Inline creation */}
-                <InlineTaskCreate
-                    autoOpen={isAddingTask}
-                    onClose={() => setIsAddingTask(false)}
-                />
+                {/* Inline creation (Desktop) */}
+                <div className="inline-create-container--elite">
+                    <InlineTaskCreate
+                        autoOpen={isAddingTask}
+                        onClose={() => setIsAddingTask(false)}
+                    />
+                </div>
 
                 {/* Task list */}
                 {taskLoading ? (
                     <div className="task-list-v2" style={{ marginTop: 4 }}>
-                        {[...Array(5)].map((_, i) => <TaskSkeleton key={i} />)}
+                        {[...Array(5)].map((_, i) => <div key={i} className="elite-row skeleton" style={{ height: 48 }} />)}
                     </div>
                 ) : filteredTasks.length > 0 ? (
                     <>
@@ -186,13 +197,14 @@ export function Tasks() {
                                 items={filteredTasks.map(t => t.id)}
                                 strategy={verticalListSortingStrategy}
                             >
-                                <div className="task-list-v2">
+                                <div className="task-list--elite">
                                     {filteredTasks.map(task => (
                                         <TaskRow
                                             key={task.id}
                                             task={task}
                                             onToggle={handleStatusToggle}
                                             onDelete={handleDelete}
+                                            onEdit={(t) => console.log('Edit task:', t)}
                                         />
                                     ))}
                                 </div>
@@ -201,7 +213,7 @@ export function Tasks() {
 
                         {/* Pagination */}
                         {totalPages > 1 && (
-                            <div className="pagination" style={{ marginTop: 'var(--space-6)', paddingBottom: 'var(--space-8)' }}>
+                            <div className="pagination--elite">
                                 <button className="pagination-btn" disabled={page === 0} onClick={() => setPage(p => p - 1)}>
                                     <span className="material-symbols-outlined icon-sm">chevron_left</span>
                                 </button>
@@ -217,29 +229,22 @@ export function Tasks() {
                         )}
                     </>
                 ) : (
-                    <div className="empty-state">
+                    <div className="empty-state--elite">
                         <div className="empty-icon">
-                            <span className="material-symbols-outlined" style={{ fontSize: 32 }}>
+                            <span className="material-symbols-outlined">
                                 {searchQuery ? 'search_off' : 'edit_note'}
                             </span>
                         </div>
-                        <h3 style={{ marginTop: 0, fontSize: 18, color: 'var(--text-primary)' }}>
-                            {searchQuery ? `No results for "${searchQuery}"` : 'No tasks yet'}
-                        </h3>
-                        <p style={{ color: 'var(--text-muted)', maxWidth: 280, margin: '8px auto 24px', fontSize: 14 }}>
-                            {searchQuery
-                                ? 'Try a different search term.'
-                                : 'Stay organized — add your first task and get things moving.'}
-                        </p>
-                        {!searchQuery && (
-                            <button className="btn btn-primary" onClick={() => setIsAddingTask(true)} style={{ height: 40 }}>
-                                <span className="material-symbols-outlined icon-sm">add</span>
-                                Create Task
-                            </button>
-                        )}
+                        <h3>{searchQuery ? `No results for "${searchQuery}"` : 'No tasks yet'}</h3>
+                        <p>{searchQuery ? 'Try a different search term.' : 'Add your first task to get moving.'}</p>
                     </div>
                 )}
             </div>
+
+            {/* Mobile FAB */}
+            <button className="fab-elite" onClick={() => setIsAddingTask(true)}>
+                <span className="material-symbols-outlined">add</span>
+            </button>
 
             <UndoToast />
         </div>
