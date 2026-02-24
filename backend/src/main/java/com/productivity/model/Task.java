@@ -1,7 +1,9 @@
 package com.productivity.model;
 
 import com.google.cloud.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Task {
@@ -11,12 +13,14 @@ public class Task {
     private String description;
     private String priority; // low, medium, high, critical
     private String status;   // todo, in-progress, done
+    private List<Map<String, Object>> subtasks;
     private Timestamp deadline;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
     public Task() {}
 
+    @SuppressWarnings("unchecked")
     public Task(Map<String, Object> data, String id) {
         this.id = id;
         this.title = (String) data.get("title");
@@ -24,6 +28,7 @@ public class Task {
         this.priority = (String) data.get("priority");
         this.status = (String) data.get("status");
         this.userId = (String) data.get("userId");
+        this.subtasks = (List<Map<String, Object>>) data.get("subtasks");
         this.deadline = (Timestamp) data.get("deadline");
         this.createdAt = (Timestamp) data.get("createdAt");
         this.updatedAt = (Timestamp) data.get("updatedAt");
@@ -36,6 +41,7 @@ public class Task {
         map.put("priority", priority);
         map.put("status", status);
         map.put("userId", userId);
+        if (subtasks != null) map.put("subtasks", subtasks);
         if (deadline != null) map.put("deadline", deadline);
         if (createdAt != null) map.put("createdAt", createdAt);
         if (updatedAt != null) map.put("updatedAt", updatedAt);
@@ -55,6 +61,8 @@ public class Task {
     public void setPriority(String priority) { this.priority = priority; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public List<Map<String, Object>> getSubtasks() { return subtasks; }
+    public void setSubtasks(List<Map<String, Object>> subtasks) { this.subtasks = subtasks; }
     public Timestamp getDeadline() { return deadline; }
     public void setDeadline(Timestamp deadline) { this.deadline = deadline; }
     public Timestamp getCreatedAt() { return createdAt; }

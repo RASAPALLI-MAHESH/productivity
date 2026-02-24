@@ -25,7 +25,11 @@ export interface Habit {
     name: string;
     description: string;
     difficulty: number;            // 1-5 scale
-    frequency: string;             // Daily, Weekly, Custom
+    frequency: 'daily' | 'weekly' | 'custom';
+    goalType: 'yesno' | 'duration' | 'count';
+    goalValue: number;
+    category: 'health' | 'learning' | 'work' | 'personal';
+    motivation?: string;
     currentStreak: number;
     longestStreak: number;
     streakFreezeAvailable: number; // Gamified recovery

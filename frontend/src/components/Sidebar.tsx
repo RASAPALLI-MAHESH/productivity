@@ -39,7 +39,7 @@ export function Sidebar({ isOpen, onToggle, isMobile }: SidebarProps) {
                         <h1>Productiv</h1>
                     </div>
                     {!isMobile && (
-                        <button className="sidebar-toggle" onClick={onToggle} aria-label="Toggle sidebar">
+                        <button className="sidebar-toggle" onClick={onToggle} aria-label="Toggle sidebar" title={isOpen ? "Collapse sidebar" : "Expand sidebar"}>
                             <span className="material-symbols-outlined">
                                 {isOpen ? 'menu_open' : 'menu'}
                             </span>
@@ -60,7 +60,7 @@ export function Sidebar({ isOpen, onToggle, isMobile }: SidebarProps) {
                             className={({ isActive }: { isActive: boolean }) => `sidebar-link ${isActive ? 'active' : ''}`}
                             end={item.to === '/'}
                             onClick={() => isMobile && onToggle()}
-                            title={!isOpen && !isMobile ? item.label : undefined}
+                            title={!isOpen ? item.label : undefined}
                         >
                             <span className="link-icon material-symbols-outlined">{item.icon}</span>
                             <span className="link-label">{item.label}</span>
@@ -69,7 +69,7 @@ export function Sidebar({ isOpen, onToggle, isMobile }: SidebarProps) {
                 </nav>
 
                 <div className="sidebar-footer">
-                    <div className="sidebar-user" title={!isOpen && !isMobile ? (user?.displayName || user?.email || 'User') : undefined}>
+                    <div className="sidebar-user" title={!isOpen ? (user?.displayName || user?.email || 'User') : undefined}>
                         <div className="user-avatar">
                             {user?.displayName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
                         </div>
@@ -82,7 +82,7 @@ export function Sidebar({ isOpen, onToggle, isMobile }: SidebarProps) {
                         className="sidebar-link"
                         onClick={handleLogout}
                         style={{ marginTop: 4 }}
-                        title={!isOpen && !isMobile ? 'Logout' : undefined}
+                        title={!isOpen ? 'Logout' : undefined}
                     >
                         <span className="link-icon material-symbols-outlined">logout</span>
                         <span className="link-label">Logout</span>

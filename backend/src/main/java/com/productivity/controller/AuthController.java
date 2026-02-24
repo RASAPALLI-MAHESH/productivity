@@ -1,5 +1,6 @@
 package com.productivity.controller;
 
+import com.productivity.config.AppProperties;
 import com.productivity.dto.ApiResponse;
 import com.productivity.dto.UserDTO;
 import com.productivity.model.User;
@@ -9,11 +10,12 @@ import com.productivity.service.PasswordService;
 import com.productivity.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,12 +35,14 @@ public class AuthController {
     private final JwtService jwtService;
     private final OtpService otpService;
     private final PasswordService passwordService;
+    private final AppProperties appProperties;
 
-    public AuthController(UserService userService, JwtService jwtService, OtpService otpService, PasswordService passwordService) {
+    public AuthController(UserService userService, JwtService jwtService, OtpService otpService, PasswordService passwordService, AppProperties appProperties) {
         this.userService = userService;
         this.jwtService = jwtService;
         this.otpService = otpService;
         this.passwordService = passwordService;
+        this.appProperties = appProperties;
     }
 
     // ─── Signup ─────────────────────────────────────────────────────────────
@@ -163,7 +167,9 @@ public class AuthController {
     // ─── Refresh Token ──────────────────────────────────────────────────────
     @PostMapping("/refresh")
     @Operation(summary = "Get new access token using httpOnly cookie")
-    public ResponseEntity<ApiResponse<Map<String, Object>>> refresh(@CookieValue(name = "refresh_token", required = false) String refreshToken) 
+    public ResponseEntity<ApiResponse<Map<String, Object>>> refresh(
+            @CookieValue(name = "refresh_token", required = false) String refreshToken,
+            HttpServletResponse response) 
             throws ExecutionException, InterruptedException {
         if (refreshToken == null || !jwtService.isTokenValid(refreshToken)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("Invalid refresh token"));
@@ -172,10 +178,23 @@ public class AuthController {
         String uid = jwtService.extractUid(refreshToken);
         User user = userService.getUserModel(uid);
         
+        // Refresh token rotation: generate new access AND new refresh token
         String newAccessToken = jwtService.generateAccessToken(uid, user.getRole());
+        String newRefreshToken = jwtService.generateRefreshToken(uid);
+        
+        // Set new refresh cookie
+        ResponseCookie cookie = ResponseCookie.from("refresh_token", newRefreshToken)
+                .httpOnly(true)
+                .secure(appProperties.getCookie().isSecure())
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60)
+                .sameSite("Lax") // Good for most cases
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         
         Map<String, Object> tokens = new HashMap<>();
         tokens.put("accessToken", newAccessToken);
+        tokens.put("refreshToken", newRefreshToken);
         
         UserDTO userDTO = userService.getUser(uid);
         
@@ -189,12 +208,14 @@ public class AuthController {
     // ─── Logout ─────────────────────────────────────────────────────────────
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("refresh_token", "");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(0); // Delete
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from("refresh_token", "")
+                .httpOnly(true)
+                .secure(appProperties.getCookie().isSecure())
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return ResponseEntity.ok().build();
     }
     
@@ -263,12 +284,14 @@ public class AuthController {
         String refreshToken = jwtService.generateRefreshToken(user.getUid());
         
         // Set refresh cookie
-        Cookie cookie = new Cookie("refresh_token", refreshToken);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true); // prod only
-        cookie.setPath("/");
-        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshToken)
+                .httpOnly(true)
+                .secure(appProperties.getCookie().isSecure())
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60)
+                .sameSite("Lax")
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         
         Map<String, Object> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);

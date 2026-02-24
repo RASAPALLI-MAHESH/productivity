@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "app")
 public class AppProperties {
 
-    private Cors cors = new Cors();
+    private Cookie cookie = new Cookie();
 
     public Cors getCors() {
         return cors;
@@ -15,6 +15,14 @@ public class AppProperties {
 
     public void setCors(Cors cors) {
         this.cors = cors;
+    }
+
+    public Cookie getCookie() {
+        return cookie;
+    }
+
+    public void setCookie(Cookie cookie) {
+        this.cookie = cookie;
     }
 
     public static class Cors {
@@ -28,5 +36,12 @@ public class AppProperties {
         public void setAllowedMethods(String allowedMethods) { this.allowedMethods = allowedMethods; }
         public String getAllowedHeaders() { return allowedHeaders; }
         public void setAllowedHeaders(String allowedHeaders) { this.allowedHeaders = allowedHeaders; }
+    }
+
+    public static class Cookie {
+        private boolean secure = false;
+
+        public boolean isSecure() { return secure; }
+        public void setSecure(boolean secure) { this.secure = secure; }
     }
 }

@@ -1,6 +1,7 @@
 package com.productivity.service;
 
 import com.google.cloud.Timestamp;
+import com.productivity.dto.SubtaskDTO;
 import com.productivity.dto.TaskDTO;
 import com.productivity.exception.ResourceNotFoundException;
 import com.productivity.model.Task;
@@ -13,7 +14,10 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -39,6 +43,16 @@ public class TaskService {
         if (dto.getDeadline() != null) {
             task.setDeadline(Timestamp.ofTimeSecondsAndNanos(
                     Instant.parse(dto.getDeadline()).getEpochSecond(), 0));
+        }
+
+        if (dto.getSubtasks() != null) {
+            task.setSubtasks(dto.getSubtasks().stream().map(s -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", s.getId());
+                map.put("title", s.getTitle());
+                map.put("completed", s.isCompleted());
+                return map;
+            }).collect(Collectors.toList()));
         }
 
         Task saved = taskRepository.save(userId, task);
@@ -73,6 +87,17 @@ public class TaskService {
             existing.setDeadline(Timestamp.ofTimeSecondsAndNanos(
                     Instant.parse(dto.getDeadline()).getEpochSecond(), 0));
         }
+
+        if (dto.getSubtasks() != null) {
+            existing.setSubtasks(dto.getSubtasks().stream().map(s -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", s.getId());
+                map.put("title", s.getTitle());
+                map.put("completed", s.isCompleted());
+                return map;
+            }).collect(Collectors.toList()));
+        }
+
         existing.setUpdatedAt(Timestamp.now());
 
         Task saved = taskRepository.save(userId, existing);
@@ -110,6 +135,17 @@ public class TaskService {
         if (task.getDeadline() != null) {
             dto.setDeadline(task.getDeadline().toDate().toInstant().toString());
         }
+
+        if (task.getSubtasks() != null) {
+            dto.setSubtasks(task.getSubtasks().stream().map(s -> {
+                SubtaskDTO sub = new SubtaskDTO();
+                sub.setId((String) s.get("id"));
+                sub.setTitle((String) s.get("title"));
+                sub.setCompleted((Boolean) s.get("completed"));
+                return sub;
+            }).collect(Collectors.toList()));
+        }
+
         if (task.getCreatedAt() != null) {
             dto.setCreatedAt(task.getCreatedAt().toDate().toInstant().toString());
         }
