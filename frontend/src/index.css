@@ -7107,3 +7107,625 @@ input[type="time"].input {
         justify-content: flex-end;
     }
 }
+
+
+/* =============================================
+   MOBILE-FIRST RESPONSIVE SYSTEM
+   Comprehensive overrides for all pages & components.
+   Breakpoints: 1024px (tablet), 768px (phone), 480px (small phone)
+   ============================================= */
+
+/* ─── TABLET: ≤1024px ────────────────────────── */
+@media (max-width: 1024px) {
+
+    /* ── Core Layout ── */
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1100;
+        width: 280px;
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+        width: 280px;
+    }
+
+    .sidebar-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 1099;
+        opacity: 0;
+        transition: opacity 300ms ease;
+    }
+
+    .sidebar-backdrop.visible {
+        display: block;
+        opacity: 1;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        max-width: 100vw !important;
+        padding: 20px 16px 100px 16px;
+    }
+
+    .app-layout.sidebar-collapsed .main-content {
+        margin-left: 0;
+        max-width: 100vw;
+    }
+
+    .content-container {
+        max-width: 100%;
+    }
+
+    /* ── Bottom Navigation Bar ── */
+    .bottom-bar {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background: var(--bg-primary);
+        border-top: 1px solid var(--border);
+        z-index: 1000;
+        align-items: center;
+        justify-content: space-around;
+        padding: 0 8px;
+        padding-bottom: env(safe-area-inset-bottom, 0);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+
+    .bottom-bar-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        flex: 1;
+        padding: 6px 0;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        transition: color 200ms ease;
+        -webkit-tap-highlight-color: transparent;
+        position: relative;
+    }
+
+    .bottom-bar-link .link-icon {
+        font-size: 22px;
+        line-height: 1;
+    }
+
+    .bottom-bar-link .link-icon .material-symbols-outlined {
+        font-size: 22px;
+    }
+
+    .bottom-bar-link.active {
+        color: var(--primary);
+    }
+
+    .bottom-bar-link.active::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 24px;
+        height: 3px;
+        border-radius: 0 0 4px 4px;
+        background: var(--primary);
+    }
+
+    /* ── Page Headers ── */
+    .page-header {
+        padding: 16px 16px 12px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .page-title {
+        font-size: 24px !important;
+    }
+
+    .page-subtitle {
+        font-size: 13px !important;
+    }
+
+    /* ── Habit Grid ── */
+    .habit-grid-elite {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* ── Habits Toolbar ── */
+    .habits-toolbar-elite {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch !important;
+    }
+
+    .filter-group-elite {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .category-pills {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        flex-wrap: nowrap;
+        padding-bottom: 4px;
+    }
+
+    .category-pills::-webkit-scrollbar {
+        display: none;
+    }
+
+    .action-group-elite {
+        justify-content: flex-end;
+    }
+
+    /* ── Deadlines ── */
+    .deadlines-page-layout {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+
+    .deadlines-side-panel {
+        position: static !important;
+    }
+}
+
+
+/* ─── PHONE: ≤768px ─────────────────────────── */
+@media (max-width: 768px) {
+
+    /* ── Tasks Page ── */
+    .tasks-page {
+        padding: 0 !important;
+    }
+
+    .tasks-page>div[style] {
+        padding: 12px 16px 0 !important;
+    }
+
+    /* Task Filters */
+    .task-filters-unified {
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px 16px !important;
+    }
+
+    .task-search-container {
+        width: 100%;
+    }
+
+    .search-input-wrapper {
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100% !important;
+        font-size: 15px !important;
+    }
+
+    .priority-select-container {
+        width: 100%;
+    }
+
+    .priority-select-container .custom-select-container {
+        width: 100%;
+    }
+
+    /* Task Cards */
+    .task-list-v2 {
+        gap: 8px !important;
+    }
+
+    .task-card {
+        padding: 10px 12px !important;
+        border-radius: var(--radius-md) !important;
+    }
+
+    .task-card__content {
+        gap: 4px;
+    }
+
+    .task-card__title {
+        font-size: 14px !important;
+    }
+
+    .task-card__desc {
+        font-size: 12px !important;
+        -webkit-line-clamp: 1;
+    }
+
+    .task-card__meta {
+        gap: 4px !important;
+        flex-wrap: wrap;
+    }
+
+    .task-card__chip {
+        font-size: 10px !important;
+        padding: 2px 6px !important;
+        height: 20px !important;
+    }
+
+    /* Show actions always on mobile (no hover) */
+    .task-card__actions {
+        opacity: 1 !important;
+        gap: 4px;
+    }
+
+    .task-card__actions button {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .task-card__priority {
+        padding: 2px 8px !important;
+        font-size: 10px !important;
+    }
+
+    /* ── Inline Task Create ── */
+    .itc-trigger {
+        margin-bottom: 12px !important;
+    }
+
+    .itc-panel {
+        padding: 12px !important;
+        border-radius: var(--radius-md) !important;
+    }
+
+    .itc-input__title {
+        font-size: 15px !important;
+    }
+
+    .itc-input__desc {
+        font-size: 13px !important;
+    }
+
+    .itc-footer {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+    }
+
+    .itc-footer__left {
+        flex-wrap: wrap;
+        gap: 8px !important;
+    }
+
+    .itc-footer__right {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    /* ── Habits Page ── */
+    .habits-page-container {
+        padding: 16px 12px !important;
+    }
+
+    .habits-toolbar-elite {
+        gap: 10px;
+    }
+
+    .segmented-control-elite {
+        width: 100%;
+    }
+
+    .seg-btn {
+        flex: 1;
+    }
+
+    .vertical-divider {
+        display: none !important;
+    }
+
+    .action-group-elite {
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    .btn-elite,
+    .btn-primary-elite {
+        font-size: 13px !important;
+        padding: 8px 12px !important;
+        flex: 1;
+        justify-content: center;
+    }
+
+    /* Habit Cards */
+    .habit-card-prod {
+        padding: 14px !important;
+    }
+
+    .habit-card-prod__header {
+        gap: 8px;
+    }
+
+    .habit-streak-display {
+        gap: 2px;
+    }
+
+    .streak-day {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 9px !important;
+    }
+
+    /* ── Deadlines Page ── */
+    .deadlines-page-container {
+        padding: 16px 12px !important;
+    }
+
+    .view-toggle-elite {
+        gap: 4px;
+    }
+
+    .toggle-btn {
+        font-size: 13px !important;
+        padding: 6px 10px !important;
+    }
+
+    .deadline-card {
+        padding: 12px !important;
+    }
+
+    .deadline-card-layout {
+        flex-direction: column !important;
+        gap: 8px;
+    }
+
+    .deadline-insights {
+        padding: 16px !important;
+        border-radius: 16px !important;
+    }
+
+    /* ── Habit Create Panel (bottom sheet style) ── */
+    .habit-create-panel {
+        width: 100% !important;
+        max-width: 100% !important;
+        right: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        top: auto !important;
+        border-radius: 20px 20px 0 0 !important;
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+
+    /* ── Habit Analytics Side Panel (full screen) ── */
+    .habit-analytics-panel {
+        width: 100% !important;
+        max-width: 100% !important;
+        right: 0 !important;
+        border-radius: 0 !important;
+    }
+
+    /* ── Modal Overlay ── */
+    .modal-overlay {
+        background: rgba(0, 0, 0, 0.6) !important;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+
+    /* ── Empty States ── */
+    .empty-state {
+        padding: 40px 20px !important;
+    }
+
+    .empty-state h3 {
+        font-size: 16px !important;
+    }
+
+    .empty-state p {
+        font-size: 13px !important;
+    }
+
+    /* ── Pagination ── */
+    .pagination {
+        gap: 4px;
+    }
+
+    .pagination-btn {
+        min-width: 32px;
+        height: 32px;
+        font-size: 13px;
+    }
+
+    /* ── HUD Cards ── */
+    .habits-executive-hud,
+    .deadlines-executive-hud {
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+
+    .hud-card {
+        padding: 12px !important;
+    }
+
+    /* ── UndoToast ── */
+    .undo-toast {
+        left: 16px !important;
+        right: 16px !important;
+        bottom: 80px !important;
+        min-width: unset !important;
+    }
+
+    /* ── Settings Page ── */
+    .settings-card {
+        padding: 16px !important;
+    }
+
+    .settings-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+
+/* ─── SMALL PHONE: ≤480px ────────────────────── */
+@media (max-width: 480px) {
+
+    .page-title {
+        font-size: 20px !important;
+    }
+
+    .page-subtitle {
+        font-size: 12px !important;
+    }
+
+    .bottom-bar {
+        height: 58px;
+    }
+
+    .bottom-bar-link {
+        font-size: 9px;
+    }
+
+    .bottom-bar-link .link-icon .material-symbols-outlined {
+        font-size: 20px;
+    }
+
+    .main-content {
+        padding: 16px 12px 90px 12px !important;
+    }
+
+    /* Smaller task cards */
+    .task-card {
+        padding: 8px 10px !important;
+    }
+
+    .task-card__accent {
+        width: 3px !important;
+    }
+
+    .task-card__check {
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    .task-card__title {
+        font-size: 13px !important;
+    }
+
+    .task-card__chip {
+        font-size: 9px !important;
+        padding: 1px 5px !important;
+    }
+
+    /* Habits */
+    .habit-card-prod {
+        padding: 12px !important;
+    }
+
+    .streak-day {
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 8px !important;
+    }
+
+    /* Inline Create */
+    .itc-panel {
+        padding: 10px !important;
+    }
+
+    .itc-input__title {
+        font-size: 14px !important;
+    }
+
+    .itc-input__desc {
+        font-size: 12px !important;
+    }
+
+    /* Deadlines */
+    .deadline-card {
+        padding: 10px !important;
+        border-radius: var(--radius-md) !important;
+    }
+
+    .deadline-insights {
+        padding: 12px !important;
+    }
+
+    /* HUD */
+    .hud-card {
+        padding: 10px !important;
+    }
+
+    .hud-metric-value {
+        font-size: 22px !important;
+    }
+
+    /* Empty state */
+    .empty-state {
+        padding: 32px 16px !important;
+        border-radius: 16px !important;
+    }
+}
+
+
+/* ─── HIDE BOTTOM BAR ON DESKTOP ────────────── */
+@media (min-width: 1025px) {
+    .bottom-bar {
+        display: none !important;
+    }
+}
+
+/* ─── TOUCH OPTIMIZATIONS ────────────────────── */
+@media (hover: none) and (pointer: coarse) {
+
+    /* Always show action buttons (no hover on touch) */
+    .task-card__actions {
+        opacity: 1 !important;
+    }
+
+    /* Larger touch targets */
+    .task-card__check {
+        min-width: 22px;
+        min-height: 22px;
+    }
+
+    .task-card__actions button {
+        min-width: 36px;
+        min-height: 36px;
+    }
+
+    .bottom-bar-link {
+        min-height: 44px;
+    }
+
+    .btn,
+    .btn-elite,
+    .btn-primary-elite,
+    .seg-btn,
+    .cat-pill,
+    .toggle-btn {
+        min-height: 40px;
+    }
+
+    /* Remove hover effects on touch */
+    .task-card:hover {
+        transform: none !important;
+        box-shadow: var(--shadow-sm) !important;
+    }
+
+    .habit-card-prod:hover {
+        transform: none !important;
+    }
+
+    .btn-primary-elite:hover {
+        transform: none !important;
+    }
+}
