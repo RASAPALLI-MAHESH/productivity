@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class AppProperties {
 
     private Cookie cookie = new Cookie();
+    private Cors cors = new Cors();
 
     public Cors getCors() {
         return cors;
