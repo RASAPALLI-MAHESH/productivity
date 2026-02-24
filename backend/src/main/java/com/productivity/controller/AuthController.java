@@ -50,7 +50,7 @@ public class AuthController {
     @Operation(summary = "Step 1: Create account & send OTP")
     public ResponseEntity<ApiResponse<Map<String, Object>>> signup(@RequestBody Map<String, String> body) 
             throws ExecutionException, InterruptedException {
-        String email = body.get("email");
+        String email = body.get("email") != null ? body.get("email").toLowerCase().trim() : null;
         String password = body.get("password");
         String displayName = body.get("displayName");
         
@@ -80,7 +80,8 @@ public class AuthController {
     @Operation(summary = "Resend a new OTP to the user's email")
     public ResponseEntity<ApiResponse<Map<String, Object>>> resendOtp(@RequestBody Map<String, String> body) 
             throws ExecutionException, InterruptedException {
-        String email = body.get("email");
+        String rawEmail = body.get("email");
+        String email = rawEmail != null ? rawEmail.toLowerCase().trim() : null;
         if (email == null || email.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponse.error("Email is required"));
@@ -112,7 +113,7 @@ public class AuthController {
     @Operation(summary = "Step 2: Verify OTP & Login")
     public ResponseEntity<ApiResponse<Map<String, Object>>> verifyOtp(@RequestBody Map<String, String> body, HttpServletResponse response) 
             throws ExecutionException, InterruptedException {
-        String email = body.get("email");
+        String email = body.get("email") != null ? body.get("email").toLowerCase().trim() : null;
         String otp = body.get("otp");
         
         if (!otpService.validateOtp(email, otp)) {
@@ -140,7 +141,7 @@ public class AuthController {
     @Operation(summary = "Login with email & password")
     public ResponseEntity<ApiResponse<Map<String, Object>>> login(@RequestBody Map<String, String> body, HttpServletResponse response) 
             throws ExecutionException, InterruptedException {
-        String email = body.get("email");
+        String email = body.get("email") != null ? body.get("email").toLowerCase().trim() : null;
         String password = body.get("password");
         
         User user = userService.findByEmail(email);
@@ -223,7 +224,7 @@ public class AuthController {
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse<Map<String, Object>>> forgotPassword(@RequestBody Map<String, String> body) 
             throws ExecutionException, InterruptedException {
-        String email = body.get("email");
+        String email = body.get("email") != null ? body.get("email").toLowerCase().trim() : null;
         User user = userService.findByEmail(email);
         if (user == null) {
             // Don't reveal user existence

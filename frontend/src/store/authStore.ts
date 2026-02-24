@@ -56,9 +56,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     // ─── Login ──────────────────────────────────────
     login: async (email, password) => {
         set({ loading: true, error: null });
+        const normalizedEmail = email.toLowerCase().trim();
         try {
             const res = await client.post<ApiResponse<AuthResponse>>('/auth/login', {
-                email,
+                email: normalizedEmail,
                 password,
             });
             const { user, tokens } = res.data.data;
@@ -97,9 +98,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     // ─── Signup ─────────────────────────────────────
     signup: async (email, password, displayName) => {
         set({ loading: true, error: null });
+        const normalizedEmail = email.toLowerCase().trim();
         try {
             const res = await client.post<ApiResponse<OtpResponse>>('/auth/signup', {
-                email,
+                email: normalizedEmail,
                 password,
                 displayName,
             });
@@ -146,8 +148,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     // ─── Resend OTP ─────────────────────────────────
     resendOtp: async (email) => {
         set({ loading: true, error: null });
+        const normalizedEmail = email.toLowerCase().trim();
         try {
-            const res = await client.post<ApiResponse<OtpResponse>>('/auth/resend-otp', { email });
+            const res = await client.post<ApiResponse<OtpResponse>>('/auth/resend-otp', { email: normalizedEmail });
             const { maskedEmail, expiresInSeconds } = res.data.data;
             set({
                 loading: false,
@@ -164,8 +167,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     // ─── Forgot Password ───────────────────────────
     forgotPassword: async (email) => {
         set({ loading: true, error: null });
+        const normalizedEmail = email.toLowerCase().trim();
         try {
-            const res = await client.post<ApiResponse<OtpResponse>>('/auth/forgot-password', { email });
+            const res = await client.post<ApiResponse<OtpResponse>>('/auth/forgot-password', { email: normalizedEmail });
             const { maskedEmail, expiresInSeconds } = res.data.data;
             set({
                 loading: false,
@@ -184,9 +188,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     // ─── Verify Reset OTP ──────────────────────────
     verifyResetOtp: async (email, otp) => {
         set({ loading: true, error: null });
+        const normalizedEmail = email.toLowerCase().trim();
         try {
             const res = await client.post<ApiResponse<{ resetToken: string }>>('/auth/verify-reset-otp', {
-                email,
+                email: normalizedEmail,
                 otp,
             });
             set({
@@ -250,7 +255,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     // ─── Init (try refresh on app load) ─────────────
     initAuth: () => {
         let isCancelled = false;
-        
+
         const init = async () => {
             const { initialized } = get();
             if (initialized) return;
@@ -261,7 +266,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                     console.warn('Auth initialization timed out, forcing initialized state');
                     set({ initialized: true });
                 }
-            }, 12000); 
+            }, 12000);
 
             try {
                 const res = await client.post<ApiResponse<AuthResponse>>('/auth/refresh', {});

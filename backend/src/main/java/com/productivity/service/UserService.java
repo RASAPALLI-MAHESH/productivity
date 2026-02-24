@@ -26,12 +26,13 @@ public class UserService {
 
     public UserDTO createOrUpdateUser(String uid, String email, String displayName, String photoURL)
             throws ExecutionException, InterruptedException {
+        String normalizedEmail = email != null ? email.toLowerCase().trim() : null;
         User user = userRepository.findById(uid).orElse(null);
 
         if (user == null) {
             user = new User();
             user.setUid(uid);
-            user.setEmail(email);
+            user.setEmail(normalizedEmail);
             user.setDisplayName(displayName);
             user.setPhotoURL(photoURL);
             user.setRole("user");
@@ -43,7 +44,7 @@ public class UserService {
             log.info("New user created: {}", uid);
         } else {
             Map<String, Object> updates = new HashMap<>();
-            if (email != null) updates.put("email", email);
+            if (normalizedEmail != null) updates.put("email", normalizedEmail);
             if (displayName != null) updates.put("displayName", displayName);
             if (photoURL != null) updates.put("photoURL", photoURL);
             updates.put("updatedAt", Timestamp.now());
@@ -58,14 +59,12 @@ public class UserService {
     // New method for enterprise signup
     public User createUser(String email, String passwordHash, String displayName) 
             throws ExecutionException, InterruptedException {
-        // Check if email exists (TODO: This requires query capability in repo)
-        // For now, assume unique or handle upon insert error if possible.
-        // Actually, we should probably generate UID here.
+        String normalizedEmail = email != null ? email.toLowerCase().trim() : null;
         String uid = UUID.randomUUID().toString();
         
         User user = new User();
         user.setUid(uid);
-        user.setEmail(email);
+        user.setEmail(normalizedEmail);
         user.setPasswordHash(passwordHash);
         user.setDisplayName(displayName);
         user.setRole("user");
@@ -80,9 +79,9 @@ public class UserService {
     }
     
     public User findByEmail(String email) throws ExecutionException, InterruptedException {
-        // TODO: Implement findByEmail in UserRepository
-        // For now, we might need to scan or use a proper Firestore query
-        return userRepository.findByEmail(email).orElse(null);
+        if (email == null) return null;
+        String normalizedEmail = email.toLowerCase().trim();
+        return userRepository.findByEmail(normalizedEmail).orElse(null);
     }
 
     public UserDTO getUser(String uid) throws ExecutionException, InterruptedException {
