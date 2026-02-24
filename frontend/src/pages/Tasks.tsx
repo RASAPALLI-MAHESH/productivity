@@ -3,7 +3,6 @@ import { useAppStore } from '../store/appStore';
 import type { Task } from '../types';
 import { TaskRow } from '../components/TaskRow';
 import { Select } from '../components/Select';
-import { TaskSkeleton } from '../components/TaskSkeleton';
 import { InlineTaskCreate } from '../components/InlineTaskCreate';
 import { UndoToast } from '../components/UndoToast';
 

@@ -20,9 +20,7 @@ export const TaskRow = memo(({ task, onToggle, onEdit, onDelete }: TaskRowProps)
     const deadlineDate = task.deadline ? new Date(task.deadline) : null;
     const isOverdue = deadlineDate && deadlineDate < new Date() && !isDone;
 
-    const totalSubtasks = task.subtasks?.length || 0;
-    const completedSubtasks = task.subtasks?.filter(s => s.completed).length || 0;
-    const hasSubtasks = totalSubtasks > 0;
+
 
     const pc = PRIORITY_CONFIG[task.priority] ?? PRIORITY_CONFIG.medium;
 
