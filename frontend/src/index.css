@@ -713,7 +713,8 @@ a:hover {
 }
 
 .sidebar.collapsed .sidebar-header {
-    padding: 4px 12px;
+    padding: 4px 0;
+    justify-content: center;
 }
 
 .sidebar-logo {
@@ -741,9 +742,8 @@ a:hover {
     transition: opacity 200ms ease;
 }
 
-.sidebar.collapsed .sidebar-logo h1 {
-    opacity: 0;
-    pointer-events: none;
+.sidebar.collapsed .sidebar-logo {
+    display: none;
 }
 
 /* Toggle button */
