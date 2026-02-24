@@ -6,6 +6,7 @@ import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { VibeBackground } from './components/VibeBackground';
+import { CookieConsent } from './components/CookieConsent';
 
 // Lazy-loaded pages for code splitting
 const Login = lazy(() => import('./pages/Login').then((m) => ({ default: m.Login })));
@@ -51,6 +52,7 @@ function App() {
         <ErrorBoundary>
             <BrowserRouter>
                 <VibeBackground />
+                <CookieConsent />
                 <Suspense fallback={<AppLoader />}>
                     <Routes>
                         {/* Public auth routes */}
