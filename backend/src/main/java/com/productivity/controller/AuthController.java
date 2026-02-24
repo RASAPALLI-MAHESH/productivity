@@ -188,7 +188,7 @@ public class AuthController {
                 .secure(appProperties.getCookie().isSecure())
                 .path("/")
                 .maxAge(7 * 24 * 60 * 60)
-                .sameSite("Lax") // Good for most cases
+                .sameSite("None") // Required for cross-domain (Vercel → Render)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         
@@ -213,7 +213,7 @@ public class AuthController {
                 .secure(appProperties.getCookie().isSecure())
                 .path("/")
                 .maxAge(0)
-                .sameSite("Lax")
+                .sameSite("None")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return ResponseEntity.ok().build();
@@ -289,7 +289,7 @@ public class AuthController {
                 .secure(appProperties.getCookie().isSecure())
                 .path("/")
                 .maxAge(7 * 24 * 60 * 60)
-                .sameSite("Lax")
+                .sameSite("None")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         
