@@ -119,11 +119,11 @@ export function Tasks() {
         <div className="tasks-page">
 
             {/* ── Page Header ── */}
-            <div className="page-header">
+            <div className="page-header" style={{ paddingBottom: 0 }}>
                 <div className="page-title-group">
                     <h1 className="page-title">Tasks</h1>
                     {tasks.length > 0 && (
-                        <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '3px 0 0' }}>
+                        <p className="page-subtitle-stats">
                             {completedCount} of {tasks.length} completed
                         </p>
                     )}
@@ -131,23 +131,21 @@ export function Tasks() {
             </div>
 
             {/* ── Filter Toolbar ── */}
-            <div className="task-filters-unified">
-                <div className="task-search-container">
-                    <div className="search-input-wrapper">
-                        <span className="material-symbols-outlined search-icon">
-                            {isSearching ? 'sync' : 'search'}
-                        </span>
-                        <input
-                            type="text"
-                            className="search-input"
-                            placeholder="Search tasks… (/)"
-                            value={searchQuery}
-                            onChange={e => setSearchQuery(e.target.value)}
-                        />
-                    </div>
+            <div className="task-filters-unified-v2">
+                <div className="task-search-minimal">
+                    <span className="material-symbols-outlined search-icon-v2">
+                        {isSearching ? 'sync' : 'search'}
+                    </span>
+                    <input
+                        type="text"
+                        className="search-input-v2"
+                        placeholder="Search tasks... (/)"
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                    />
                 </div>
 
-                <div className="priority-select-container">
+                <div className="filter-group-minimal">
                     <Select
                         label="Priority"
                         value={filterPriority}

@@ -9,27 +9,38 @@ export function ThemeToggle({ variant = 'minimal' }: ThemeToggleProps) {
 
     if (variant === 'full') {
         return (
-            <div className="premium-toggle">
+            <div className="theme-card-group">
                 <button
-                    className={`toggle-option ${theme === 'dark' ? 'active' : ''}`}
-                    onClick={() => setTheme('dark')}
-                >
-                    <span className="material-symbols-outlined icon-sm">dark_mode</span>
-                    <span>Dark</span>
-                </button>
-                <button
-                    className={`toggle-option ${theme === 'light' ? 'active' : ''}`}
+                    className={`theme-card ${theme === 'light' ? 'active' : ''}`}
                     onClick={() => setTheme('light')}
                 >
-                    <span className="material-symbols-outlined icon-sm">light_mode</span>
-                    <span>Light</span>
+                    <div className="theme-card__visual theme-card__visual--light">
+                        <span className="material-symbols-outlined theme-card__icon">light_mode</span>
+                    </div>
+                    <div className="theme-card__info">
+                        <span className="theme-card__name">Clean Light</span>
+                        <span className="theme-card__desc">Focus & Clarity</span>
+                    </div>
+                    <div className="theme-card__radio">
+                        <div className="theme-card__radio-inner" />
+                    </div>
                 </button>
-                <div
-                    className="toggle-slider"
-                    style={{
-                        transform: `translateX(${theme === 'dark' ? '0' : '100%'})`
-                    }}
-                />
+
+                <button
+                    className={`theme-card ${theme === 'dark' ? 'active' : ''}`}
+                    onClick={() => setTheme('dark')}
+                >
+                    <div className="theme-card__visual theme-card__visual--dark">
+                        <span className="material-symbols-outlined theme-card__icon">dark_mode</span>
+                    </div>
+                    <div className="theme-card__info">
+                        <span className="theme-card__name">Amoled Dark</span>
+                        <span className="theme-card__desc">Deep & Immersive</span>
+                    </div>
+                    <div className="theme-card__radio">
+                        <div className="theme-card__radio-inner" />
+                    </div>
+                </button>
             </div>
         );
     }

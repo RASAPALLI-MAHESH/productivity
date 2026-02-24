@@ -92,7 +92,7 @@ export function Sidebar({ isOpen, onToggle, isMobile }: SidebarProps) {
 
             {/* Mobile Bottom Bar */}
             <nav className="bottom-bar">
-                {navItems.slice(0, 4).map((item) => (
+                {navItems.map((item) => (
                     <NavLink
                         key={item.to}
                         to={item.to}
@@ -103,13 +103,6 @@ export function Sidebar({ isOpen, onToggle, isMobile }: SidebarProps) {
                         <span>{item.label}</span>
                     </NavLink>
                 ))}
-                <NavLink
-                    to="/settings"
-                    className={({ isActive }: { isActive: boolean }) => `bottom-bar-link ${isActive ? 'active' : ''}`}
-                >
-                    <span className="link-icon"><span className="material-symbols-outlined">settings</span></span>
-                    <span>Settings</span>
-                </NavLink>
             </nav>
         </>
     );
