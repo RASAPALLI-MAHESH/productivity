@@ -117,14 +117,6 @@ export function Tasks() {
     return (
         <div className="tasks-page">
 
-            {/* ── Momentum Bar (Top) ── */}
-            <div className="momentum-container">
-                <div
-                    className="momentum-bar"
-                    style={{ width: `${(completedCount / (tasks.length || 1)) * 100}%` }}
-                />
-            </div>
-
             {/* ── Page Header ── */}
             <header className="page-header--elite">
                 <div className="page-title-group">
@@ -239,11 +231,6 @@ export function Tasks() {
                     </div>
                 )}
             </div>
-
-            {/* Mobile FAB */}
-            <button className="fab-elite" onClick={() => setIsAddingTask(true)}>
-                <span className="material-symbols-outlined">add</span>
-            </button>
 
             <UndoToast />
         </div>
