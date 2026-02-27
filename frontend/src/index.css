@@ -9191,49 +9191,96 @@ input[type="time"].input {
 
     /* Tasks Row */
     .elite-row {
-        padding: 16px 12px;
+        padding: 10px 12px;
         gap: 12px;
-        flex-direction: column;
+        flex-direction: row;
+        /* Back to horizontal */
         align-items: flex-start;
         border-bottom: 1px solid var(--border);
         border-radius: 0;
+        min-height: 64px;
     }
 
     .elite-row:hover {
         transform: none;
         box-shadow: none;
-        background: rgba(255, 255, 255, 0.02);
+        background: rgba(255, 255, 255, 0.01) !important;
     }
 
     .elite-row__body {
-        width: 100%;
+        padding-top: 2px;
     }
 
     .elite-row__title {
-        font-size: 15px;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .elite-row__desc {
+        font-size: 12px;
+        margin-top: 2px;
+        -webkit-line-clamp: 1;
+        line-clamp: 1;
+        /* Keep it single line on mobile if possible */
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .elite-row__actions {
-        position: relative;
-        right: auto;
-        top: auto;
+        position: absolute;
+        right: 8px;
+        top: 8px;
         transform: none;
-        opacity: 1;
+        opacity: 0.8;
         pointer-events: auto;
         display: flex;
-        justify-content: flex-end;
-        width: 100%;
-        padding: 0;
-        margin-top: 12px;
+        gap: 4px;
+        width: auto;
+        margin-top: 0;
         background: transparent;
+        z-index: 5;
+    }
+
+    .elite-row__action-btn {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+    }
+
+    .elite-row__action-btn span {
+        font-size: 18px !important;
+    }
+
+    .elite-row__priority {
+        position: absolute;
+        right: 12px;
+        bottom: 10px;
+        margin: 0;
+        font-size: 10px;
+    }
+
+    .elite-row__priority-dot {
+        width: 6px;
+        height: 6px;
     }
 
     /* Task Meta Wrapping */
     .elite-row__meta {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 6px;
+        gap: 6px;
+        margin-top: 4px;
+    }
+
+    .elite-tag {
+        font-size: 10px;
+        padding: 2px 6px;
+        height: 18px;
+    }
+
+    .elite-tag span {
+        font-size: 12px !important;
     }
 
     /* Navigation */
