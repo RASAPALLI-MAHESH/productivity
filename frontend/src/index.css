@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    PRODUCTIV — Design System
    AMOLED Dark + Light Theme. Material Icons.
    ============================================ */
@@ -247,6 +247,69 @@ a:hover {
     color: var(--primary);
 }
 
+/* ── Content States ── */
+.empty-state--elite {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6) var(--space-4);
+    text-align: center;
+    background: linear-gradient(180deg, var(--bg-secondary) 0%, transparent 100%);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-xl);
+    margin-top: var(--space-4);
+    position: relative;
+    overflow: hidden;
+}
+
+.empty-state--elite::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+}
+
+.empty-state--elite .empty-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-3);
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.empty-state--elite .empty-icon .material-symbols-outlined {
+    font-size: 32px;
+    color: var(--text-muted);
+    background: linear-gradient(135deg, var(--text-secondary), var(--text-muted));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.empty-state--elite h3 {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-1);
+    letter-spacing: -0.01em;
+}
+
+.empty-state--elite p {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    max-width: 320px;
+    line-height: 1.6;
+}
+
 @media (prefers-reduced-motion: reduce) {
 
     *,
@@ -372,11 +435,15 @@ a:hover {
 .command-bar--elite {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: transparent;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: var(--space-2);
+    gap: 16px;
+    padding: 12px 16px;
+    background: linear-gradient(180deg, var(--bg-tertiary) 0%, rgba(22, 22, 22, 0.5) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .search-group--elite {
@@ -385,6 +452,16 @@ a:hover {
     align-items: center;
     gap: 12px;
     position: relative;
+    background: var(--bg-input);
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    transition: all 0.2s ease;
+}
+
+.search-group--elite:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-light);
 }
 
 .search-icon--elite {
@@ -420,33 +497,62 @@ a:hover {
     width: 140px;
 }
 
+/* Row Hover & Interactions */
+.elite-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 16px;
+    border-radius: var(--radius-md);
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    background: transparent;
+    cursor: default;
+    border: 1px solid transparent;
+}
+
 .elite-row:hover {
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--bg-tertiary);
+    border-color: var(--border-hover);
+    transform: translateX(4px);
+    box-shadow: -4px 0 0 var(--border);
 }
 
 .elite-row--done {
-    opacity: 0.5;
+    opacity: 0.6;
+    transition: all 0.4s ease;
+}
+
+.elite-row--done:hover {
+    opacity: 0.8;
 }
 
 .elite-row--done .elite-row__title {
     text-decoration: line-through;
     color: var(--text-muted);
+    transition: color 0.3s ease;
 }
 
 /* Row Actions (Floating) */
 .elite-row__actions {
     position: absolute;
-    right: 12px;
+    right: 16px;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-50%) translateX(10px);
     display: flex;
-    gap: 4px;
+    gap: 6px;
     opacity: 0;
-    transition: opacity var(--duration-fast) ease;
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
     z-index: 10;
-    background: var(--bg-primary);
-    padding-left: 12px;
-    box-shadow: -10px 0 10px var(--bg-primary);
+    background: linear-gradient(90deg, transparent, var(--bg-tertiary) 20%);
+    padding-left: 24px;
+    pointer-events: none;
+}
+
+.elite-row:hover .elite-row__actions {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+    pointer-events: auto;
 }
 
 .elite-row:hover .elite-row__actions {
@@ -454,17 +560,18 @@ a:hover {
 }
 
 .elite-row__action-btn {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: var(--radius-sm);
-    border: none;
-    background: transparent;
+    border: 1px solid transparent;
+    background: var(--bg-elevated);
     color: var(--text-muted);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all var(--duration-fast) ease;
+    box-shadow: var(--shadow-sm);
 }
 
 .elite-row__action-btn:hover {
@@ -479,21 +586,37 @@ a:hover {
 
 /* Checkbox Precision */
 .elite-row__checkbox {
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
-    border: 1.5px solid var(--border);
-    background: transparent;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 2px solid var(--border-hover);
+    background: var(--bg-input);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all var(--duration-fast) var(--ease-out);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.elite-row__checkbox::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent-color, var(--text-secondary));
+    opacity: 0;
+    transition: opacity 0.2s ease;
 }
 
 .elite-row__checkbox:hover {
     border-color: var(--accent-color, var(--text-secondary));
+    transform: scale(1.05);
+}
+
+.elite-row__checkbox:hover::after {
+    opacity: 0.1;
 }
 
 .elite-row__checkbox--checked {
