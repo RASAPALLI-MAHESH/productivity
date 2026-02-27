@@ -146,30 +146,30 @@ export function Deadlines() {
 
     return (
         <div className="deadlines-page-container">
-            <div className="page-header" style={{ marginBottom: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div>
-                        <h1 className="page-title">Deadlines</h1>
-                        <p className="page-subtitle">Strategic overview of your upcoming milestones</p>
-                    </div>
-                    <div className="view-toggle-elite">
-                        <button
-                            className={`toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
-                            onClick={() => setViewMode('list')}
-                        >
-                            <span className="material-symbols-outlined">list</span>
-                            List
-                        </button>
-                        <button
-                            className={`toggle-btn ${viewMode === 'timeline' ? 'active' : ''}`}
-                            onClick={() => setViewMode('timeline')}
-                        >
-                            <span className="material-symbols-outlined">timeline</span>
-                            Timeline
-                        </button>
-                    </div>
+            <header className="page-header--elite deadlines-header">
+                <div className="page-title-group">
+                    <h1 className="page-title">Deadlines</h1>
+                    <p className="page-subtitle--elite">Strategic overview of your upcoming milestones</p>
                 </div>
-            </div>
+                <div className="view-toggle-elite">
+                    <button
+                        className={`toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+                        onClick={() => setViewMode('list')}
+                        title="List view"
+                    >
+                        <span className="material-symbols-outlined">list</span>
+                        <span className="toggle-btn-label">List</span>
+                    </button>
+                    <button
+                        className={`toggle-btn ${viewMode === 'timeline' ? 'active' : ''}`}
+                        onClick={() => setViewMode('timeline')}
+                        title="Timeline view"
+                    >
+                        <span className="material-symbols-outlined">timeline</span>
+                        <span className="toggle-btn-label">Timeline</span>
+                    </button>
+                </div>
+            </header>
 
             <DeadlinesExecutiveHUD tasks={tasks} />
 
@@ -188,8 +188,10 @@ export function Deadlines() {
                             renderTimeline()
                         )
                     ) : (
-                        <div className="empty-state">
-                            <div className="empty-icon"><span className="material-symbols-outlined">schedule</span></div>
+                        <div className="empty-state--elite">
+                            <div className="empty-icon">
+                                <span className="material-symbols-outlined">schedule</span>
+                            </div>
                             <h3>No active deadlines</h3>
                             <p>Add deadlines to your tasks to track them here</p>
                         </div>

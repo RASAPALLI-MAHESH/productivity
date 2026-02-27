@@ -23,13 +23,17 @@ import {
 } from '@dnd-kit/sortable';
 
 export function Tasks() {
-    const { tasks, setTasks, taskLoading, totalPages, fetchTasks, updateTask, deleteTask } = useAppStore();
+    const { tasks, setTasks, taskLoading, totalPages, fetchTasks, updateTask, deleteTask, createTask } = useAppStore();
     const [page, setPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
     const [filterPriority, setFilterPriority] = useState('');
     const [isAddingTask, setIsAddingTask] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
     const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [showMobileCreate, setShowMobileCreate] = useState(false);
+    const [mobileTaskTitle, setMobileTaskTitle] = useState('');
+    const [mobileTaskPriority, setMobileTaskPriority] = useState('medium');
+    const [isMobileCreating, setIsMobileCreating] = useState(false);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -112,7 +116,32 @@ export function Tasks() {
         }
     };
 
+    const handleMobileCreate = async () => {
+        if (!mobileTaskTitle.trim()) return;
+        setIsMobileCreating(true);
+        try {
+            await createTask({
+                title: mobileTaskTitle.trim(),
+                priority: mobileTaskPriority as Task['priority'],
+                status: 'todo',
+            });
+            setMobileTaskTitle('');
+            setMobileTaskPriority('medium');
+            setShowMobileCreate(false);
+            fetchTasks({ page: 0, size: 20, sortBy: 'createdAt', sortDirection: 'desc' });
+        } finally {
+            setIsMobileCreating(false);
+        }
+    };
+
     const completedCount = tasks.filter(t => t.status === 'done').length;
+
+    const PRIORITY_OPTS = [
+        { value: 'low', label: '🟢 Low', color: '#10b981' },
+        { value: 'medium', label: '🟡 Medium', color: '#f59e0b' },
+        { value: 'high', label: '🔴 High', color: '#ef4444' },
+        { value: 'critical', label: '🟣 Critical', color: '#8b5cf6' },
+    ];
 
     return (
         <div className="tasks-page">
@@ -138,7 +167,7 @@ export function Tasks() {
                     <input
                         type="text"
                         className="search-input--elite"
-                        placeholder="Search or filter... (/)"
+                        placeholder="Search tasks... (/)"
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
                     />
@@ -164,8 +193,8 @@ export function Tasks() {
             {/* ── Body ── */}
             <div className="tasks-content--elite">
 
-                {/* Inline creation (Desktop) */}
-                <div className="inline-create-container--elite">
+                {/* Inline creation — Desktop only */}
+                <div className="inline-create-container--elite desktop-only">
                     <InlineTaskCreate
                         autoOpen={isAddingTask}
                         onClose={() => setIsAddingTask(false)}
@@ -175,7 +204,7 @@ export function Tasks() {
                 {/* Task list */}
                 {taskLoading ? (
                     <div className="task-list-v2" style={{ marginTop: 4 }}>
-                        {[...Array(5)].map((_, i) => <div key={i} className="elite-row skeleton" style={{ height: 48 }} />)}
+                        {[...Array(5)].map((_, i) => <div key={i} className="elite-row skeleton" style={{ height: 60 }} />)}
                     </div>
                 ) : filteredTasks.length > 0 ? (
                     <>
@@ -227,10 +256,65 @@ export function Tasks() {
                             </span>
                         </div>
                         <h3>{searchQuery ? `No results for "${searchQuery}"` : 'No tasks yet'}</h3>
-                        <p>{searchQuery ? 'Try a different search term.' : 'Add your first task to get moving.'}</p>
+                        <p>{searchQuery ? 'Try a different search term.' : 'Tap + to add your first task.'}</p>
                     </div>
                 )}
             </div>
+
+            {/* ── Mobile FAB ── */}
+            <button
+                className="mobile-fab"
+                onClick={() => setShowMobileCreate(true)}
+                aria-label="Add task"
+            >
+                <span className="material-symbols-outlined">add</span>
+            </button>
+
+            {/* ── Mobile Task Bottom Sheet ── */}
+            {showMobileCreate && (
+                <div className="mobile-sheet-backdrop" onClick={() => setShowMobileCreate(false)}>
+                    <div className="mobile-task-sheet" onClick={e => e.stopPropagation()}>
+                        <div className="mobile-sheet-handle" />
+                        <h3 className="mobile-sheet-title">New Task</h3>
+
+                        <input
+                            className="mobile-sheet-input"
+                            type="text"
+                            placeholder="What needs to be done?"
+                            value={mobileTaskTitle}
+                            onChange={e => setMobileTaskTitle(e.target.value)}
+                            onKeyDown={e => { if (e.key === 'Enter') handleMobileCreate(); }}
+                            autoFocus
+                        />
+
+                        <div className="mobile-sheet-priority">
+                            {PRIORITY_OPTS.map(opt => (
+                                <button
+                                    key={opt.value}
+                                    className={`mobile-priority-chip ${mobileTaskPriority === opt.value ? 'active' : ''}`}
+                                    style={{ '--chip-color': opt.color } as React.CSSProperties}
+                                    onClick={() => setMobileTaskPriority(opt.value)}
+                                >
+                                    {opt.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="mobile-sheet-actions">
+                            <button className="mobile-sheet-cancel" onClick={() => setShowMobileCreate(false)}>
+                                Cancel
+                            </button>
+                            <button
+                                className="mobile-sheet-submit"
+                                onClick={handleMobileCreate}
+                                disabled={!mobileTaskTitle.trim() || isMobileCreating}
+                            >
+                                {isMobileCreating ? 'Adding…' : 'Add Task'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <UndoToast />
         </div>

@@ -9293,3 +9293,392 @@ input[type="time"].input {
         border-top: 1px solid var(--border);
     }
 }
+
+/* ============================================
+   16. THEME PILL TOGGLE (Settings)
+   ============================================ */
+.theme-pill-toggle {
+    display: flex;
+    align-items: center;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full, 999px);
+    padding: 4px;
+    gap: 4px;
+}
+
+.theme-pill-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full, 999px);
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+.theme-pill-option.active {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--border);
+}
+
+.theme-pill-option:hover:not(.active) {
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+}
+
+.theme-pill-icon {
+    font-size: 16px !important;
+}
+
+/* Light theme overrides for the pill */
+[data-theme="light"] .theme-pill-option.active {
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15), 0 0 0 1px var(--border);
+}
+
+/* ============================================
+   17. MOBILE FAB + BOTTOM SHEET (Tasks)
+   ============================================ */
+.desktop-only {
+    display: block;
+}
+
+.mobile-fab {
+    display: none;
+    /* Hidden on desktop */
+}
+
+@media (max-width: 768px) {
+    .desktop-only {
+        display: none;
+    }
+
+    /* Floating Action Button */
+    .mobile-fab {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        bottom: 90px;
+        /* Above bottom nav */
+        right: 20px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: var(--bg-primary);
+        border: none;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-hover);
+        cursor: pointer;
+        z-index: 500;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .mobile-fab:active {
+        transform: scale(0.92);
+    }
+
+    .mobile-fab span {
+        font-size: 28px !important;
+    }
+}
+
+/* Bottom Sheet (visible on all sizes to allow dismiss) */
+.mobile-sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    z-index: 9000;
+    display: flex;
+    align-items: flex-end;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: sheetBackdropIn 0.2s ease;
+}
+
+@keyframes sheetBackdropIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.mobile-task-sheet {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-hover);
+    border-radius: 24px 24px 0 0;
+    padding: 16px 20px 40px;
+    animation: sheetSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+@keyframes sheetSlideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.mobile-sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--border-hover);
+    border-radius: 99px;
+    margin: 0 auto 8px;
+}
+
+.mobile-sheet-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.mobile-sheet-input {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-family: var(--font-family);
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+
+.mobile-sheet-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.mobile-sheet-input::placeholder {
+    color: var(--text-muted);
+}
+
+.mobile-sheet-priority {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.mobile-priority-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full, 999px);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.mobile-priority-chip.active {
+    background: var(--chip-color, var(--primary));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--chip-color, var(--primary)) 40%, transparent);
+}
+
+.mobile-sheet-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.mobile-sheet-cancel {
+    flex: 1;
+    padding: 14px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.mobile-sheet-cancel:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.mobile-sheet-submit {
+    flex: 2;
+    padding: 14px;
+    border-radius: var(--radius-lg);
+    border: none;
+    background: var(--primary);
+    color: var(--bg-primary);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.mobile-sheet-submit:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.mobile-sheet-submit:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ============================================
+   18. HABITS PAGE SPACING NORMALIZATION
+   ============================================ */
+.habits-page-container {
+    padding: var(--space-3) var(--space-3) var(--space-6);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.habits-toolbar-elite {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border);
+}
+
+.habit-grid-elite {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-3);
+    align-items: start;
+}
+
+.habits-intel-section {
+    margin-bottom: var(--space-3);
+}
+
+/* ============================================
+   19. DEADLINES PAGE (Mobile Header)
+   ============================================ */
+.deadlines-page-container {
+    padding: var(--space-3) var(--space-3) var(--space-6);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.deadlines-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: var(--space-2) 12px;
+}
+
+.view-toggle-elite {
+    display: flex;
+    align-items: center;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 3px;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: calc(var(--radius-md) - 2px);
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.toggle-btn span.material-symbols-outlined {
+    font-size: 18px !important;
+}
+
+.toggle-btn.active {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-weight: 600;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.toggle-btn:hover:not(.active) {
+    color: var(--text-secondary);
+    background: var(--bg-elevated);
+}
+
+/* Mobile: icon-only toggle on narrow screens */
+@media (max-width: 480px) {
+    .toggle-btn-label {
+        display: none;
+    }
+
+    .toggle-btn {
+        padding: 8px 10px;
+    }
+
+    .deadlines-header {
+        flex-wrap: nowrap;
+        align-items: flex-start;
+    }
+
+    .deadlines-page-container {
+        padding: 0 12px 120px;
+    }
+}
+
+@media (max-width: 768px) {
+    .habits-page-container {
+        padding: 0 12px 120px !important;
+    }
+
+    .habit-grid-elite {
+        grid-template-columns: 1fr;
+        gap: var(--space-2);
+    }
+
+    .habits-toolbar-elite {
+        gap: 8px;
+        margin-bottom: var(--space-2);
+    }
+
+    .deadlines-page-container {
+        padding: 0 12px 120px !important;
+    }
+}
