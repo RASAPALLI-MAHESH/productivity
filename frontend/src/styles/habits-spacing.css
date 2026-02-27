@@ -1,0 +1,130 @@
+﻿/* ============================================
+   18. HABITS PAGE SPACING NORMALIZATION
+   ============================================ */
+.habits-page-container {
+    padding: var(--space-3) var(--space-3) var(--space-6);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.habits-toolbar-elite {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border);
+}
+
+.habit-grid-elite {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-3);
+    align-items: start;
+}
+
+.habits-intel-section {
+    margin-bottom: var(--space-3);
+}
+
+/* ============================================
+   19. DEADLINES PAGE (Mobile Header)
+   ============================================ */
+.deadlines-page-container {
+    padding: var(--space-3) var(--space-3) var(--space-6);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.deadlines-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: var(--space-2) 12px;
+}
+
+.view-toggle-elite {
+    display: flex;
+    align-items: center;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 3px;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: calc(var(--radius-md) - 2px);
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.toggle-btn span.material-symbols-outlined {
+    font-size: 18px !important;
+}
+
+.toggle-btn.active {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-weight: 600;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.toggle-btn:hover:not(.active) {
+    color: var(--text-secondary);
+    background: var(--bg-elevated);
+}
+
+/* Mobile: icon-only toggle on narrow screens */
+@media (max-width: 480px) {
+    .toggle-btn-label {
+        display: none;
+    }
+
+    .toggle-btn {
+        padding: 8px 10px;
+    }
+
+    .deadlines-header {
+        flex-wrap: nowrap;
+        align-items: flex-start;
+    }
+
+    .deadlines-page-container {
+        padding: 0 12px 120px;
+    }
+}
+
+@media (max-width: 768px) {
+    .habits-page-container {
+        padding: 0 12px 120px !important;
+    }
+
+    .habit-grid-elite {
+        grid-template-columns: 1fr;
+        gap: var(--space-2);
+    }
+
+    .habits-toolbar-elite {
+        gap: 8px;
+        margin-bottom: var(--space-2);
+    }
+
+    .deadlines-page-container {
+        padding: 0 12px 120px !important;
+    }
+}

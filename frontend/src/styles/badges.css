@@ -1,0 +1,42 @@
+/* badges.css — Badges, Tags, Chips, Count Indicators */
+
+/* Moved to tasks.css as part of the task UI.
+   This file exists to keep the import manifest clean.
+   Add standalone badge components here if needed. */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: var(--radius-full, 999px);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.badge--success {
+    background: rgba(50, 215, 75, 0.12);
+    color: var(--success);
+}
+
+.badge--warning {
+    background: rgba(255, 159, 10, 0.12);
+    color: var(--warning);
+}
+
+.badge--error {
+    background: var(--error-light);
+    color: var(--error);
+}
+
+.badge--info {
+    background: rgba(10, 132, 255, 0.12);
+    color: var(--info);
+}
+
+.badge--neutral {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+}

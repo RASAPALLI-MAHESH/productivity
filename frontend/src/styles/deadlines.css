@@ -1,0 +1,43 @@
+﻿/* deadlines.css */
+
+/* ============================================
+   14. DEADLINE
+   ============================================ */
+.deadline-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 12px var(--space-2);
+    background: var(--bg-card);
+    border-left: 3px solid var(--primary);
+}
+
+.deadline-countdown {
+    text-align: center;
+    min-width: 48px;
+}
+
+.deadline-countdown .days {
+    font-size: var(--h3-size);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.deadline-countdown .label {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+.deadline-item.urgent {
+    border-left-color: var(--error);
+}
+
+.deadline-item.warning {
+    border-left-color: var(--warning);
+}
+
+.deadline-item.safe {
+    border-left-color: var(--success);
+}
+
+/* ============================================

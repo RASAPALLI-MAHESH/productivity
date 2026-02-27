@@ -1,0 +1,144 @@
+﻿/* cards.css */
+
+/* ============================================
+   8. CARDS
+   ============================================ */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* ============================================
+   8. DASHBOARD & STATS (ENTERPRISE GRID)
+   ============================================ */
+.dashboard-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--space-6);
+    width: 100%;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: var(--space-8);
+}
+
+.stat-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    transition: border-color var(--duration-fast) ease;
+    min-height: 110px;
+}
+
+.stat-card:hover {
+    border-color: var(--border-hover);
+}
+
+.stat-label {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text-primary);
+}
+
+.stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+
+.stat-icon .material-symbols-outlined {
+    font-size: 22px;
+}
+
+/* ============================================
+   10. BADGES
+   ============================================ */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.badge-low {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+.badge-medium {
+    background: var(--warning-light);
+    color: var(--warning);
+}
+
+.badge-high {
+    background: rgba(248, 113, 113, 0.08);
+    color: var(--error);
+}
+
+.badge-critical {
+    background: var(--error-light);
+    color: var(--error);
+}
+
+.badge-todo {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+
+.badge-in-progress {
+    background: var(--info-light);
+    color: var(--info);
+}
+
+.badge-done {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+/* ============================================
+   11. TASK LIST
+   ============================================ */

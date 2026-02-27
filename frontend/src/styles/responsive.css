@@ -1,0 +1,303 @@
+﻿/* responsive.css */
+
+/* ============================================
+   28. RESPONSIVE
+   ============================================ */
+
+/* Tablet & Below */
+@media (max-width: 1023px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 240px;
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .sidebar-backdrop.visible {
+        display: block;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        padding: var(--space-3);
+        max-width: 100% !important;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+
+
+/* ============================================
+   MOBILE TWEAKS & SEARCH
+   ============================================ */
+/* Premium Theme Toggle Animation */
+.theme-toggle-animated {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    border-radius: 50%;
+    transition: background-color var(--duration-fast), color var(--duration-fast);
+}
+
+.theme-toggle-animated:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.theme-icon {
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.theme-icon.light {
+    transform: rotate(90deg) scale(1);
+}
+
+.theme-icon.dark {
+    transform: rotate(0deg) scale(1);
+}
+
+/* Tasks Header Search */
+.tasks-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.task-search-container {
+    position: relative;
+    width: 240px;
+    transition: width var(--duration-normal) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    color: var(--text-muted);
+    pointer-events: none;
+    font-size: 20px;
+}
+
+.search-input {
+    width: 100%;
+    height: 40px;
+    padding-left: 36px;
+    padding-right: 12px;
+    background: var(--bg-tertiary);
+    /* Slightly distinct from card */
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: all var(--duration-fast);
+}
+
+.search-input:focus {
+    background: var(--bg-card);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+    outline: none;
+}
+
+.mobile-search-trigger {
+    display: none;
+    /* Desktop hidden */
+}
+
+.btn-icon-only {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    border-radius: var(--radius-md);
+}
+
+@media (max-width: 640px) {
+    .tasks-header-actions {
+        z-index: 200;
+        position: relative;
+        overflow: visible;
+        justify-content: flex-end;
+        position: static;
+    }
+
+    /* When search is CLOSED on mobile */
+    .task-search-container {
+        display: none;
+    }
+
+    .mobile-search-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-md);
+        background: transparent;
+        color: var(--text-secondary);
+        border: none;
+        cursor: pointer;
+    }
+
+    .mobile-search-trigger:active {
+        background: var(--bg-tertiary);
+    }
+
+    /* When search is OPEN on mobile */
+    .page-header.search-active {
+        padding: 8px 16px;
+        /* Tighter padding */
+    }
+
+    .page-header.search-active .page-title,
+    .page-header.search-active .page-subtitle,
+    .page-header.search-active .mobile-search-trigger,
+    .page-header.search-active .btn-primary {
+        display: none;
+        /* Hide everything else */
+    }
+
+    .page-header.search-active .tasks-header-actions {
+        width: 100%;
+    }
+
+    .page-header.search-active .task-search-container {
+        display: block;
+        width: 100%;
+        animation: expandSearch 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .search-close-btn {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+    }
+}
+
+@keyframes expandSearch {
+    from {
+        opacity: 0;
+        transform: scaleX(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+}
+
+/* Mobile */
+@media (max-width: 639px) {
+    .main-content {
+        padding: var(--space-2);
+        padding-bottom: 80px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .btn-lg {
+        width: 100%;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+
+    .filter-bar {
+        flex-direction: column;
+    }
+
+    .filter-bar .input {
+        width: 100%;
+    }
+
+    .bottom-bar {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background: var(--bg-primary);
+        border-top: 1px solid var(--border);
+        justify-content: space-around;
+        align-items: center;
+        z-index: 100;
+    }
+
+    .habit-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================
+   29. UTILITIES
+   ============================================ */
+.animate-up {
+    animation: modalSlideUp var(--duration-slow) var(--ease-out);
+}
+
+.glow-text {
+    color: var(--text-primary);
+}
+
+/* Mobile menu toggle button shown in main content on mobile */
+.mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: var(--space-2);
+    left: var(--space-2);
+    z-index: 98;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border-radius: var(--radius-md);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+@media (max-width: 1023px) {
+    .mobile-menu-btn {
+        display: flex;
+    }
+}
+

@@ -1,0 +1,292 @@
+﻿/* ============================================
+   15. SETTINGS PAGE (Elite SaaS)
+   ============================================ */
+.settings-container--elite {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: var(--space-3) 0 var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.settings-section-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+}
+
+.settings-section-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-tertiary);
+}
+
+.settings-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.settings-section-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s ease;
+}
+
+.settings-row:last-child {
+    border-bottom: none;
+}
+
+.settings-row:hover {
+    background: var(--bg-tertiary);
+}
+
+.settings-row-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.settings-row-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.settings-row-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.settings-danger-card {
+    border-color: var(--error-light);
+    background: rgba(255, 69, 58, 0.02);
+}
+
+.settings-danger-card .settings-section-header {
+    background: rgba(255, 69, 58, 0.05);
+    border-bottom-color: var(--error-light);
+}
+
+.settings-danger-card .settings-section-title {
+    color: var(--error);
+}
+
+@media (max-width: 768px) {
+    .settings-container--elite {
+        padding: var(--space-2) 12px 120px;
+    }
+
+    .settings-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+}
+
+/* ============================================
+   14. MOBILE REFINEMENTS (Elite SaaS)
+   ============================================ */
+@media (max-width: 768px) {
+
+    /* Layout & Surface */
+    .tasks-page,
+    .habits-page-container {
+        padding: 0 12px 120px !important;
+    }
+
+    .sidebar {
+        z-index: 1000;
+    }
+
+    /* Command Bar */
+    .command-bar--elite {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 12px;
+        margin-bottom: 20px;
+        background: var(--bg-secondary);
+        border-color: var(--border-hover);
+    }
+
+    .search-group--elite {
+        padding: 8px 12px;
+    }
+
+    .filter-group--elite {
+        width: 100%;
+    }
+
+    .kbd-hint {
+        display: none;
+    }
+
+    /* Tasks Row */
+    .elite-row {
+        padding: 10px 12px;
+        gap: 12px;
+        flex-direction: row;
+        /* Back to horizontal */
+        align-items: flex-start;
+        border-bottom: 1px solid var(--border);
+        border-radius: 0;
+        min-height: 64px;
+    }
+
+    .elite-row:hover {
+        transform: none;
+        box-shadow: none;
+        background: rgba(255, 255, 255, 0.01) !important;
+    }
+
+    .elite-row__body {
+        padding-top: 2px;
+    }
+
+    .elite-row__title {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .elite-row__desc {
+        font-size: 12px;
+        margin-top: 2px;
+        -webkit-line-clamp: 1;
+        line-clamp: 1;
+        /* Keep it single line on mobile if possible */
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .elite-row__actions {
+        position: absolute;
+        right: 8px;
+        top: 8px;
+        transform: none;
+        opacity: 0.8;
+        pointer-events: auto;
+        display: flex;
+        gap: 4px;
+        width: auto;
+        margin-top: 0;
+        background: transparent;
+        z-index: 5;
+    }
+
+    .elite-row__action-btn {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+    }
+
+    .elite-row__action-btn span {
+        font-size: 18px !important;
+    }
+
+    .elite-row__priority {
+        position: absolute;
+        right: 12px;
+        bottom: 10px;
+        margin: 0;
+        font-size: 10px;
+    }
+
+    .elite-row__priority-dot {
+        width: 6px;
+        height: 6px;
+    }
+
+    /* Task Meta Wrapping */
+    .elite-row__meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 4px;
+    }
+
+    .elite-tag {
+        font-size: 10px;
+        padding: 2px 6px;
+        height: 18px;
+    }
+
+    .elite-tag span {
+        font-size: 12px !important;
+    }
+
+    /* Navigation */
+    .bottom-bar {
+        height: 72px;
+        padding-bottom: 20px;
+        background: rgba(10, 10, 10, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid var(--border);
+    }
+}
+
+/* ============================================
+   16. THEME PILL TOGGLE (Settings)
+   ============================================ */
+.theme-pill-toggle {
+    display: flex;
+    align-items: center;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full, 999px);
+    padding: 4px;
+    gap: 4px;
+}
+
+.theme-pill-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full, 999px);
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+.theme-pill-option.active {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--border);
+}
+
+.theme-pill-option:hover:not(.active) {
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+}
+
+.theme-pill-icon {
+    font-size: 16px !important;
+}
+
+/* Light theme overrides for the pill */
+[data-theme="light"] .theme-pill-option.active {
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15), 0 0 0 1px var(--border);
+}
+
+/* ============================================

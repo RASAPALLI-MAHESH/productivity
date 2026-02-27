@@ -1,0 +1,179 @@
+﻿/* auth.css */
+
+   24. AUTH PAGES
+   ============================================ */
+.auth-container {
+    display: flex;
+    min-height: 100vh;
+    background: var(--bg-primary);
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-branding {
+    display: none;
+}
+
+@media (min-width: 900px) {
+    .auth-container {
+        gap: var(--space-8);
+        padding: var(--space-5);
+    }
+
+    .auth-branding {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        flex: 0 0 360px;
+    }
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 400px;
+    padding: var(--space-5) var(--space-4);
+}
+
+@media (min-width: 900px) {
+    .auth-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        padding: var(--space-5);
+        box-shadow: var(--shadow-lg);
+    }
+}
+
+.auth-card h1 {
+    font-size: var(--h2-size);
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+}
+
+.auth-card p {
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-4);
+    line-height: 1.5;
+}
+
+.auth-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.auth-error {
+    background: var(--error-light);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+    color: var(--error);
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-2);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: var(--space-3);
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+}
+
+.auth-footer a {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+.auth-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.auth-link:hover {
+    text-decoration: underline;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    opacity: 0.5;
+    transition: opacity var(--duration-fast) ease;
+    padding: 0;
+    color: var(--text-muted);
+}
+
+.password-toggle:hover {
+    opacity: 1;
+}
+
+.password-toggle .material-symbols-outlined {
+    font-size: 20px;
+}
+
+/* ============================================
+   25. OTP INPUT
+   ============================================ */
+.otp-container {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-1);
+}
+
+.otp-input {
+    width: 44px;
+    height: 52px;
+    text-align: center;
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    font-family: var(--font-family);
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+    caret-color: var(--primary);
+}
+
+.otp-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.otp-input.filled {
+    border-color: var(--primary);
+    background: var(--primary-light);
+}
+
+@media (max-width: 480px) {
+    .otp-input {
+        width: 38px;
+        height: 44px;
+        font-size: var(--font-size-lg);
+    }
+
+    .otp-container {
+        gap: 6px;
+    }
+}
+
+/* ============================================

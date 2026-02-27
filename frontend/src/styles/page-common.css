@@ -1,0 +1,312 @@
+﻿/* page-common.css */
+
+/* ============================================
+   16. PAGE HEADER
+   ============================================ */
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 20px;
+}
+
+.page-title-group {
+    flex-shrink: 0;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.page-subtitle {
+    display: none;
+    /* Hide subtitle for cleaner look */
+}
+
+/* --- Search Bar Upgrade --- */
+.task-filters-unified {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 0 4px;
+}
+
+.task-search-container {
+    flex: 1;
+    max-width: 400px;
+}
+
+.priority-select-container {
+    min-width: 140px;
+}
+
+.search-input {
+    width: 100%;
+    height: 38px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0 12px 0 36px;
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.search-input:focus {
+    border-color: var(--primary);
+    background: var(--bg-tertiary);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    color: var(--text-muted);
+    font-size: 18px;
+}
+
+.tasks-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+@media (max-width: 1024px) {
+    .task-search-container {
+        max-width: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .tasks-header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .task-search-container {
+        max-width: none;
+        order: 2;
+    }
+
+    .page-title-group {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+/* ============================================
+   17. FILTERS
+   ============================================ */
+.filter-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin-bottom: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.filter-bar .input {
+    min-width: 140px;
+    width: auto;
+}
+
+/* ============================================
+   18. PAGINATION
+   ============================================ */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin-top: var(--space-4);
+}
+
+.pagination-btn {
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: all var(--duration-fast) ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.pagination-btn.active {
+    background: var(--primary);
+    color: #000;
+    border-color: var(--primary);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* ============================================
+   19. LOADER & SKELETON
+   ============================================ */
+.loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-10);
+}
+
+.spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: var(--radius-full);
+    animation: spin 0.6s linear infinite;
+}
+
+/* ============================================
+   20. EMPTY STATE
+   ============================================ */
+.empty-state {
+    text-align: center;
+    padding: var(--space-8) var(--space-4);
+    color: var(--text-muted);
+}
+
+.empty-state .empty-icon {
+    margin-bottom: var(--space-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-state .empty-icon .material-symbols-outlined {
+    font-size: 40px;
+    color: var(--text-muted);
+    opacity: 0.6;
+}
+
+.empty-state h3 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.empty-state p {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    max-width: 280px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+/* ============================================
+   21. SETTINGS
+   ============================================ */
+.settings-container {
+    max-width: 640px;
+}
+
+.settings-section {
+    margin-bottom: var(--space-5);
+}
+
+.settings-section-title {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--space-2);
+}
+
+.settings-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px var(--space-2);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-1);
+    transition: border-color var(--duration-fast) ease;
+}
+
+.settings-item:hover {
+    border-color: var(--border-hover);
+}
+
+.settings-item-label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.settings-item-desc {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.settings-danger-zone {
+    border: 1px solid rgba(248, 113, 113, 0.2);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2);
+}
+
+/* ============================================
+   22. TOAST
+   ============================================ */
+.toast-container {
+    position: fixed;
+    bottom: var(--space-4);
+    right: var(--space-4);
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.toast {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-lg);
+    animation: modalSlideUp var(--duration-base) var(--ease-out);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.toast.success {
+    border-left: 3px solid var(--success);
+}
+
+.toast.error {
+    border-left: 3px solid var(--error);
+}
+
+

@@ -1,0 +1,70 @@
+﻿/* menu.css */
+
+/* ============================================
+   9. MENU COMPONENT OVERLAY
+   ============================================ */
+.menu-container {
+    position: relative;
+    display: inline-block;
+}
+
+.menu-trigger {
+    cursor: pointer;
+    display: inline-flex;
+}
+
+.menu-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 6px;
+    min-width: 180px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8), 0 0 0 1px var(--border);
+    z-index: 9999;
+    /* Elite highest priority overlay */
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    animation: fadeIn var(--duration-fast) ease-out;
+}
+
+.menu-pos-left {
+    right: 0;
+}
+
+.menu-pos-right {
+    left: 0;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 14px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: all var(--duration-fast) ease;
+}
+
+.menu-item:hover {
+    background: var(--bg-tertiary);
+    color: var(--primary);
+}
+
+.menu-item-critical {
+    color: var(--error);
+}
+
+.menu-item-critical:hover {
+    background: rgba(255, 69, 58, 0.1);
+    color: #ff554f;
+}
+
