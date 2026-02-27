@@ -13,104 +13,129 @@ export function Settings() {
     };
 
     return (
-        <div>
-            <div className="page-header">
-                <div>
+        <div className="settings-page">
+            {/* ── Page Header ── */}
+            <header className="page-header--elite">
+                <div className="page-title-group">
                     <h1 className="page-title">Settings</h1>
-                    <p className="page-subtitle">Manage your account and preferences</p>
+                    <p className="page-subtitle--elite">Manage your account and preferences</p>
                 </div>
-            </div>
+            </header>
 
-            {/* ... rest of the file ... */}
-
-            <div className="settings-container">
+            <div className="settings-container--elite">
                 {/* Profile Section */}
-                <div className="settings-section">
-                    <div className="settings-section-title">Profile</div>
-                    <div className="settings-item">
-                        <div>
-                            <div className="settings-item-label">Display Name</div>
-                            <div className="settings-item-desc">{user?.displayName || 'Not set'}</div>
-                        </div>
+                <section className="settings-section-card">
+                    <div className="settings-section-header">
+                        <h2 className="settings-section-title">Profile</h2>
                     </div>
-                    <div className="settings-item">
-                        <div>
-                            <div className="settings-item-label">Email</div>
-                            <div className="settings-item-desc">{user?.email}</div>
-                        </div>
-                    </div>
-                    {profile?.bio && (
-                        <div className="settings-item">
-                            <div>
-                                <div className="settings-item-label">Bio</div>
-                                <div className="settings-item-desc">{profile.bio}</div>
+                    <div className="settings-section-content">
+                        <div className="settings-row">
+                            <div className="settings-row-info">
+                                <span className="settings-row-label">Display Name</span>
+                                <span className="settings-row-desc">{user?.displayName || 'Not set'}</span>
                             </div>
                         </div>
-                    )}
-                </div>
+                        <div className="settings-row">
+                            <div className="settings-row-info">
+                                <span className="settings-row-label">Email Address</span>
+                                <span className="settings-row-desc">{user?.email}</span>
+                            </div>
+                        </div>
+                        {profile?.bio && (
+                            <div className="settings-row">
+                                <div className="settings-row-info">
+                                    <span className="settings-row-label">Bio</span>
+                                    <span className="settings-row-desc">{profile.bio}</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </section>
 
                 {/* Preferences Section */}
-                <div className="settings-section">
-                    <div className="settings-section-title">Preferences</div>
-                    <div className="settings-item">
-                        <div>
-                            <div className="settings-item-label">Theme</div>
-                            <div className="settings-item-desc">Choose your preferred appearance</div>
-                        </div>
-                        <ThemeToggle variant="full" />
+                <section className="settings-section-card">
+                    <div className="settings-section-header">
+                        <h2 className="settings-section-title">Preferences</h2>
                     </div>
-                    <div className="settings-item">
-                        <div>
-                            <div className="settings-item-label">Tasks per page</div>
-                            <div className="settings-item-desc">20 tasks</div>
+                    <div className="settings-section-content">
+                        <div className="settings-row">
+                            <div className="settings-row-info">
+                                <span className="settings-row-label">Appearance</span>
+                                <span className="settings-row-desc">Choose your preferred application theme</span>
+                            </div>
+                            <ThemeToggle variant="full" />
+                        </div>
+                        <div className="settings-row">
+                            <div className="settings-row-info">
+                                <span className="settings-row-label">Pagination</span>
+                                <span className="settings-row-desc">Current limit: 20 tasks per page</span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </section>
 
                 {/* Data Section */}
-                <div className="settings-section">
-                    <div className="settings-section-title">Data</div>
-                    <div className="settings-item">
-                        <div>
-                            <div className="settings-item-label">Export Data</div>
-                            <div className="settings-item-desc">Download all your tasks and habits as JSON</div>
-                        </div>
-                        <button className="btn btn-secondary btn-sm">Export</button>
+                <section className="settings-section-card">
+                    <div className="settings-section-header">
+                        <h2 className="settings-section-title">Data Management</h2>
                     </div>
-                </div>
+                    <div className="settings-section-content">
+                        <div className="settings-row">
+                            <div className="settings-row-info">
+                                <span className="settings-row-label">Export Data</span>
+                                <span className="settings-row-desc">Download a complete archive of your tasks and habits in JSON format</span>
+                            </div>
+                            <button className="btn btn-secondary btn-sm">Export</button>
+                        </div>
+                    </div>
+                </section>
 
                 {/* Account Section */}
-                <div className="settings-section">
-                    <div className="settings-section-title">Account</div>
-                    <div className="settings-item">
-                        <div>
-                            <div className="settings-item-label">Sign Out</div>
-                            <div className="settings-item-desc">Sign out of your account on this device</div>
-                        </div>
-                        <button className="btn btn-secondary btn-sm" onClick={handleLogout}>Sign Out</button>
+                <section className="settings-section-card">
+                    <div className="settings-section-header">
+                        <h2 className="settings-section-title">Account</h2>
                     </div>
-
-                    <div className="settings-danger-zone" style={{ marginTop: 'var(--space-4)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div>
-                                <div className="settings-item-label" style={{ color: 'var(--danger)' }}>Delete Account</div>
-                                <div className="settings-item-desc">Permanently delete your account and all data</div>
+                    <div className="settings-section-content">
+                        <div className="settings-row">
+                            <div className="settings-row-info">
+                                <span className="settings-row-label">Session Control</span>
+                                <span className="settings-row-desc">Securely sign out of your current session on this device</span>
                             </div>
-                            <button className="btn btn-danger btn-sm">Delete</button>
+                            <button className="btn btn-secondary btn-sm" onClick={handleLogout}>Sign Out</button>
                         </div>
                     </div>
-                </div>
+                </section>
+
+                {/* Danger Zone */}
+                <section className="settings-section-card settings-danger-card">
+                    <div className="settings-section-header">
+                        <h2 className="settings-section-title">Danger Zone</h2>
+                    </div>
+                    <div className="settings-section-content">
+                        <div className="settings-row">
+                            <div className="settings-row-info">
+                                <span className="settings-row-label" style={{ color: 'var(--error)' }}>Delete Account</span>
+                                <span className="settings-row-desc">Permanently erase your account, tasks, habits, and all associated data. This action is irreversible.</span>
+                            </div>
+                            <button className="btn btn-danger btn-sm">Delete Forever</button>
+                        </div>
+                    </div>
+                </section>
 
                 {/* About Section */}
-                <div className="settings-section">
-                    <div className="settings-section-title">About</div>
-                    <div className="settings-item">
-                        <div>
-                            <div className="settings-item-label">Productiv</div>
-                            <div className="settings-item-desc">Version 1.0.0</div>
+                <section className="settings-section-card">
+                    <div className="settings-section-header">
+                        <h2 className="settings-section-title">About Productiv</h2>
+                    </div>
+                    <div className="settings-section-content">
+                        <div className="settings-row">
+                            <div className="settings-row-info">
+                                <span className="settings-row-label">Version</span>
+                                <span className="settings-row-desc">Elite Release v1.0.0</span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </section>
             </div>
         </div>
     );

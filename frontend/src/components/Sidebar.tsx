@@ -35,7 +35,9 @@ export function Sidebar({ isOpen, onToggle, isMobile }: SidebarProps) {
             <aside className={sidebarClass}>
                 <div className="sidebar-header">
                     <div className="sidebar-logo">
-                        <span className="logo-icon material-symbols-outlined icon-filled" style={{ fontSize: 24 }}>bolt</span>
+                        <div className="logo-icon">
+                            <span className="material-symbols-outlined icon-filled" style={{ fontSize: 20 }}>bolt</span>
+                        </div>
                         <h1>Productiv</h1>
                     </div>
                     {!isMobile && (
@@ -69,7 +71,7 @@ export function Sidebar({ isOpen, onToggle, isMobile }: SidebarProps) {
                 </nav>
 
                 <div className="sidebar-footer">
-                    <div className="sidebar-user" title={!isOpen ? (user?.displayName || user?.email || 'User') : undefined}>
+                    <div className="sidebar-user" onClick={() => navigate('/settings')} title={!isOpen ? (user?.displayName || user?.email || 'User') : undefined}>
                         <div className="user-avatar">
                             {user?.displayName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
                         </div>
@@ -79,9 +81,8 @@ export function Sidebar({ isOpen, onToggle, isMobile }: SidebarProps) {
                         </div>
                     </div>
                     <button
-                        className="sidebar-link"
+                        className="sidebar-link logout-link"
                         onClick={handleLogout}
-                        style={{ marginTop: 4 }}
                         title={!isOpen ? 'Logout' : undefined}
                     >
                         <span className="link-icon material-symbols-outlined">logout</span>
