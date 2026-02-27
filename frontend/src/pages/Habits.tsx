@@ -106,8 +106,8 @@ export function Habits() {
         <div className={`habits-page-container ${focusMode ? 'focus-mode' : ''}`}>
             {!focusMode && <HabitsIntelligenceHeader />}
 
-            <div className="habits-toolbar-elite">
-                <div className="filter-group-elite">
+            <div className="command-bar--elite" style={{ marginBottom: '24px', justifyContent: 'space-between', display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+                <div className="filter-group--elite" style={{ display: 'flex', alignItems: 'center', gap: '16px', overflowX: 'auto', flex: 1 }}>
                     <div className="segmented-control-elite">
                         <button
                             className={`seg-btn ${viewMode === 'weekly' ? 'active' : ''}`}
@@ -123,7 +123,7 @@ export function Habits() {
                         </button>
                     </div>
 
-                    <div className="vertical-divider" style={{ width: '1px', height: '20px', background: 'var(--p-border)' }} />
+                    <div className="vertical-divider" style={{ width: '1px', height: '20px', background: 'var(--border)' }} />
 
                     <div className="category-pills">
                         {categories.map(cat => (
@@ -139,7 +139,7 @@ export function Habits() {
                     </div>
                 </div>
 
-                <div className="action-group-elite">
+                <div className="action-group--elite" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <button
                         className={`btn-elite ${focusMode ? 'active' : ''}`}
                         onClick={() => setFocusMode(!focusMode)}
@@ -175,12 +175,12 @@ export function Habits() {
                     ))}
                 </div>
             ) : (
-                <div className="empty-state" style={{ background: 'var(--bg-secondary)', border: '1px dashed var(--border)', borderRadius: '24px', padding: '64px' }}>
-                    <div className="empty-icon" style={{ background: 'var(--primary-light)', color: 'var(--primary)' }}>
-                        <span className="material-symbols-outlined" style={{ fontSize: '48px' }}>spa</span>
+                <div className="empty-state--elite">
+                    <div className="empty-icon">
+                        <span className="material-symbols-outlined">spa</span>
                     </div>
-                    <h3 style={{ fontSize: '24px', fontWeight: '800', marginTop: '24px' }}>Start with 1 small habit</h3>
-                    <p style={{ color: 'var(--text-muted)', maxWidth: '400px', margin: '12px auto 32px' }}>
+                    <h3>Start with 1 small habit</h3>
+                    <p>
                         "Tiny changes, remarkable results." Build your first streak today and transform your trajectory.
                     </p>
                     <button className="btn btn-primary btn-lg" onClick={() => setShowCreate(true)} style={{ width: 'auto', padding: '0 32px' }}>

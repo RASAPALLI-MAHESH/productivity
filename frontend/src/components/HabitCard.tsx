@@ -90,7 +90,7 @@ export const HabitCard = memo(({ habit, logs, isActive, onComplete, onDelete, on
                 <div className="stat-item-p">
                     <span className="label">14D Trend</span>
                     <div className="sparkline-container">
-                        <svg viewBox="0 0 140 30" width="100%" height="100%" preserveAspectRatio="none">
+                        <svg viewBox="0 0 140 30" width="100%" height="100%" preserveAspectRatio="none" style={{ overflow: 'visible' }}>
                             <path
                                 d={`M ${sparklineData.map((v, i) => `${i * 10},${30 - v * 25}`).join(' L ')}`}
                                 fill="none"
@@ -98,6 +98,7 @@ export const HabitCard = memo(({ habit, logs, isActive, onComplete, onDelete, on
                                 strokeWidth="2.5"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
+                                filter="drop-shadow(0 4px 6px rgba(63, 140, 255, 0.4))"
                             />
                         </svg>
                     </div>
