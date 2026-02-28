@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, KeyboardEvent, ClipboardEvent, FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
+import { AuthLayout } from '../components/AuthLayout';
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN = 30; // seconds
@@ -98,70 +99,63 @@ export function VerifyOtp() {
 
     const isComplete = digits.every((d) => d !== '');
 
+    const footerNode = (
+        <>
+            Wrong email? <Link to="/signup">Go back</Link>
+        </>
+    );
+
     return (
-        <div className="auth-container">
-            <div className="auth-card" style={{ maxWidth: 440, textAlign: 'center' }}>
-                <div style={{ marginBottom: 'var(--space-2)' }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'var(--text-secondary)' }}>lock</span>
+        <AuthLayout
+            title="Check your email"
+            subtitle={`We sent a 6-digit code to ${maskedEmail || pendingEmail}`}
+            error={error}
+            footer={footerNode}
+        >
+            <form onSubmit={handleSubmit}>
+                <div className="otp-container">
+                    {digits.map((digit, i) => (
+                        <input
+                            key={i}
+                            ref={(el) => { inputRefs.current[i] = el; }}
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={1}
+                            className={`otp-input ${digit ? 'filled' : ''}`}
+                            value={digit}
+                            onChange={(e) => handleChange(i, e.target.value)}
+                            onKeyDown={(e) => handleKeyDown(i, e)}
+                            onPaste={i === 0 ? handlePaste : undefined}
+                            autoComplete="one-time-code"
+                        />
+                    ))}
                 </div>
-                <h1>Check your email</h1>
-                <p>
-                    We sent a 6-digit code to{' '}
-                    <strong style={{ color: 'var(--text-primary)' }}>{maskedEmail || pendingEmail}</strong>
-                </p>
 
-                {error && <div className="auth-error">{error}</div>}
+                <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={loading || !isComplete}
+                    style={{ marginTop: 'var(--space-4)' }}
+                >
+                    {loading ? 'Verifying...' : 'Verify Email'}
+                </button>
+            </form>
 
-                <form onSubmit={handleSubmit} style={{ marginTop: 'var(--space-6)' }}>
-                    {/* OTP Input Boxes */}
-                    <div className="otp-container">
-                        {digits.map((digit, i) => (
-                            <input
-                                key={i}
-                                ref={(el) => { inputRefs.current[i] = el; }}
-                                type="text"
-                                inputMode="numeric"
-                                maxLength={1}
-                                className={`otp-input ${digit ? 'filled' : ''}`}
-                                value={digit}
-                                onChange={(e) => handleChange(i, e.target.value)}
-                                onKeyDown={(e) => handleKeyDown(i, e)}
-                                onPaste={i === 0 ? handlePaste : undefined}
-                                autoComplete="one-time-code"
-                            />
-                        ))}
-                    </div>
-
+            <div style={{ marginTop: 'var(--space-4)', fontSize: 'var(--font-size-sm)', color: 'var(--text-muted)', textAlign: 'center' }}>
+                Didn't receive the code?{' '}
+                {countdown > 0 ? (
+                    <span>Resend in <strong style={{ color: 'var(--text-secondary)' }}>{countdown}s</strong></span>
+                ) : (
                     <button
-                        type="submit"
-                        className="btn btn-primary btn-lg"
-                        disabled={loading || !isComplete}
-                        style={{ marginTop: 'var(--space-6)', width: '100%' }}
+                        onClick={handleResend}
+                        className="auth-link"
+                        disabled={loading}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                     >
-                        {loading ? 'Verifying...' : 'Verify Email'}
+                        Resend OTP
                     </button>
-                </form>
-
-                <div style={{ marginTop: 'var(--space-6)', fontSize: 'var(--font-size-sm)', color: 'var(--text-muted)' }}>
-                    Didn't receive the code?{' '}
-                    {countdown > 0 ? (
-                        <span>Resend in <strong style={{ color: 'var(--text-secondary)' }}>{countdown}s</strong></span>
-                    ) : (
-                        <button
-                            onClick={handleResend}
-                            className="auth-link"
-                            disabled={loading}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-                        >
-                            Resend OTP
-                        </button>
-                    )}
-                </div>
-
-                <div className="auth-footer">
-                    Wrong email? <Link to="/signup">Go back</Link>
-                </div>
+                )}
             </div>
-        </div>
+        </AuthLayout>
     );
 }

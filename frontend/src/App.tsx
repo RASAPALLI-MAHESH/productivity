@@ -21,6 +21,7 @@ const Habits = lazy(() => import('./pages/Habits').then((m) => ({ default: m.Hab
 const Deadlines = lazy(() => import('./pages/Deadlines').then((m) => ({ default: m.Deadlines })));
 const Onboarding = lazy(() => import('./pages/Onboarding').then((m) => ({ default: m.Onboarding })));
 const Settings = lazy(() => import('./pages/Settings').then((m) => ({ default: m.Settings })));
+const Landing = lazy(() => import('./pages/Landing').then((m) => ({ default: m.Landing })));
 
 function AppLoader() {
     return (
@@ -56,6 +57,7 @@ function App() {
                 <Suspense fallback={<AppLoader />}>
                     <Routes>
                         {/* Public auth routes */}
+                        <Route path="/" element={user ? <Navigate to="/tasks" replace /> : <Landing />} />
                         <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
                         <Route path="/signup" element={user ? <Navigate to="/" replace /> : <Signup />} />
                         <Route path="/verify-otp" element={<VerifyOtp />} />
@@ -66,7 +68,6 @@ function App() {
 
                         {/* Protected routes */}
                         <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-                            <Route index element={profile && !profile.onboarded ? <Navigate to="/onboarding" replace /> : <Tasks />} />
                             <Route path="tasks" element={profile && !profile.onboarded ? <Navigate to="/onboarding" replace /> : <Tasks />} />
                             <Route path="habits" element={profile && !profile.onboarded ? <Navigate to="/onboarding" replace /> : <Habits />} />
                             <Route path="deadlines" element={profile && !profile.onboarded ? <Navigate to="/onboarding" replace /> : <Deadlines />} />

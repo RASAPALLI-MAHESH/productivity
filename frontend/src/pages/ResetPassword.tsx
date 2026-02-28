@@ -1,6 +1,7 @@
 import { useState, FormEvent, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
+import { AuthLayout } from '../components/AuthLayout';
 
 function getPasswordStrength(password: string): { score: number; label: string; color: string } {
     let score = 0;
@@ -47,112 +48,102 @@ export function ResetPassword() {
 
     if (success) {
         return (
-            <div className="auth-container">
-                <div className="auth-card" style={{ maxWidth: 440, textAlign: 'center' }}>
-                    <div style={{ marginBottom: 'var(--space-2)' }}>
-                        <span className="material-symbols-outlined icon-filled" style={{ fontSize: 40, color: 'var(--success)' }}>check_circle</span>
-                    </div>
-                    <h1>Password reset!</h1>
-                    <p>Your password has been updated successfully. You can now sign in with your new password.</p>
-                    <button
-                        className="btn btn-primary btn-lg"
-                        onClick={() => navigate('/login')}
-                        style={{ marginTop: 'var(--space-6)', width: '100%' }}
-                    >
-                        Go to Sign In
-                    </button>
-                </div>
-            </div>
+            <AuthLayout
+                title="Password reset!"
+                subtitle="Your password has been updated successfully. You can now sign in with your new password."
+            >
+                <button
+                    className="btn-primary"
+                    onClick={() => navigate('/login')}
+                    style={{ marginTop: 'var(--space-2)' }}
+                >
+                    Go to Sign In
+                </button>
+            </AuthLayout>
         );
     }
 
     return (
-        <div className="auth-container">
-            <div className="auth-card" style={{ maxWidth: 440, textAlign: 'center' }}>
-                <div style={{ marginBottom: 'var(--space-2)' }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'var(--text-secondary)' }}>lock</span>
-                </div>
-                <h1>Set new password</h1>
-                <p>Choose a strong password to secure your account</p>
-
-                {error && <div className="auth-error">{error}</div>}
-
-                <form onSubmit={handleSubmit} style={{ textAlign: 'left', marginTop: 'var(--space-6)' }}>
-                    <div className="input-group">
-                        <label className="input-label" htmlFor="newPassword">New Password</label>
-                        <div style={{ position: 'relative' }}>
-                            <input
-                                id="newPassword"
-                                type={showPassword ? 'text' : 'password'}
-                                className="input"
-                                placeholder="Min 8 characters"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                minLength={8}
-                                autoComplete="new-password"
-                                autoFocus
-                                style={{ paddingRight: 48 }}
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="password-toggle"
-                                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                            >
-                                <span className="material-symbols-outlined">{showPassword ? 'visibility_off' : 'visibility'}</span>
-                            </button>
-                        </div>
-                        {/* Strength Meter */}
-                        {password && (
-                            <div style={{ marginTop: 'var(--space-2)' }}>
-                                <div style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
-                                    {[1, 2, 3, 4, 5].map((i) => (
-                                        <div key={i} style={{
-                                            flex: 1, height: 3,
-                                            borderRadius: 'var(--radius-full)',
-                                            background: i <= strength.score ? strength.color : 'var(--border)',
-                                            transition: 'all 200ms ease',
-                                        }} />
-                                    ))}
-                                </div>
-                                <span style={{ fontSize: 'var(--font-size-xs)', color: strength.color }}>
-                                    {strength.label}
-                                </span>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="input-group">
-                        <label className="input-label" htmlFor="confirmNewPassword">Confirm Password</label>
+        <AuthLayout
+            title="Set new password"
+            subtitle="Choose a strong password to secure your account"
+            error={error}
+        >
+            <form onSubmit={handleSubmit}>
+                <div className="input-group">
+                    <label className="input-label" htmlFor="newPassword">New Password</label>
+                    <div style={{ position: 'relative' }}>
                         <input
-                            id="confirmNewPassword"
+                            id="newPassword"
                             type={showPassword ? 'text' : 'password'}
                             className="input"
-                            placeholder="Re-enter new password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            placeholder="Min 8 characters"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             required
+                            minLength={8}
                             autoComplete="new-password"
-                            style={{ borderColor: !passwordsMatch ? 'var(--critical)' : undefined }}
+                            autoFocus
+                            style={{ paddingRight: 48 }}
                         />
-                        {!passwordsMatch && (
-                            <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--critical)', marginTop: 'var(--space-1)' }}>
-                                Passwords do not match
-                            </span>
-                        )}
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="password-toggle"
+                            aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        >
+                            <span className="material-symbols-outlined">{showPassword ? 'visibility_off' : 'visibility'}</span>
+                        </button>
                     </div>
+                    {/* Strength Meter */}
+                    {password && (
+                        <div style={{ marginTop: 'var(--space-2)', paddingLeft: 4 }}>
+                            <div style={{ display: 'flex', gap: 4, marginBottom: 4 }}>
+                                {[1, 2, 3, 4, 5].map((i) => (
+                                    <div key={i} style={{
+                                        flex: 1, height: 4,
+                                        borderRadius: 'var(--radius-sm)',
+                                        background: i <= strength.score ? strength.color : 'var(--border)',
+                                        transition: 'all 200ms ease',
+                                    }} />
+                                ))}
+                            </div>
+                            <span style={{ fontSize: 'var(--font-size-xs)', color: strength.color }}>
+                                {strength.label}
+                            </span>
+                        </div>
+                    )}
+                </div>
 
-                    <button
-                        type="submit"
-                        className="btn btn-primary btn-lg"
-                        disabled={loading || !passwordsMatch || strength.score < 2}
-                        style={{ marginTop: 'var(--space-2)' }}
-                    >
-                        {loading ? 'Resetting...' : 'Reset Password'}
-                    </button>
-                </form>
-            </div>
-        </div>
+                <div className="input-group">
+                    <label className="input-label" htmlFor="confirmNewPassword">Confirm Password</label>
+                    <input
+                        id="confirmNewPassword"
+                        type={showPassword ? 'text' : 'password'}
+                        className="input"
+                        placeholder="Re-enter new password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                        autoComplete="new-password"
+                        style={{ borderColor: !passwordsMatch ? 'var(--critical)' : undefined }}
+                    />
+                    {!passwordsMatch && (
+                        <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--critical)', marginTop: 'var(--space-1)', paddingLeft: 4 }}>
+                            Passwords do not match
+                        </span>
+                    )}
+                </div>
+
+                <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={loading || !passwordsMatch || strength.score < 2}
+                    style={{ marginTop: 'var(--space-2)' }}
+                >
+                    {loading ? 'Resetting...' : 'Reset Password'}
+                </button>
+            </form>
+        </AuthLayout>
     );
 }
