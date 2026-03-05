@@ -56,7 +56,7 @@ export const HabitInlineCreate: React.FC = () => {
     if (!isExpanded) {
         return (
             <button className="habit-inline-create-trigger" onClick={() => setIsExpanded(true)}>
-                <span className="material-icons">add</span>
+                <span className="material-symbols-outlined">add</span>
                 Add Habit
             </button>
         );
