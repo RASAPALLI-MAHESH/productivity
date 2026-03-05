@@ -47,8 +47,6 @@
 /* Task list, rows, command bar, pagination */
 @import './styles/habits.css';
 /* Habits page, cards, analytics */
-@import './styles/habits-spacing.css';
-/* Habits spacing normalisation */
 @import './styles/deadlines.css';
 /* Deadline cards + timeline */
 @import './styles/settings.css';

@@ -4,62 +4,49 @@ import { Habit } from '../types';
 
 interface HabitRowProps {
     habit: Habit;
+    index: number;
     onSparklineClick: () => void;
 }
 
-export const HabitRow: React.FC<HabitRowProps> = ({ habit, onSparklineClick }) => {
+const WEEKDAY_LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+export const HabitRow: React.FC<HabitRowProps> = ({ habit, index, onSparklineClick }) => {
     const { toggleCompletion, updateHabit, deleteHabit, habitLogs } = useHabitStore();
     const [isEditing, setIsEditing] = useState(false);
     const [editName, setEditName] = useState(habit.name);
-    const [showMenu, setShowMenu] = useState(false);
-    const [showXP, setShowXP] = useState(false);
-    const menuRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const todayStr = new Date().toISOString().split('T')[0];
     const logs = habitLogs[habit.id] || [];
     const isCompletedToday = logs.some((l) => l.date === todayStr && l.completed);
 
-    // Weekday Tracker Logic (M T W T F S S)
-    const getWeekdayCircles = () => {
-        const circles = [];
+    // Build weekly matrix (Mon-Sun)
+    const getWeekMatrix = () => {
         const today = new Date();
         const startOfWeek = new Date(today);
-        startOfWeek.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1)); // Monday
+        startOfWeek.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
 
-        for (let i = 0; i < 7; i++) {
+        return WEEKDAY_LABELS.map((label, i) => {
             const loopDate = new Date(startOfWeek);
             loopDate.setDate(startOfWeek.getDate() + i);
             const dateStr = loopDate.toISOString().split('T')[0];
             const completed = logs.some(l => l.date === dateStr && l.completed);
+            const isToday = dateStr === todayStr;
 
-            circles.push(
+            return (
                 <div
                     key={dateStr}
+                    className={`matrix-day${completed ? ' filled' : ''}${isToday ? ' today' : ''}`}
                     title={dateStr}
-                    className={`weekday-circle ${completed ? 'completed' : ''} ${dateStr === todayStr ? 'today' : ''}`}
                 >
-                    {completed ? '●' : '○'}
+                    {label}
                 </div>
             );
-        }
-        return circles;
+        });
     };
 
     useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-                setShowMenu(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
-    useEffect(() => {
-        if (isEditing && inputRef.current) {
-            inputRef.current.focus();
-        }
+        if (isEditing && inputRef.current) inputRef.current.focus();
     }, [isEditing]);
 
     const handleSaveEdit = () => {
@@ -73,101 +60,104 @@ export const HabitRow: React.FC<HabitRowProps> = ({ habit, onSparklineClick }) =
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') handleSaveEdit();
-        if (e.key === 'Escape') {
-            setEditName(habit.name);
-            setIsEditing(false);
-        }
+        if (e.key === 'Escape') { setEditName(habit.name); setIsEditing(false); }
     };
 
     const handleComplete = (e: React.MouseEvent) => {
         e.stopPropagation();
         if (isCompletedToday) return;
-
-        setShowXP(true);
         toggleCompletion(habit.id, todayStr);
-        setTimeout(() => setShowXP(false), 1500);
     };
 
     return (
-        <div className="habit-row" onClick={() => !isEditing && onSparklineClick()}>
+        <div
+            className={`habit-row animate-row-enter${isCompletedToday ? ' is-completed' : ''}`}
+            style={{ animationDelay: `${index * 40}ms` }}
+        >
+            {/* Checkbox */}
+            <button
+                className={`habit-check${isCompletedToday ? ' completed' : ''}`}
+                onClick={handleComplete}
+                disabled={isCompletedToday}
+                aria-label={isCompletedToday ? 'Completed' : 'Mark as complete'}
+            >
+                <span className="material-symbols-outlined">check</span>
+            </button>
 
-            {showXP && <div className="xp-float">+XP</div>}
-
-            <div className="habit-row-left">
-                <button
-                    className={`habit-checkbox ${isCompletedToday ? 'checked' : ''}`}
-                    onClick={handleComplete}
-                    disabled={isCompletedToday}
-                >
-                    {isCompletedToday && <span className="material-icons">check</span>}
-                </button>
-
-                <div className="habit-row-info">
-                    {isEditing ? (
-                        <input
-                            ref={inputRef}
-                            type="text"
-                            className="habit-inline-edit-input"
-                            value={editName}
-                            onChange={(e) => setEditName(e.target.value)}
-                            onBlur={handleSaveEdit}
-                            onKeyDown={handleKeyDown}
-                            onClick={(e) => e.stopPropagation()}
-                        />
-                    ) : (
-                        <div className="habit-name" onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}>
-                            {habit.name}
-                        </div>
-                    )}
-                    <div className="habit-meta">
-                        <span className="habit-category">{habit.category || 'General'}</span>
-                        {habit.currentStreak > 0 && (
-                            <span className="habit-streak">
-                                🔥 {habit.currentStreak}
-                            </span>
-                        )}
-                    </div>
-                </div>
+            {/* Info */}
+            <div className="habit-info">
+                {isEditing ? (
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        className="habit-inline-edit"
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        onBlur={handleSaveEdit}
+                        onKeyDown={handleKeyDown}
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                            background: 'transparent',
+                            border: 'none',
+                            borderBottom: '1px solid var(--border-hover)',
+                            color: 'var(--text-primary)',
+                            fontSize: '15px',
+                            fontWeight: 500,
+                            outline: 'none',
+                            padding: '0 0 2px',
+                            width: '100%',
+                        }}
+                    />
+                ) : (
+                    <span
+                        className="habit-name"
+                        onDoubleClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
+                    >
+                        {habit.name}
+                    </span>
+                )}
+                <span className="habit-category">{habit.category || 'General'}</span>
             </div>
 
-            <div className="habit-row-center">
-                <div className="weekday-tracker">
-                    <div className="weekday-labels">
-                        <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
-                    </div>
-                    <div className="weekday-circles">
-                        {getWeekdayCircles()}
-                    </div>
-                </div>
+            {/* Weekly Matrix */}
+            <div className="habit-matrix">
+                {getWeekMatrix()}
             </div>
 
-            <div className="habit-row-right">
+            {/* Streak */}
+            <div className={`habit-streak${habit.currentStreak >= 7 ? ' hot' : ''}`}>
+                {habit.currentStreak > 0 && (
+                    <>
+                        <span className="material-symbols-outlined">local_fire_department</span>
+                        {habit.currentStreak}
+                    </>
+                )}
+            </div>
+
+            {/* Hover Actions */}
+            <div className="habit-actions">
                 <button
-                    className="habit-sparkline-btn"
+                    className="btn-icon-subtle"
                     onClick={(e) => { e.stopPropagation(); onSparklineClick(); }}
                     title="View Analytics"
                 >
-                    <span className="material-icons">insights</span>
+                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>insights</span>
                 </button>
-
-                <div className="habit-menu-container" ref={menuRef}>
-                    <button
-                        className="habit-menu-btn"
-                        onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
-                    >
-                        •••
-                    </button>
-                    {showMenu && (
-                        <div className="habit-dropdown-menu">
-                            <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); setShowMenu(false); }}>
-                                Edit Name
-                            </button>
-                            <button className="delete-btn" onClick={(e) => { e.stopPropagation(); deleteHabit(habit.id); setShowMenu(false); }}>
-                                Delete
-                            </button>
-                        </div>
-                    )}
-                </div>
+                <button
+                    className="btn-icon-subtle"
+                    onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
+                    title="Edit"
+                >
+                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>edit</span>
+                </button>
+                <button
+                    className="btn-icon-subtle"
+                    onClick={(e) => { e.stopPropagation(); deleteHabit(habit.id); }}
+                    title="Delete"
+                    style={{ color: 'var(--error)' }}
+                >
+                    <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
+                </button>
             </div>
         </div>
     );
