@@ -55,6 +55,10 @@ public class TaskService {
             }).collect(Collectors.toList()));
         }
 
+        if (dto.getExternalLinks() != null) {
+            task.setExternalLinks(dto.getExternalLinks());
+        }
+
         Task saved = taskRepository.save(userId, task);
         return toDTO(saved);
     }
@@ -96,6 +100,10 @@ public class TaskService {
                 map.put("completed", s.isCompleted());
                 return map;
             }).collect(Collectors.toList()));
+        }
+
+        if (dto.getExternalLinks() != null) {
+            existing.setExternalLinks(dto.getExternalLinks());
         }
 
         existing.setUpdatedAt(Timestamp.now());
@@ -144,6 +152,10 @@ public class TaskService {
                 sub.setCompleted((Boolean) s.get("completed"));
                 return sub;
             }).collect(Collectors.toList()));
+        }
+
+        if (task.getExternalLinks() != null) {
+            dto.setExternalLinks(task.getExternalLinks());
         }
 
         if (task.getCreatedAt() != null) {

@@ -5,10 +5,12 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
+import java.util.Map;
 
 public class TaskDTO {
     private String id;
     private List<SubtaskDTO> subtasks;
+    private List<Map<String, String>> externalLinks;
 
     @NotBlank(message = "Title is required")
     @Size(max = 200, message = "Title must be under 200 characters")
@@ -47,4 +49,6 @@ public class TaskDTO {
     public void setSubtasks(List<SubtaskDTO> subtasks) { this.subtasks = subtasks; }
     public String getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
+    public List<Map<String, String>> getExternalLinks() { return externalLinks; }
+    public void setExternalLinks(List<Map<String, String>> externalLinks) { this.externalLinks = externalLinks; }
 }

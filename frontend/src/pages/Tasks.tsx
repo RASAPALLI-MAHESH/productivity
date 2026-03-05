@@ -47,11 +47,10 @@ export function Tasks() {
         fetchTasks({
             page,
             size: 20,
-            ...(filterPriority && { priority: filterPriority }),
             sortBy: 'createdAt',
             sortDirection: 'desc',
         });
-    }, [fetchTasks, page, filterPriority]);
+    }, [fetchTasks, page]);
 
     // Keyboard shortcuts
     useEffect(() => {
@@ -94,6 +93,9 @@ export function Tasks() {
     }, [searchQuery]);
 
     const filteredTasks = tasks.filter(task => {
+        // Priority filter (client-side)
+        if (filterPriority && task.priority !== filterPriority) return false;
+        // Search filter
         if (!debouncedSearch) return true;
         const q = debouncedSearch.toLowerCase();
         return (
