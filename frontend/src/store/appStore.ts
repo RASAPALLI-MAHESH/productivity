@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import client from '../api/client';
-import type { Task, Habit, ApiResponse, HabitLog } from '../types';
+import type { Task, ApiResponse } from '../types';
 
 interface AppState {
 
@@ -17,16 +17,7 @@ interface AppState {
     setTasks: (tasks: Task[]) => void;
     lastDeletedTask: Task | null;
 
-    // Habits
-    habits: Habit[];
-    habitLoading: boolean;
-    habitLogs: Record<string, HabitLog[]>;
-    fetchHabits: () => Promise<void>;
-    createHabit: (habit: Partial<Habit>) => Promise<void>;
-    updateHabit: (id: string, habit: Partial<Habit>) => Promise<void>;
-    deleteHabit: (id: string) => Promise<void>;
-    completeHabit: (id: string) => Promise<void>;
-    fetchHabitLogs: (habitId: string, startDate: string, endDate: string) => Promise<void>;
+    // Habits have been migrated to habitStore.ts
     gamificationEnabled: boolean;
     setGamificationEnabled: (enabled: boolean) => void;
     focusMode: boolean;
@@ -139,82 +130,9 @@ export const useAppStore = create<AppState>((set, get) => ({
     },
     setTasks: (tasks) => set({ tasks }),
 
-    // Habits
-    habits: [],
-    habitLoading: false,
-    habitLogs: {},
+    // Habits have been migrated to habitStore.ts
     gamificationEnabled: true,
     setGamificationEnabled: (enabled) => set({ gamificationEnabled: enabled }),
     focusMode: false,
     setFocusMode: (enabled) => set({ focusMode: enabled }),
-    fetchHabits: async () => {
-        set({ habitLoading: true });
-        try {
-            const res = await client.get<ApiResponse<Habit[]>>('/habits');
-            set({ habits: res.data.data, habitLoading: false });
-        } catch {
-            set({ habitLoading: false });
-        }
-    },
-    createHabit: async (habit) => {
-        await client.post('/habits', habit);
-        await get().fetchHabits();
-    },
-    updateHabit: async (id, habit) => {
-        await client.put(`/habits/${id}`, habit);
-        await get().fetchHabits();
-    },
-    deleteHabit: async (id) => {
-        const prev = get().habits;
-        set({ habits: prev.filter((h) => h.id !== id) });
-        try {
-            await client.delete(`/habits/${id}`);
-        } catch {
-            set({ habits: prev });
-        }
-    },
-    completeHabit: async (id) => {
-        const today = new Date().toISOString().split('T')[0];
-        const prevHabits = get().habits;
-        const prevLogs = get().habitLogs;
-
-        // Optimistic update
-        set({
-            habits: prevHabits.map((h) => {
-                if (h.id === id) {
-                    return {
-                        ...h,
-                        currentStreak: h.currentStreak + 1,
-                        lastCompletedDate: today,
-                    };
-                }
-                return h;
-            }),
-            habitLogs: {
-                ...prevLogs,
-                [id]: [
-                    ...(prevLogs[id] || []),
-                    { date: today, completed: true, completedAt: new Date().toISOString() },
-                ],
-            },
-        });
-
-        try {
-            await client.post(`/habits/${id}/complete`);
-        } catch {
-            set({ habits: prevHabits, habitLogs: prevLogs });
-        }
-    },
-    fetchHabitLogs: async (habitId, startDate, endDate) => {
-        try {
-            const res = await client.get<ApiResponse<HabitLog[]>>(`/habits/${habitId}/logs`, {
-                params: { startDate, endDate },
-            });
-            set((state) => ({
-                habitLogs: { ...state.habitLogs, [habitId]: res.data.data },
-            }));
-        } catch {
-            // silent fail
-        }
-    },
 }));

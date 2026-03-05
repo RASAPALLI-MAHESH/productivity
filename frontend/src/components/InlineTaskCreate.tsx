@@ -34,7 +34,7 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
     const [pendingLinkWord, setPendingLinkWord] = useState<string | null>(null);
     const [pendingLinkUrl, setPendingLinkUrl] = useState('');
 
-    const { createTask } = useAppStore();
+    const { createTask, fetchTasks } = useAppStore();
     const titleRef = useRef<HTMLTextAreaElement>(null);
     const linkUrlRef = useRef<HTMLInputElement>(null);
 
@@ -144,6 +144,8 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
             setExternalLinks([]);
             setIsExpanded(false);
             onClose?.();
+            // Force refresh task list to clear empty state
+            fetchTasks({ page: 0, size: 20, sortBy: 'createdAt', sortDirection: 'desc' });
         } catch (err) {
             console.error('Failed to create task:', err);
         } finally {

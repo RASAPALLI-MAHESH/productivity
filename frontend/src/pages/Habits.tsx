@@ -1,213 +1,150 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useAppStore } from '../store/appStore';
-import { HabitCard } from '../components/HabitCard';
-import { HabitCreatePanel } from '../components/HabitCreatePanel';
-import { HabitAnalytics } from '../components/HabitAnalytics';
+import { useHabitStore } from '../store/habitStore';
 import { HabitsIntelligenceHeader } from '../components/HabitsIntelligenceHeader';
+import { HabitsCommandBar } from '../components/HabitsCommandBar';
+import { HabitRow } from '../components/HabitRow';
+import { HabitInlineCreate } from '../components/HabitInlineCreate';
+import { HabitAnalyticsDrawer } from '../components/HabitAnalyticsDrawer';
+import { HabitDeleteToast } from '../components/HabitDeleteToast';
 
 export function Habits() {
     const {
-        habits, habitLoading, habitLogs, focusMode,
-        fetchHabits, createHabit, deleteHabit, completeHabit, fetchHabitLogs, setFocusMode
-    } = useAppStore();
+        habits, loading, error, fetchDashboard,
+        searchQuery, sortOption, filterCategory
+    } = useHabitStore();
 
-    const [showCreate, setShowCreate] = useState(false);
-    const [selectedAnalyticsId, setSelectedAnalyticsId] = useState<string | null>(null);
-    const [filterCategory, setFilterCategory] = useState<string>('all');
-    const [viewMode, setViewMode] = useState<'weekly' | 'monthly'>('weekly');
+    const [activeAnalyticsHabitId, setActiveAnalyticsHabitId] = useState<string | null>(null);
+
+    useEffect(() => {
+        fetchDashboard();
+    }, [fetchDashboard]);
 
     // Keyboard Shortcuts
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-
-            switch (e.key.toLowerCase()) {
-                case 'h':
-                    e.preventDefault();
-                    setShowCreate(true);
-                    break;
-                case 'f':
-                    e.preventDefault();
-                    setFocusMode(!focusMode);
-                    break;
-                case 'd':
-                    e.preventDefault();
-                    // Mark first pending habit as done (for quick D workflow)
-                    const todayStr = new Date().toISOString().split('T')[0];
-                    const firstPending = habits.find(h => h.lastCompletedDate !== todayStr);
-                    if (firstPending) completeHabit(firstPending.id);
-                    break;
-                case 'arrowleft':
-                    setViewMode('weekly');
-                    break;
-                case 'arrowright':
-                    setViewMode('monthly');
-                    break;
+            // Ignore if in input
+            if (['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement).tagName)) {
+                return;
             }
-        };
 
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [focusMode, habits, completeHabit, setFocusMode]);
-
-    useEffect(() => {
-        fetchHabits();
-    }, [fetchHabits]);
-
-    // Pre-fetch logs for all habits to populate cards
-    useEffect(() => {
-        if (habits.length > 0) {
-            const end = new Date().toISOString().split('T')[0];
-            const start = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-            habits.forEach(habit => {
-                if (!habitLogs[habit.id]) {
-                    fetchHabitLogs(habit.id, start, end);
-                }
-            });
-        }
-    }, [habits, fetchHabitLogs, habitLogs]);
-
-    const filteredHabits = useMemo(() => {
-        if (filterCategory === 'all') return habits;
-        return habits.filter(h => h.category === filterCategory);
-    }, [habits, filterCategory]);
-
-    const analyticsHabit = useMemo(() =>
-        habits.find(h => h.id === selectedAnalyticsId) || null
-        , [habits, selectedAnalyticsId]);
-
-    const categories = ['all', 'health', 'learning', 'work', 'personal'];
-
-    const [activeIndex, setActiveIndex] = useState(-1);
-
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-
-            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-                setActiveIndex(prev => (prev + 1) % filteredHabits.length);
-            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-                setActiveIndex(prev => (prev - 1 + filteredHabits.length) % filteredHabits.length);
-            } else if (e.key === ' ' && activeIndex >= 0) {
+            if (e.key.toLowerCase() === 'h') {
                 e.preventDefault();
-                completeHabit(filteredHabits[activeIndex].id);
-            } else if (e.key === 'Enter' && activeIndex >= 0) {
-                setSelectedAnalyticsId(filteredHabits[activeIndex].id);
-            } else if (e.key === 'f') {
-                setFocusMode(!focusMode);
+                const createBtn = document.querySelector('.habit-inline-create-trigger') as HTMLElement;
+                if (createBtn) createBtn.click();
             }
+            if (e.key === '/') {
+                e.preventDefault();
+                const searchInput = document.querySelector('.habits-search-input') as HTMLElement;
+                if (searchInput) searchInput.focus();
+            }
+            // For 'D' or 'E', one would need a focused state for rows.
         };
-
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [filteredHabits, activeIndex, focusMode]);
+    }, []);
+
+    // Derived / Filtered State
+    const filteredHabits = useMemo(() => {
+        let result = [...habits];
+
+        if (filterCategory !== 'all') {
+            result = result.filter(h => h.category === filterCategory);
+        }
+
+        if (searchQuery.trim()) {
+            const q = searchQuery.toLowerCase();
+            result = result.filter(h =>
+                h.name.toLowerCase().includes(q) ||
+                (h.description && h.description.toLowerCase().includes(q))
+            );
+        }
+
+        switch (sortOption) {
+            case 'Most Streak':
+                result.sort((a, b) => b.currentStreak - a.currentStreak);
+                break;
+            case 'Completion Rate':
+                // Highly complex, roughly sorting by longestStreak for now, real SaaS uses specific derived metrics
+                result.sort((a, b) => b.longestStreak - a.longestStreak);
+                break;
+            case 'Alphabetical':
+                result.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case 'Recently Created':
+            default:
+                result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                break;
+        }
+
+        return result;
+    }, [habits, filterCategory, searchQuery, sortOption]);
+
+    if (loading && habits.length === 0) {
+        return (
+            <div className="habits-page">
+                <main className="habits-main">
+                    <div className="empty-state">Loading Habits Ecosystem...</div>
+                </main>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="habits-page">
+                <main className="habits-main">
+                    <div className="empty-state error">
+                        <span className="material-icons text-4xl mb-2 text-red-500">error_outline</span>
+                        <p>{error}</p>
+                        <button onClick={fetchDashboard} className="mt-4 px-4 py-2 bg-[var(--p-surface)] rounded-md border border-[var(--p-border)] hover:bg-[var(--p-border)] transition-colors text-sm font-medium">Try Again</button>
+                    </div>
+                </main>
+            </div>
+        );
+    }
 
     return (
-        <div className={`habits-page-container ${focusMode ? 'focus-mode' : ''}`}>
-            {!focusMode && <HabitsIntelligenceHeader />}
+        <div className="habits-page">
+            <main className="habits-main">
+                <header className="habits-page-header">
+                    <h1>Habits</h1>
+                    <p className="subtitle">Build behavioral pipelines and track momentum.</p>
+                </header>
 
-            <div className="command-bar--elite" style={{ marginBottom: '24px', justifyContent: 'space-between', display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
-                <div className="filter-group--elite" style={{ display: 'flex', alignItems: 'center', gap: '16px', overflowX: 'auto', flex: 1 }}>
-                    <div className="segmented-control-elite">
-                        <button
-                            className={`seg-btn ${viewMode === 'weekly' ? 'active' : ''}`}
-                            onClick={() => setViewMode('weekly')}
-                        >
-                            Weekly
-                        </button>
-                        <button
-                            className={`seg-btn ${viewMode === 'monthly' ? 'active' : ''}`}
-                            onClick={() => setViewMode('monthly')}
-                        >
-                            Monthly
-                        </button>
-                    </div>
+                <HabitsIntelligenceHeader />
+                <HabitsCommandBar />
 
-                    <div className="vertical-divider" style={{ width: '1px', height: '20px', background: 'var(--border)' }} />
+                <div className="habits-list-container">
+                    {filteredHabits.length > 0 ? (
+                        <div className="habits-list">
+                            {filteredHabits.map((habit) => (
+                                <HabitRow
+                                    key={habit.id}
+                                    habit={habit}
+                                    onSparklineClick={() => setActiveAnalyticsHabitId(habit.id)}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="empty-state" style={{ padding: '64px 0', border: '1px dashed var(--p-border)', borderRadius: '12px' }}>
+                            <span className="material-icons icon-lg" style={{ color: 'var(--p-text-muted)' }}>water_drop</span>
+                            <h3>No habits found</h3>
+                            <p>Press <kbd>H</kbd> to build a new habit.</p>
+                        </div>
+                    )}
 
-                    <div className="category-pills">
-                        {categories.map(cat => (
-                            <button
-                                key={cat}
-                                className={`cat-pill ${filterCategory === cat ? 'active' : ''}`}
-                                onClick={() => setFilterCategory(cat)}
-                            >
-                                <span className={`dot ${cat}`} />
-                                {cat}
-                            </button>
-                        ))}
-                    </div>
+                    <HabitInlineCreate />
                 </div>
+            </main>
 
-                <div className="action-group--elite" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <button
-                        className={`btn-elite ${focusMode ? 'active' : ''}`}
-                        onClick={() => setFocusMode(!focusMode)}
-                        title="Focus Mode (F)"
-                    >
-                        <span className="material-symbols-outlined icon-sm">
-                            {focusMode ? 'center_focus_strong' : 'center_focus_weak'}
-                        </span>
-                        {focusMode ? 'Exit Focus' : 'Focus Mode'}
-                    </button>
-
-                    <button className="btn-primary-elite" onClick={() => setShowCreate(true)}>
-                        <span className="material-symbols-outlined icon-sm">add</span>
-                        New Habit
-                    </button>
-                </div>
-            </div>
-
-            {habitLoading && !habits.length ? (
-                <div className="loader"><div className="spinner" /></div>
-            ) : filteredHabits.length ? (
-                <div className="habit-grid-elite">
-                    {filteredHabits.map((habit, index) => (
-                        <HabitCard
-                            key={habit.id}
-                            habit={habit}
-                            logs={habitLogs[habit.id] || []}
-                            isActive={activeIndex === index}
-                            onComplete={completeHabit}
-                            onDelete={deleteHabit}
-                            onToggleAnalytics={(id) => setSelectedAnalyticsId(id)}
-                        />
-                    ))}
-                </div>
-            ) : (
-                <div className="empty-state--elite">
-                    <div className="empty-icon">
-                        <span className="material-symbols-outlined">spa</span>
-                    </div>
-                    <h3>Start with 1 small habit</h3>
-                    <p>
-                        "Tiny changes, remarkable results." Build your first streak today and transform your trajectory.
-                    </p>
-                    <button className="btn btn-primary btn-lg" onClick={() => setShowCreate(true)} style={{ width: 'auto', padding: '0 32px' }}>
-                        Create your first habit
-                    </button>
-                </div>
-            )}
-
-            {/* Creation Panel */}
-            {showCreate && (
-                <HabitCreatePanel
-                    onClose={() => setShowCreate(false)}
-                    onCreate={createHabit}
+            {activeAnalyticsHabitId && (
+                <HabitAnalyticsDrawer
+                    habitId={activeAnalyticsHabitId}
+                    onClose={() => setActiveAnalyticsHabitId(null)}
                 />
             )}
 
-            {/* Analytics Side Panel */}
-            {selectedAnalyticsId && (
-                <>
-                    <div className="modal-overlay" onClick={() => setSelectedAnalyticsId(null)} style={{ background: 'transparent' }} />
-                    <HabitAnalytics
-                        habit={analyticsHabit}
-                        logs={habitLogs[selectedAnalyticsId] || []}
-                        onClose={() => setSelectedAnalyticsId(null)}
-                    />
-                </>
-            )}
+            <HabitDeleteToast />
         </div>
     );
 }

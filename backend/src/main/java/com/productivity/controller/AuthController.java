@@ -22,6 +22,9 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
+import com.google.firebase.auth.FirebaseAuthException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -162,6 +165,60 @@ public class AuthController {
         
         userService.recordLogin(user.getUid());
         return generateTokensAndResponse(user, response);
+    }
+
+    // ─── Google SignIn ──────────────────────────────────────────────────────
+    @PostMapping("/google")
+    @Operation(summary = "Login or Signup with Google ID Token")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> googleAuth(@RequestBody Map<String, String> body, HttpServletResponse response) 
+            throws ExecutionException, InterruptedException {
+        String idToken = body.get("token");
+        if (idToken == null || idToken.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Missing Google token"));
+        }
+
+        try {
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            String email = decodedToken.getEmail();
+            String displayName = decodedToken.getName();
+            
+            if (email == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error("Google token missing email"));
+            }
+
+            // Find or create user
+            User user = userService.findByEmail(email);
+            if (user == null) {
+                // Auto-create user for Google Auth
+                // Generate a random impossible password since they login via Google
+                String randomPass = java.util.UUID.randomUUID().toString();
+                String passwordHash = passwordService.hashPassword(randomPass);
+                user = userService.createUser(email, passwordHash, displayName);
+                
+                // Immediately verify the user since Google did it
+                userService.verifyUser(user.getUid());
+                user.setVerified(true);
+            } else {
+                // Check lock
+                if (user.getLockedUntil() != null && user.getLockedUntil().toDate().toInstant().isAfter(Instant.now())) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                            .body(ApiResponse.error("Account locked until " + user.getLockedUntil()));
+                }
+                
+                // Ensure verified if they log in through Google successfully
+                if (!user.isVerified()) {
+                    userService.verifyUser(user.getUid());
+                    user.setVerified(true);
+                }
+            }
+
+            userService.recordLogin(user.getUid());
+            return generateTokensAndResponse(user, response);
+
+        } catch (FirebaseAuthException e) {
+            log.error("Invalid Google Token", e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("Invalid Google Authentication"));
+        }
     }
 
     // ─── Refresh Token ──────────────────────────────────────────────────────

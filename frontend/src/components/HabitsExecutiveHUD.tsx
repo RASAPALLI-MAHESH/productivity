@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
-import { useAppStore } from '../store/appStore';
+import { useHabitStore } from '../store/habitStore';
 
 export function HabitsExecutiveHUD() {
-    const { habits, habitLogs } = useAppStore();
+    const { habits, habitLogs } = useHabitStore();
 
     const stats = useMemo(() => {
         const activeHabits = habits.length;
         if (activeHabits === 0) return { streak: 0, completion: 0, active: 0, level: 12 };
 
         // Global streak (max of all habits)
-        const maxStreak = Math.max(...habits.map(h => h.currentStreak), 0);
+        const maxStreak = Math.max(...habits.map((h: any) => h.currentStreak), 0);
 
         // Weekly completion (last 7 days)
         const today = new Date();
@@ -22,10 +22,10 @@ export function HabitsExecutiveHUD() {
         let totalEligible = activeHabits * 7;
         let totalCompleted = 0;
 
-        habits.forEach(habit => {
+        habits.forEach((habit: any) => {
             const logs = habitLogs[habit.id] || [];
-            last7Days.forEach(date => {
-                if (logs.some(l => l.date === date && l.completed)) {
+            last7Days.forEach((date: string) => {
+                if (logs.some((l: any) => l.date === date && l.completed)) {
                     totalCompleted++;
                 }
             });

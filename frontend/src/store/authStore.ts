@@ -33,6 +33,7 @@ interface AuthState {
     forgotPassword: (email: string) => Promise<void>;
     verifyResetOtp: (email: string, otp: string) => Promise<void>;
     resetPassword: (newPassword: string) => Promise<void>;
+    loginWithGoogle: () => Promise<void>;
     logout: () => Promise<void>;
     clearError: () => void;
     setAuthStep: (step: AuthStep) => void;
@@ -92,6 +93,35 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             } else {
                 set({ error: message, loading: false });
             }
+            throw err;
+        }
+    },
+
+    // ─── Google SignIn ──────────────────────────────────────
+    loginWithGoogle: async () => {
+        set({ loading: true, error: null });
+        try {
+            // Lazy load Firebase to keep initial bundle size down slightly
+            const { signInWithPopup } = await import('firebase/auth');
+            const { auth, googleProvider } = await import('../lib/firebase');
+
+            const result = await signInWithPopup(auth, googleProvider);
+            const idToken = await result.user.getIdToken();
+
+            // Send token to backend
+            const res = await client.post<ApiResponse<AuthResponse>>('/auth/google', { token: idToken });
+            const { user, tokens } = res.data.data;
+            setAccessToken(tokens.accessToken);
+
+            if (user.lockedUntil && new Date(user.lockedUntil) > new Date()) {
+                set({ loading: false, authStep: 'account-locked', user });
+                return;
+            }
+
+            set({ user, profile: user, loading: false, authStep: 'idle' });
+        } catch (err: unknown) {
+            const message = extractErrorMessage(err, 'Google Sign-In failed');
+            set({ error: message, loading: false });
             throw err;
         }
     },

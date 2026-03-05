@@ -2,13 +2,15 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useAppStore } from '../store/appStore';
+import { useHabitStore } from '../store/habitStore';
 import { ThemeToggle } from '../components/ThemeToggle';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 export function Settings() {
     const { user, profile, logout, updateProfile } = useAuthStore();
-    const { tasks, habits } = useAppStore();
+    const { tasks } = useAppStore();
+    const { habits } = useHabitStore();
     const navigate = useNavigate();
 
     const [isEditingName, setIsEditingName] = useState(false);

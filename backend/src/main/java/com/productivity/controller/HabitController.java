@@ -45,6 +45,15 @@ public class HabitController {
         return ResponseEntity.ok(ApiResponse.success(habits));
     }
 
+    @GetMapping("/dashboard")
+    @Operation(summary = "Get habit dashboard (habits, logs, intelligence)")
+    public ResponseEntity<ApiResponse<com.productivity.dto.HabitDashboardDTO>> getDashboard(Authentication auth)
+            throws ExecutionException, InterruptedException {
+        String userId = (String) auth.getPrincipal();
+        com.productivity.dto.HabitDashboardDTO dashboard = habitService.getDashboard(userId);
+        return ResponseEntity.ok(ApiResponse.success(dashboard));
+    }
+
     @GetMapping("/{habitId}")
     @Operation(summary = "Get a habit by ID")
     public ResponseEntity<ApiResponse<HabitDTO>> getHabit(

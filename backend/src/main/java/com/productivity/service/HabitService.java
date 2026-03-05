@@ -16,8 +16,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import com.productivity.dto.HabitDashboardDTO;
+import com.productivity.dto.HabitIntelligenceDTO;
 
 @Service
 public class HabitService {
@@ -37,6 +41,11 @@ public class HabitService {
         Habit habit = new Habit();
         habit.setName(dto.getName());
         habit.setDescription(dto.getDescription());
+        habit.setCategory(dto.getCategory());
+        habit.setFrequency(dto.getFrequency());
+        habit.setGoalType(dto.getGoalType());
+        habit.setGoalValue(dto.getGoalValue());
+        habit.setMotivation(dto.getMotivation());
         habit.setCurrentStreak(0);
         habit.setLongestStreak(0);
         habit.setCreatedAt(Timestamp.now());
@@ -62,6 +71,11 @@ public class HabitService {
 
         if (dto.getName() != null) existing.setName(dto.getName());
         if (dto.getDescription() != null) existing.setDescription(dto.getDescription());
+        if (dto.getCategory() != null) existing.setCategory(dto.getCategory());
+        if (dto.getFrequency() != null) existing.setFrequency(dto.getFrequency());
+        if (dto.getGoalType() != null) existing.setGoalType(dto.getGoalType());
+        if (dto.getGoalValue() > 0) existing.setGoalValue(dto.getGoalValue());
+        if (dto.getMotivation() != null) existing.setMotivation(dto.getMotivation());
 
         Habit saved = habitRepository.save(userId, existing);
         return toDTO(saved);
@@ -134,11 +148,94 @@ public class HabitService {
                 .stream().map(this::toLogDTO).collect(Collectors.toList());
     }
 
+    public HabitDashboardDTO getDashboard(String userId) throws ExecutionException, InterruptedException {
+        List<HabitDTO> habits = getHabits(userId);
+        
+        String endDate = LocalDate.now().format(DATE_FORMAT);
+        String startDate = LocalDate.now().minusDays(30).format(DATE_FORMAT);
+        
+        Map<String, List<HabitLogDTO>> logs = new HashMap<>();
+        for (HabitDTO h : habits) {
+            logs.put(h.getId(), getHabitLogs(userId, h.getId(), startDate, endDate));
+        }
+        
+        HabitIntelligenceDTO intelligence = computeIntelligence(habits, logs);
+        
+        return new HabitDashboardDTO(habits, logs, intelligence);
+    }
+
+    private HabitIntelligenceDTO computeIntelligence(List<HabitDTO> habits, Map<String, List<HabitLogDTO>> logsMap) {
+        HabitIntelligenceDTO intel = new HabitIntelligenceDTO();
+        if (habits.isEmpty()) return intel;
+        
+        LocalDate today = LocalDate.now();
+        
+        // 1. Consistency Score (last 30 days weighted)
+        double weightedCompletion = 0;
+        double totalWeight = 0;
+        
+        for (int i = 0; i < 30; i++) {
+            LocalDate date = today.minusDays(i);
+            String dateStr = date.format(DATE_FORMAT);
+            double weight = (30.0 - i) / 30.0;
+            totalWeight += weight * habits.size();
+            
+            for (HabitDTO h : habits) {
+                List<HabitLogDTO> hLogs = logsMap.get(h.getId());
+                if (hLogs != null && hLogs.stream().anyMatch(l -> l.getDate().equals(dateStr) && l.isCompleted())) {
+                    weightedCompletion += weight;
+                }
+            }
+        }
+        int consistency = totalWeight > 0 ? (int) Math.round((weightedCompletion / totalWeight) * 100) : 0;
+        intel.setConsistencyScore(consistency);
+        
+        // 2. Risk Detection
+        int riskCount = 0;
+        String todayStr = today.format(DATE_FORMAT);
+        String yesterdayStr = today.minusDays(1).format(DATE_FORMAT);
+        
+        for (HabitDTO h : habits) {
+            if ("daily".equals(h.getFrequency()) || h.getFrequency() == null) {
+                if (h.getCurrentStreak() > 0 && !todayStr.equals(h.getLastCompletedDate()) && !yesterdayStr.equals(h.getLastCompletedDate())) {
+                    riskCount++;
+                }
+            }
+        }
+        intel.setRiskCount(riskCount);
+        
+        // 3. Longest Streak
+        int maxStreak = habits.stream().mapToInt(HabitDTO::getCurrentStreak).max().orElse(0);
+        intel.setLongestStreak(maxStreak);
+        
+        // 4. Weekly Completion Rate
+        int weeklyCompleted = 0;
+        int weeklyExpected = habits.size() * 7;
+        for (int i = 0; i < 7; i++) {
+            String dateStr = today.minusDays(i).format(DATE_FORMAT);
+            for (HabitDTO h : habits) {
+                List<HabitLogDTO> hLogs = logsMap.get(h.getId());
+                if (hLogs != null && hLogs.stream().anyMatch(l -> l.getDate().equals(dateStr) && l.isCompleted())) {
+                    weeklyCompleted++;
+                }
+            }
+        }
+        int weeklyRate = weeklyExpected > 0 ? (int) Math.round((weeklyCompleted * 100.0) / weeklyExpected) : 0;
+        intel.setWeeklyCompletionRate(weeklyRate);
+        
+        return intel;
+    }
+
     private HabitDTO toDTO(Habit habit) {
         HabitDTO dto = new HabitDTO();
         dto.setId(habit.getId());
         dto.setName(habit.getName());
         dto.setDescription(habit.getDescription());
+        dto.setCategory(habit.getCategory());
+        dto.setFrequency(habit.getFrequency());
+        dto.setGoalType(habit.getGoalType());
+        dto.setGoalValue(habit.getGoalValue());
+        dto.setMotivation(habit.getMotivation());
         dto.setCurrentStreak(habit.getCurrentStreak());
         dto.setLongestStreak(habit.getLongestStreak());
         dto.setLastCompletedDate(habit.getLastCompletedDate());

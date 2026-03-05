@@ -4033,6 +4033,7 @@
     .task-card__desc {
         font-size: 12px !important;
         -webkit-line-clamp: 1;
+        line-clamp: 1;
     }
 
     .task-card__meta {

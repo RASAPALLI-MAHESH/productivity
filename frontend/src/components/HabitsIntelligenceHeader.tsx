@@ -1,131 +1,77 @@
-import { useMemo } from 'react';
-import { useAppStore } from '../store/appStore';
+import React from 'react';
+import { useHabitStore } from '../store/habitStore';
 import { useAuthStore } from '../store/authStore';
-import { subDays, isSameDay } from 'date-fns';
 
-export function HabitsIntelligenceHeader() {
-    const { habits, habitLogs } = useAppStore();
+export const HabitsIntelligenceHeader: React.FC = () => {
+    const { intelligence, habits } = useHabitStore();
     const { user } = useAuthStore();
 
-    const stats = useMemo(() => {
-        if (!habits.length) return { consistency: 0, momentum: 'stable', riskCount: 0, xpProgress: 0, level: 1 };
+    if (habits.length === 0) return null;
 
-        const today = new Date();
-        const last30Days = Array.from({ length: 30 }, (_, i) => subDays(today, i));
-
-        // 1. Consistency Score (Weighted 30-day Completion %)
-        let weightedCompletion = 0;
-        let totalWeight = 0;
-
-        habits.forEach(habit => {
-            const logs = habitLogs[habit.id] || [];
-            last30Days.forEach((date, i) => {
-                const weight = (30 - i) / 30; // Recent days have higher weight
-                totalWeight += weight;
-                if (logs.some(l => isSameDay(new Date(l.date), date) && l.completed)) {
-                    weightedCompletion += weight;
-                }
-            });
-        });
-
-        const consistency = habits.length ? Math.round((weightedCompletion / totalWeight) * 100) : 0;
-
-        // 2. Momentum Detection (Last 7 vs Previous 7 days)
-        let thisWeekCompletions = 0;
-        let lastWeekCompletions = 0;
-
-        habits.forEach(habit => {
-            const logs = habitLogs[habit.id] || [];
-            logs.forEach(l => {
-                const logDate = new Date(l.date);
-                if (l.completed) {
-                    if (logDate >= subDays(today, 7)) thisWeekCompletions++;
-                    else if (logDate >= subDays(today, 14)) lastWeekCompletions++;
-                }
-            });
-        });
-
-        let momentum: 'rising' | 'declining' | 'stable' = 'stable';
-        if (thisWeekCompletions > lastWeekCompletions * 1.1) momentum = 'rising';
-        else if (thisWeekCompletions < lastWeekCompletions * 0.9) momentum = 'declining';
-
-        // 3. Risk Detection (Streaks about to break - no completion today or yesterday for daily)
-        const todayStr = today.toISOString().split('T')[0];
-        const yesterdayStr = subDays(today, 1).toISOString().split('T')[0];
-
-        const riskCount = habits.filter(h =>
-            h.frequency === 'daily' &&
-            h.currentStreak > 0 &&
-            h.lastCompletedDate !== todayStr &&
-            h.lastCompletedDate !== yesterdayStr
-        ).length;
-
-        // 4. XP Progress (Placeholder if user.xp/level not yet dynamic)
-        const currentLevel = user?.level || 1;
-        const xp = user?.xp || 0;
-        const xpForNext = currentLevel * 1000;
-        const xpProgress = Math.min(Math.round((xp / xpForNext) * 100), 100);
-
-        return { consistency, momentum, riskCount, xpProgress, level: currentLevel };
-    }, [habits, habitLogs, user]);
+    const currentLevel = user?.level || 1;
+    const xp = user?.xp || 0;
+    const xpForNext = currentLevel * 1000;
+    const xpProgress = Math.min(Math.round((xp / xpForNext) * 100), 100);
 
     return (
         <div className="intel-header-grid">
             {/* Consistency Module */}
-            <div className="intel-module">
-                <span className="intel-label">Consistency Score</span>
-                <div className="intel-value-group">
-                    <span className="intel-value">{stats.consistency}</span>
-                    <span className="intel-sub">/ 100</span>
+            <div className="intel-module relative overflow-hidden">
+                <span className="intel-label text-gray-400 font-medium">Consistency Score</span>
+                <div className="intel-value-group mt-1 flex items-baseline gap-1">
+                    <span className="intel-value text-3xl font-bold tracking-tight text-white">{intelligence.consistencyScore}</span>
+                    <span className="intel-sub text-gray-500 font-medium tracking-wider">/ 100</span>
                 </div>
-                <div className={`momentum-indicator ${stats.momentum}`}>
-                    <span className="material-symbols-outlined icon-sm">
-                        {stats.momentum === 'rising' ? 'trending_up' : stats.momentum === 'declining' ? 'trending_down' : 'trending_flat'}
-                    </span>
-                    <span style={{ textTransform: 'capitalize' }}>Momentum {stats.momentum}</span>
+                <div className={`momentum-indicator stable mt-2 flex items-center gap-1.5 text-xs font-semibold px-2 py-1 rounded w-fit`}>
+                    <span className="material-icons text-[14px]">insights</span>
+                    <span>30-Day Avg</span>
                 </div>
             </div>
 
             {/* Risk Module */}
-            <div className="intel-module">
-                <span className="intel-label">Risk Threshold</span>
-                <div className="intel-value-group">
-                    <span className="intel-value" style={{ color: stats.riskCount > 0 ? 'var(--p-error)' : 'var(--p-success)' }}>
-                        {stats.riskCount}
+            <div className="intel-module relative overflow-hidden">
+                <span className="intel-label text-gray-400 font-medium">Risk Threshold</span>
+                <div className="intel-value-group mt-1 flex items-baseline gap-1">
+                    <span className="intel-value text-3xl font-bold tracking-tight" style={{ color: intelligence.riskCount > 0 ? 'var(--p-error)' : 'var(--p-success)' }}>
+                        {intelligence.riskCount}
                     </span>
-                    <span className="intel-sub">Habits at Risk</span>
+                    <span className="intel-sub text-gray-500 font-medium tracking-wider">Habits at Risk</span>
                 </div>
-                <div className="intel-sub" style={{ fontSize: '11px', marginTop: '4px' }}>
-                    {stats.riskCount > 0 ? 'Action required to protect streaks' : 'All habits are stable'}
+                <div className="intel-sub text-[11px] mt-2 text-gray-500">
+                    {intelligence.riskCount > 0 ? 'Action required to protect streaks' : 'All habits are stable'}
                 </div>
             </div>
 
             {/* Momentum Module (Stability vs Intensity) */}
-            <div className="intel-module">
-                <span className="intel-label">Streak Capacity</span>
-                <div className="intel-value-group">
-                    <span className="intel-value">{habits.length > 0 ? Math.max(...habits.map(h => h.currentStreak)) : 0}</span>
-                    <span className="intel-sub">Max Current Streak</span>
+            <div className="intel-module relative overflow-hidden">
+                <span className="intel-label text-gray-400 font-medium">Streak Capacity</span>
+                <div className="intel-value-group mt-1 flex items-baseline gap-1">
+                    <span className="intel-value text-3xl font-bold tracking-tight text-white">{intelligence.longestStreak}</span>
+                    <span className="intel-sub text-gray-500 font-medium tracking-wider">Max Current Streak</span>
                 </div>
-                <div className="intel-sub" style={{ fontSize: '11px', marginTop: '4px' }}>
-                    {habits.length} active behavioral pipelines
+                <div className="intel-sub text-[11px] mt-2 text-gray-500">
+                    Across {habits.length} active pipelines
                 </div>
             </div>
 
             {/* Performance Level Module */}
-            <div className="intel-module">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span className="intel-label">Elite Rank</span>
-                    <span className="intel-sub" style={{ fontWeight: 800, color: 'var(--p-accent)' }}>LVL {stats.level}</span>
+            <div className="intel-module relative overflow-hidden flex flex-col justify-between">
+                <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span className="intel-label text-gray-400 font-medium">Elite Rank</span>
+                        <span className="intel-sub text-xs" style={{ fontWeight: 800, color: 'var(--p-accent)' }}>LVL {currentLevel}</span>
+                    </div>
                 </div>
-                <div className="level-progress-track" style={{ height: '6px', marginTop: '8px' }}>
-                    <div className="level-progress-fill" style={{ width: `${stats.xpProgress}%`, background: 'var(--p-accent)' }} />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
-                    <span className="intel-sub" style={{ fontSize: '11px' }}>Efficiency Gain</span>
-                    <span className="intel-sub" style={{ fontSize: '11px', fontWeight: 700 }}>{stats.xpProgress}%</span>
+                <div className="mt-auto">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                        <span className="intel-sub text-[10px] uppercase tracking-wider text-gray-500 font-bold">Efficiency Gain</span>
+                        <span className="intel-sub text-[10px] uppercase tracking-wider text-white font-bold">{xpProgress}%</span>
+                    </div>
+                    <div className="level-progress-track relative w-full bg-white/5 rounded-full overflow-hidden" style={{ height: '6px' }}>
+                        <div className="level-progress-fill absolute top-0 left-0 h-full rounded-full" style={{ width: `${xpProgress}%`, background: 'var(--p-accent)' }} />
+                    </div>
                 </div>
             </div>
         </div>
     );
-}
+};
