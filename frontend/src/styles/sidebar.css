@@ -49,7 +49,18 @@
     gap: 12px;
     overflow: hidden;
     flex: 1;
-    transition: all 0.3s ease;
+    transition: opacity 0.2s ease, width 0.3s ease;
+    width: 100%;
+    opacity: 1;
+}
+
+.sidebar.collapsed .sidebar-logo {
+    opacity: 0;
+    width: 0;
+    margin: 0;
+    padding: 0;
+    visibility: hidden;
+    transition: opacity 0.1s ease, width 0.3s ease, visibility 0s 0.1s;
 }
 
 .sidebar-logo .logo-icon {
@@ -69,19 +80,7 @@
     font-weight: 700;
     color: var(--text-primary);
     letter-spacing: -0.02em;
-    overflow: hidden;
     white-space: nowrap;
-    text-overflow: clip;
-    transition: opacity 0.2s ease, width 0.3s ease;
-}
-
-.sidebar.collapsed .sidebar-logo h1 {
-    opacity: 0;
-    width: 0;
-    margin: 0;
-    padding: 0;
-    visibility: hidden;
-    transition: opacity 0.1s ease, width 0.3s ease, visibility 0s 0.1s;
 }
 
 /* Toggle button */

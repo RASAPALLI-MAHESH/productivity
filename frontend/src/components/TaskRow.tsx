@@ -66,7 +66,7 @@ export const TaskRow = memo(({ task, onToggle, onEdit, onDelete }: TaskRowProps)
             </button>
 
             {/* Content Body */}
-            <div className="elite-row__body" onClick={() => onEdit?.(task)}>
+            <div className="elite-row__body">
                 <div className="elite-row__main">
                     <span className="elite-row__title">{task.title}</span>
                     {task.description && (
