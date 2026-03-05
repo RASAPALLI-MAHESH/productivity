@@ -35,6 +35,8 @@ export interface Habit {
     longestStreak: number;
     streakFreezeAvailable: number; // Gamified recovery
     lastCompletedDate: string | null;
+    startDate?: string;
+    targetTime?: string;
     createdAt: string;
 }
 

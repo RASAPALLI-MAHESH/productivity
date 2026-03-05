@@ -6,7 +6,13 @@ export const HabitInlineCreate: React.FC = () => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [name, setName] = useState('');
     const [category, setCategory] = useState<'health' | 'learning' | 'work' | 'personal'>('health');
-    const [frequency, setFrequency] = useState<'daily' | 'weekly'>('daily');
+    const [frequency] = useState<'daily' | 'weekly'>('daily');
+
+    // New scheduling states
+    const todayStr = new Date().toISOString().split('T')[0];
+    const [startDate, setStartDate] = useState(todayStr);
+    const [targetTime, setTargetTime] = useState('');
+
     const inputRef = useRef<HTMLInputElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -30,15 +36,27 @@ export const HabitInlineCreate: React.FC = () => {
 
     const handleCreate = async () => {
         if (!name.trim()) return;
-        await createHabit({
+
+        const newHabitPayload: any = {
             name: name.trim(),
             category,
             frequency,
             goalType: 'yesno',
             goalValue: 1,
-            difficulty: 3
-        });
+            difficulty: 3,
+            startDate,
+        };
+
+        if (targetTime) {
+            newHabitPayload.targetTime = targetTime;
+        }
+
+        await createHabit(newHabitPayload);
+
+        // Reset
         setName('');
+        setStartDate(todayStr);
+        setTargetTime('');
         setIsExpanded(false);
     };
 
@@ -68,40 +86,57 @@ export const HabitInlineCreate: React.FC = () => {
                 <input
                     ref={inputRef}
                     type="text"
-                    placeholder="Habit name..."
+                    placeholder="Habit name (e.g., Morning Meditation)"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="habit-inline-create-input"
+                    className="habit-inline-create-input primary-input"
                 />
 
-                <div className="habit-inline-create-actions">
-                    <select
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value as any)}
-                        className="habit-inline-select"
-                    >
-                        <option value="health">Health</option>
-                        <option value="learning">Learning</option>
-                        <option value="work">Work</option>
-                        <option value="personal">Personal</option>
-                    </select>
+                <div className="habit-inline-create-row secondary-inputs">
+                    <div className="inline-group">
+                        <span className="material-symbols-outlined input-icon">category</span>
+                        <select
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value as any)}
+                            className="habit-inline-select"
+                        >
+                            <option value="health">Health</option>
+                            <option value="learning">Learning</option>
+                            <option value="work">Work</option>
+                            <option value="personal">Personal</option>
+                        </select>
+                    </div>
 
-                    <select
-                        value={frequency}
-                        onChange={(e) => setFrequency(e.target.value as any)}
-                        className="habit-inline-select"
-                    >
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
-                    </select>
+                    <div className="inline-group">
+                        <span className="material-symbols-outlined input-icon">event</span>
+                        <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="habit-inline-date-picker"
+                            min={todayStr}
+                            title="Start Date"
+                        />
+                    </div>
+
+                    <div className="inline-group">
+                        <span className="material-symbols-outlined input-icon">schedule</span>
+                        <input
+                            type="time"
+                            value={targetTime}
+                            onChange={(e) => setTargetTime(e.target.value)}
+                            className="habit-inline-time-picker"
+                            title="Specific Time (Optional)"
+                        />
+                    </div>
 
                     <button
                         className={`habit-inline-save-btn ${name.trim() ? 'active' : ''}`}
                         onClick={handleCreate}
                         disabled={!name.trim()}
                     >
-                        Save
+                        Save Habit
                     </button>
                 </div>
             </div>

@@ -181,14 +181,7 @@ export function Habits() {
                             <select
                                 value={filterCategory}
                                 onChange={(e) => setFilterCategory(e.target.value)}
-                                style={{
-                                    height: 32, padding: '0 8px',
-                                    background: 'var(--bg-secondary)',
-                                    border: '1px solid var(--border)',
-                                    borderRadius: 'var(--radius-md)',
-                                    color: 'var(--text-primary)',
-                                    fontSize: 13, cursor: 'pointer', outline: 'none',
-                                }}
+                                className="habits-filter-select"
                             >
                                 <option value="all">All</option>
                                 <option value="health">Health</option>
@@ -209,6 +202,9 @@ export function Habits() {
                             </button>
                         </div>
                     </div>
+
+                    {/* Inline Create (Moved to top) */}
+                    <HabitInlineCreate />
 
                     {/* Habit List */}
                     {filteredHabits.length > 0 ? (
@@ -231,8 +227,6 @@ export function Habits() {
                             <p>Small daily actions compound into extraordinary results. Create your first habit to get started.</p>
                         </div>
                     )}
-
-                    <HabitInlineCreate />
                 </div>
 
                 {/* ── Right Insight Panel (Collapsible) ── */}
