@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAppStore } from '../store/appStore';
+import { useAuthStore } from '../store/authStore';
 import type { Task } from '../types';
 import { TaskRow } from '../components/TaskRow';
 import { Select } from '../components/Select';
@@ -146,6 +147,17 @@ export function Tasks() {
         { value: 'critical', label: '🟣 Critical', color: '#8b5cf6' },
     ];
 
+    const { user } = useAuthStore();
+
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return 'Good morning';
+        if (hour < 17) return 'Good afternoon';
+        return 'Good evening';
+    };
+
+    const displayName = user?.displayName?.split(' ')[0] || user?.email?.split('@')[0] || '';
+
     return (
         <div className="tasks-page">
 
@@ -153,6 +165,9 @@ export function Tasks() {
             <header className="page-header--elite">
                 <div className="page-title-group">
                     <h1 className="page-title">Tasks</h1>
+                    <span className="page-greeting" style={{ marginLeft: '12px', fontSize: '18px', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                        {getGreeting()}, {displayName}
+                    </span>
                     {tasks.length > 0 && (
                         <p className="page-subtitle--elite">
                             {completedCount} of {tasks.length} tasks completed
