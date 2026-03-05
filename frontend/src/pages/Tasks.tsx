@@ -4,6 +4,7 @@ import type { Task } from '../types';
 import { TaskRow } from '../components/TaskRow';
 import { Select } from '../components/Select';
 import { InlineTaskCreate } from '../components/InlineTaskCreate';
+import { InlineTaskEdit } from '../components/InlineTaskEdit';
 import { UndoToast } from '../components/UndoToast';
 
 import {
@@ -28,6 +29,7 @@ export function Tasks() {
     const [searchQuery, setSearchQuery] = useState('');
     const [filterPriority, setFilterPriority] = useState('');
     const [isAddingTask, setIsAddingTask] = useState(false);
+    const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
     const [isSearching, setIsSearching] = useState(false);
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const [showMobileCreate, setShowMobileCreate] = useState(false);
@@ -220,13 +222,21 @@ export function Tasks() {
                             >
                                 <div className="task-list--elite">
                                     {filteredTasks.map(task => (
-                                        <TaskRow
-                                            key={task.id}
-                                            task={task}
-                                            onToggle={handleStatusToggle}
-                                            onDelete={handleDelete}
-                                            onEdit={(t) => console.log('Edit task:', t)}
-                                        />
+                                        editingTaskId === task.id ? (
+                                            <InlineTaskEdit
+                                                key={`edit-${task.id}`}
+                                                task={task}
+                                                onClose={() => setEditingTaskId(null)}
+                                            />
+                                        ) : (
+                                            <TaskRow
+                                                key={task.id}
+                                                task={task}
+                                                onToggle={handleStatusToggle}
+                                                onDelete={handleDelete}
+                                                onEdit={(t) => setEditingTaskId(t.id)}
+                                            />
+                                        )
                                     ))}
                                 </div>
                             </SortableContext>
