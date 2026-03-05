@@ -319,7 +319,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({ loading: true });
         try {
             const res = await client.put<ApiResponse<User>>('/users/me', data);
-            set({ profile: res.data.data, user: res.data.data, loading: false });
+            const updatedData = res.data.data;
+            const currentUser = get().user;
+            const currentProfile = get().profile;
+            set({
+                user: currentUser ? { ...currentUser, ...updatedData } : updatedData,
+                profile: currentProfile ? { ...currentProfile, ...updatedData } : updatedData,
+                loading: false,
+            });
         } catch (err) {
             set({ loading: false });
             throw err;
