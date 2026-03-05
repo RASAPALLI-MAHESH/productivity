@@ -163,6 +163,11 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("Invalid credentials"));
         }
         
+        if (!user.isVerified()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(ApiResponse.error("Email not verified"));
+        }
+        
         userService.recordLogin(user.getUid());
         return generateTokensAndResponse(user, response);
     }
@@ -234,6 +239,13 @@ public class AuthController {
         
         String uid = jwtService.extractUid(refreshToken);
         User user = userService.getUserModel(uid);
+        
+        if (user.getLockedUntil() != null && user.getLockedUntil().toDate().toInstant().isAfter(Instant.now())) {
+             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("Account locked"));
+        }
+        if (!user.isVerified()) {
+             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("Email not verified"));
+        }
         
         // Refresh token rotation: generate new access AND new refresh token
         String newAccessToken = jwtService.generateAccessToken(uid, user.getRole());

@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+﻿import { useState, FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { AuthLayout } from '../components/AuthLayout';
@@ -48,18 +48,18 @@ export function Login() {
     return (
         <AuthLayout
             title="Welcome back"
-            subtitle="Let's get you focused."
+            subtitle="Sign in to your account to continue"
             error={error}
             footer={footerNode}
         >
-            <div className="auth-social-buttons mb-4">
+            <div className="auth-social-buttons mb-4 animate-slide-up-fade stagger-1">
                 <button
                     type="button"
-                    className="btn-social w-full flex items-center justify-center gap-3"
+                    className="btn-social"
                     onClick={handleGoogleLogin}
                     disabled={loading}
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20px" height="20px">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
                         <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
                         <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
                         <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
@@ -69,11 +69,10 @@ export function Login() {
                 </button>
             </div>
 
-            <div className="auth-divider">or continue with email</div>
+            <div className="auth-divider animate-slide-up-fade stagger-2">or sign in with email</div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="animate-slide-up-fade stagger-3">
                 <div className="input-group">
-                    <label className="input-label" htmlFor="email">Email</label>
                     <input
                         id="email"
                         type="email"
@@ -85,10 +84,10 @@ export function Login() {
                         autoComplete="email"
                         autoFocus
                     />
+                    <label className="input-label" htmlFor="email">Email address</label>
                 </div>
 
                 <div className="input-group">
-                    <label className="input-label" htmlFor="password">Password</label>
                     <div style={{ position: 'relative', width: '100%' }}>
                         <input
                             id="password"
@@ -107,12 +106,14 @@ export function Login() {
                             onClick={() => setShowPassword(!showPassword)}
                             className="password-toggle"
                             aria-label={showPassword ? 'Hide password' : 'Show password'}
+                            tabIndex={-1}
                         >
                             <span className="material-symbols-outlined">
                                 {showPassword ? 'visibility_off' : 'visibility'}
                             </span>
                         </button>
                     </div>
+                    <label className="input-label" htmlFor="password">Password</label>
                 </div>
 
                 <div className="custom-checkbox-row">
@@ -123,7 +124,7 @@ export function Login() {
                             onChange={(e) => setRememberMe(e.target.checked)}
                             className="custom-checkbox"
                         />
-                        Remember me
+                        Remember this device
                     </label>
                     <Link to="/forgot-password" className="auth-link">
                         Forgot password?

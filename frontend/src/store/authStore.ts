@@ -87,13 +87,24 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             set({ user, profile: user, loading: false, authStep: 'idle' });
         } catch (err: unknown) {
             const message = extractErrorMessage(err, 'Login failed');
-            // Check for account locked response
-            if (message.toLowerCase().includes('locked')) {
-                set({ error: message, loading: false, authStep: 'account-locked' });
+            // Check for expected auth flow states from backend
+            if (message.toLowerCase().includes('not verified')) {
+                set({
+                    loading: false,
+                    authStep: 'email-not-verified',
+                    pendingEmail: email,
+                    error: null // clear error since it's just a step
+                });
+            } else if (message.toLowerCase().includes('locked')) {
+                set({
+                    loading: false,
+                    authStep: 'account-locked',
+                    error: message
+                });
             } else {
                 set({ error: message, loading: false });
+                throw err;
             }
-            throw err;
         }
     },
 
