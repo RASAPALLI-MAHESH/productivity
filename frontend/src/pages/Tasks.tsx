@@ -164,10 +164,12 @@ export function Tasks() {
             {/* ── Page Header ── */}
             <header className="page-header--elite">
                 <div className="page-title-group">
-                    <h1 className="page-title">Tasks</h1>
-                    <span className="page-greeting" style={{ marginLeft: '12px', fontSize: '18px', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                        {getGreeting()}, {displayName}
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px' }}>
+                        <h1 className="page-title" style={{ margin: 0 }}>Tasks</h1>
+                        <span className="page-greeting" style={{ fontSize: '16px', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                            {getGreeting()}, {displayName}
+                        </span>
+                    </div>
                     {tasks.length > 0 && (
                         <p className="page-subtitle--elite">
                             {completedCount} of {tasks.length} tasks completed
