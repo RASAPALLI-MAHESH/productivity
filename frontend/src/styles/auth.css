@@ -4,8 +4,8 @@
 
 .auth-container {
     display: flex;
-    height: 100vh;
-    width: 100vw;
+    height: 100dvh;
+    width: 100%;
     background: var(--bg-primary);
     position: fixed;
     top: 0;
@@ -16,12 +16,13 @@
 
 /* ── Split Pane Layout for Desktop ── */
 .auth-brand-pane {
-    display: none; /* hidden on mobile */
+    display: none;
+    /* hidden on mobile */
     flex: 1;
     position: relative;
     background: radial-gradient(circle at 50% 10%, rgba(63, 140, 255, 0.08), transparent 50%),
-                radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.05), transparent 40%),
-                var(--bg-secondary);
+        radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.05), transparent 40%),
+        var(--bg-secondary);
     border-right: 1px solid var(--border);
     overflow: hidden;
 }
@@ -39,12 +40,12 @@
 .auth-brand-grid-mesh {
     position: absolute;
     inset: 0;
-    background-image: 
+    background-image:
         linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     background-size: 32px 32px;
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0));
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0));
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
     z-index: 1;
     pointer-events: none;
 }
@@ -102,22 +103,24 @@
     .auth-brand-pane {
         display: flex;
     }
+
     .auth-form-pane {
         max-width: 600px;
     }
 }
 
-/* Auth Card Mechanics */
 .auth-card {
     width: 100%;
     max-width: 440px;
-    background: transparent; /* No card background on desktop split */
+    background: transparent;
+    /* No card background on desktop split */
     padding: var(--space-6);
     position: relative;
     z-index: 20;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
 }
 
 .auth-card-header {
@@ -143,7 +146,8 @@
 .auth-form-container form {
     display: flex;
     flex-direction: column;
-    gap: var(--space-5); /* Wider gap for floating labels */
+    gap: var(--space-5);
+    /* Wider gap for floating labels */
 }
 
 /* Elite Inputs - Floating Label Design */
@@ -157,18 +161,20 @@
 .auth-form-container .input {
     width: 100%;
     height: 56px;
-    padding: 20px 16px 8px; /* Offset for floating label */
+    padding: 20px 16px 8px;
+    /* Offset for floating label */
     background: var(--bg-input);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     font-size: var(--font-size-base);
     color: var(--text-primary);
     transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .auth-form-container .input::placeholder {
-    color: transparent; /* Hide placeholder to favor floating label */
+    color: transparent;
+    /* Hide placeholder to favor floating label */
 }
 
 .auth-form-container .input:focus,
@@ -179,7 +185,7 @@
 .auth-form-container .input:focus {
     outline: none;
     border-color: var(--text-secondary);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 0 0 4px rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 4px rgba(255, 255, 255, 0.05);
 }
 
 .input-label {
@@ -194,8 +200,8 @@
 }
 
 /* Floating Label Logic */
-.auth-form-container .input:focus ~ .input-label,
-.auth-form-container .input:not(:placeholder-shown) ~ .input-label {
+.auth-form-container .input:focus~.input-label,
+.auth-form-container .input:not(:placeholder-shown)~.input-label {
     transform: translateY(-8px) scale(0.75);
     color: var(--text-secondary);
 }
@@ -216,7 +222,8 @@
     justify-content: center;
     transition: color 150ms ease;
     border-radius: var(--radius-sm);
-    z-index: 2; /* keep above input */
+    z-index: 2;
+    /* keep above input */
 }
 
 .password-toggle:hover {
@@ -275,7 +282,8 @@
     height: 10px;
     border: solid var(--bg-primary);
     border-width: 0 2px 2px 0;
-    transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1); /* Bounce effect */
+    transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Bounce effect */
 }
 
 .custom-checkbox:checked::after {
@@ -311,19 +319,22 @@
     left: -100%;
     width: 50%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     transform: skewX(-20deg);
     animation: shimmer 3s infinite reverse;
 }
 
 @keyframes shimmer {
-    100% { left: 200%; }
+    100% {
+        left: 200%;
+    }
 }
 
 .auth-form-container .btn-primary:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(255, 255, 255, 0.12);
-    background: #ffffff; /* pure white on hover for dark mode assumed */
+    background: #ffffff;
+    /* pure white on hover for dark mode assumed */
 }
 
 .auth-form-container .btn-primary:active:not(:disabled) {
@@ -427,6 +438,7 @@
         transform: translateY(30px) scale(0.98);
         filter: blur(4px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -434,10 +446,21 @@
     }
 }
 
-.stagger-1 { animation-delay: 100ms; }
-.stagger-2 { animation-delay: 200ms; }
-.stagger-3 { animation-delay: 300ms; }
-.stagger-4 { animation-delay: 400ms; }
+.stagger-1 {
+    animation-delay: 100ms;
+}
+
+.stagger-2 {
+    animation-delay: 200ms;
+}
+
+.stagger-3 {
+    animation-delay: 300ms;
+}
+
+.stagger-4 {
+    animation-delay: 400ms;
+}
 
 
 /* OTP Upgrades */
@@ -450,7 +473,8 @@
 
 .otp-input {
     width: 100%;
-    aspect-ratio: 1; /* perfect squares */
+    aspect-ratio: 1;
+    /* perfect squares */
     max-width: 60px;
     text-align: center;
     font-size: 28px;
@@ -462,12 +486,12 @@
     color: var(--text-primary);
     outline: none;
     transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .otp-input:focus {
     border-color: var(--text-secondary);
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 0 0 4px rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0 4px rgba(255, 255, 255, 0.05);
     background: var(--bg-elevated);
     transform: translateY(-4px);
 }
@@ -568,16 +592,30 @@
 
 
 /* Form Element Entry Animations */
-.auth-form-container form > * {
+.auth-form-container form>* {
     animation: slideUpFade 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
     opacity: 0;
 }
 
-.auth-form-container form > :nth-child(1) { animation-delay: 100ms; }
-.auth-form-container form > :nth-child(2) { animation-delay: 180ms; }
-.auth-form-container form > :nth-child(3) { animation-delay: 260ms; }
-.auth-form-container form > :nth-child(4) { animation-delay: 340ms; }
-.auth-form-container form > :nth-child(5) { animation-delay: 420ms; }
+.auth-form-container form> :nth-child(1) {
+    animation-delay: 100ms;
+}
+
+.auth-form-container form> :nth-child(2) {
+    animation-delay: 180ms;
+}
+
+.auth-form-container form> :nth-child(3) {
+    animation-delay: 260ms;
+}
+
+.auth-form-container form> :nth-child(4) {
+    animation-delay: 340ms;
+}
+
+.auth-form-container form> :nth-child(5) {
+    animation-delay: 420ms;
+}
 
 /* Mobile Polish */
 @media (max-width: 1023px) {
@@ -597,14 +635,16 @@
         padding-top: var(--space-8);
         overflow-y: auto;
     }
-    
+
     .auth-card {
         padding: var(--space-4);
         border: none;
         background: transparent;
         box-shadow: none;
         backdrop-filter: none;
-        max-width: 100%;
+        max-width: 100vw;
+        width: 100%;
+        overflow-x: hidden;
     }
 
     .auth-card-header h2 {
@@ -612,7 +652,8 @@
     }
 
     .auth-form-container .input {
-        font-size: 16px; /* Prevent iOS zoom */
+        font-size: 16px;
+        /* Prevent iOS zoom */
     }
 
     .otp-input {
@@ -622,8 +663,8 @@
 }
 
 /* Floating label for password fields where input is inside a wrapper div */
-.input-group:has(.input:focus) > .input-label,
-.input-group:has(.input:not(:placeholder-shown)) > .input-label {
+.input-group:has(.input:focus)>.input-label,
+.input-group:has(.input:not(:placeholder-shown))>.input-label {
     transform: translateY(-8px) scale(0.75);
     color: var(--text-secondary);
 }
