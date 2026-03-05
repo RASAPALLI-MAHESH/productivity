@@ -10,8 +10,8 @@ interface InlineTaskCreateProps {
 
 interface ExternalLink {
     id: string;
+    text: string;
     url: string;
-    title: string;
 }
 
 const PRIORITY_OPTIONS = [
@@ -28,13 +28,15 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
     const [priority, setPriority] = useState<'low' | 'medium' | 'high' | 'critical'>('medium');
     const [deadline, setDeadline] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [showLinkManager, setShowLinkManager] = useState(false);
     const [externalLinks, setExternalLinks] = useState<ExternalLink[]>([]);
-    const [newLinkTitle, setNewLinkTitle] = useState('');
-    const [newLinkUrl, setNewLinkUrl] = useState('');
+
+    // Link popup state
+    const [pendingLinkWord, setPendingLinkWord] = useState<string | null>(null);
+    const [pendingLinkUrl, setPendingLinkUrl] = useState('');
 
     const { createTask } = useAppStore();
     const titleRef = useRef<HTMLTextAreaElement>(null);
+    const linkUrlRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (autoOpen) setIsExpanded(true);
@@ -46,28 +48,68 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
         }
     }, [isExpanded]);
 
-    // Watch for #link in the title
     useEffect(() => {
-        if (title.includes('#link')) {
-            setShowLinkManager(true);
-            setTitle(prev => prev.replace(/#link/gi, '').trim());
+        if (pendingLinkWord && linkUrlRef.current) {
+            linkUrlRef.current.focus();
         }
-    }, [title]);
+    }, [pendingLinkWord]);
 
-    const addLink = () => {
-        if (!newLinkUrl.trim()) return;
-        const link: ExternalLink = {
+    // Detect #link in title
+    const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const val = e.target.value;
+        const linkIndex = val.indexOf('#link');
+        if (linkIndex !== -1) {
+            // Find the word/text before #link
+            const beforeLink = val.substring(0, linkIndex);
+            const afterLink = val.substring(linkIndex + 5); // skip '#link'
+            // Find the last word before #link (from last space to #link)
+            const lastSpaceIdx = beforeLink.lastIndexOf(' ');
+            const linkedWord = beforeLink.substring(lastSpaceIdx + 1);
+            if (linkedWord.trim()) {
+                setPendingLinkWord(linkedWord);
+                setTitle(beforeLink + afterLink);
+            } else {
+                setTitle(beforeLink + afterLink);
+            }
+        } else {
+            setTitle(val);
+        }
+    };
+
+    // Detect #link in description
+    const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const val = e.target.value;
+        const linkIndex = val.indexOf('#link');
+        if (linkIndex !== -1) {
+            const beforeLink = val.substring(0, linkIndex);
+            const afterLink = val.substring(linkIndex + 5);
+            const lastSpaceIdx = beforeLink.lastIndexOf(' ');
+            const linkedWord = beforeLink.substring(lastSpaceIdx + 1);
+            if (linkedWord.trim()) {
+                setPendingLinkWord(linkedWord);
+                setDescription(beforeLink + afterLink);
+            } else {
+                setDescription(beforeLink + afterLink);
+            }
+        } else {
+            setDescription(val);
+        }
+    };
+
+    const confirmLink = () => {
+        if (!pendingLinkWord || !pendingLinkUrl.trim()) return;
+        const url = pendingLinkUrl.trim().startsWith('http') ? pendingLinkUrl.trim() : `https://${pendingLinkUrl.trim()}`;
+        setExternalLinks(prev => [...prev, {
             id: `link-${Date.now()}`,
-            url: newLinkUrl.trim().startsWith('http') ? newLinkUrl.trim() : `https://${newLinkUrl.trim()}`,
-            title: newLinkTitle.trim() || new URL(newLinkUrl.trim().startsWith('http') ? newLinkUrl.trim() : `https://${newLinkUrl.trim()}`).hostname,
-        };
-        setExternalLinks([...externalLinks, link]);
-        setNewLinkTitle('');
-        setNewLinkUrl('');
+            text: pendingLinkWord,
+            url,
+        }]);
+        setPendingLinkWord(null);
+        setPendingLinkUrl('');
     };
 
     const removeLink = (id: string) => {
-        setExternalLinks(externalLinks.filter(l => l.id !== id));
+        setExternalLinks(prev => prev.filter(l => l.id !== id));
     };
 
     const handleCancel = () => {
@@ -77,7 +119,8 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
         setPriority('medium');
         setDeadline(null);
         setExternalLinks([]);
-        setShowLinkManager(false);
+        setPendingLinkWord(null);
+        setPendingLinkUrl('');
         onClose?.();
     };
 
@@ -99,7 +142,6 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
             setPriority('medium');
             setDeadline(null);
             setExternalLinks([]);
-            setShowLinkManager(false);
             setIsExpanded(false);
             onClose?.();
         } catch (err) {
@@ -110,11 +152,36 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleCreate(); }
-        if (e.key === 'Escape') handleCancel();
+        if (e.key === 'Enter' && !e.shiftKey && !pendingLinkWord) { e.preventDefault(); handleCreate(); }
+        if (e.key === 'Escape') { if (pendingLinkWord) { setPendingLinkWord(null); setPendingLinkUrl(''); } else handleCancel(); }
     };
 
     const activePriority = PRIORITY_OPTIONS.find(p => p.id === priority)!;
+
+    // Render text with linked words highlighted
+    const renderPreview = (text: string) => {
+        if (externalLinks.length === 0) return null;
+        const linkedWords = externalLinks.filter(l =>
+            text.includes(l.text)
+        );
+        if (linkedWords.length === 0) return null;
+        return (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 4, padding: '0 16px' }}>
+                {linkedWords.map(l => (
+                    <span key={l.id} style={{
+                        fontSize: 11, color: 'var(--primary)', display: 'inline-flex', alignItems: 'center', gap: 3,
+                        padding: '2px 8px', borderRadius: 4, background: 'var(--primary-light)',
+                    }}>
+                        🔗 {l.text}
+                        <button onClick={() => removeLink(l.id)} style={{
+                            background: 'none', border: 'none', cursor: 'pointer', color: 'var(--error)',
+                            padding: 0, fontSize: 11, marginLeft: 2,
+                        }}>✕</button>
+                    </span>
+                ))}
+            </div>
+        );
+    };
 
     /* ── COLLAPSED ── */
     if (!isExpanded) {
@@ -134,112 +201,74 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
             <textarea
                 ref={titleRef}
                 className="itc-title"
-                placeholder="Task name (type #link to add links)"
+                placeholder="Task name — type word#link to hyperlink a word"
                 value={title}
-                onChange={e => setTitle(e.target.value)}
+                onChange={handleTitleChange}
                 onKeyDown={handleKeyDown}
                 rows={1}
             />
+            {renderPreview(title)}
 
             {/* Description input */}
             <textarea
                 className="itc-desc"
-                placeholder="Add description…"
+                placeholder="Add description… (word#link works here too)"
                 value={description}
-                onChange={e => setDescription(e.target.value)}
+                onChange={handleDescChange}
                 rows={2}
             />
+            {renderPreview(description)}
 
-            {/* Link Manager */}
-            {showLinkManager && (
+            {/* Link URL Popup */}
+            {pendingLinkWord && (
                 <div style={{
-                    padding: '12px 16px',
-                    borderTop: '1px solid var(--border)',
+                    padding: '12px 16px', borderTop: '1px solid var(--border)',
                     background: 'var(--surface-raised, var(--bg-secondary))',
-                    borderRadius: '0 0 12px 12px',
+                    display: 'flex', alignItems: 'center', gap: 8,
                 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-                        <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'var(--primary)' }}>link</span>
-                        <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-primary)' }}>External Links</span>
-                        <button
-                            onClick={() => { setShowLinkManager(false); setExternalLinks([]); }}
-                            style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontSize: 12 }}
-                        >✕</button>
-                    </div>
-
-                    {/* Existing links */}
-                    {externalLinks.map(link => (
-                        <div key={link.id} style={{
-                            display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px',
-                            background: 'var(--bg-primary)', borderRadius: 8, marginBottom: 6,
-                            border: '1px solid var(--border)',
-                        }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: 14, color: 'var(--primary)' }}>open_in_new</span>
-                            <span style={{ flex: 1, fontSize: 13, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                <strong style={{ color: 'var(--text-primary)' }}>{link.title}</strong> — {link.url}
-                            </span>
-                            <button
-                                onClick={() => removeLink(link.id)}
-                                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--error)', fontSize: 14, padding: 2 }}
-                            >
-                                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
-                            </button>
-                        </div>
-                    ))}
-
-                    {/* Add new link */}
-                    <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 8 }}>
-                        <input
-                            type="text"
-                            placeholder="Link title"
-                            value={newLinkTitle}
-                            onChange={e => setNewLinkTitle(e.target.value)}
-                            style={{
-                                flex: 1, padding: '6px 10px', borderRadius: 6, border: '1px solid var(--border)',
-                                background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: 13,
-                            }}
-                        />
-                        <input
-                            type="url"
-                            placeholder="https://example.com"
-                            value={newLinkUrl}
-                            onChange={e => setNewLinkUrl(e.target.value)}
-                            onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addLink())}
-                            style={{
-                                flex: 2, padding: '6px 10px', borderRadius: 6, border: '1px solid var(--border)',
-                                background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: 13,
-                            }}
-                        />
-                        <button
-                            onClick={addLink}
-                            disabled={!newLinkUrl.trim()}
-                            style={{
-                                padding: '6px 12px', borderRadius: 6, border: 'none', cursor: 'pointer',
-                                background: 'var(--primary)', color: '#fff', fontSize: 13, fontWeight: 500,
-                                opacity: newLinkUrl.trim() ? 1 : 0.5,
-                            }}
-                        >Add</button>
-                    </div>
+                    <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'var(--primary)' }}>link</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+                        Link <strong style={{ color: 'var(--text-primary)' }}>"{pendingLinkWord}"</strong> to:
+                    </span>
+                    <input
+                        ref={linkUrlRef}
+                        type="url"
+                        placeholder="https://example.com"
+                        value={pendingLinkUrl}
+                        onChange={e => setPendingLinkUrl(e.target.value)}
+                        onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); confirmLink(); } if (e.key === 'Escape') { setPendingLinkWord(null); setPendingLinkUrl(''); } }}
+                        style={{
+                            flex: 1, padding: '6px 10px', borderRadius: 6, border: '1px solid var(--border)',
+                            background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: 13,
+                        }}
+                    />
+                    <button
+                        onClick={confirmLink}
+                        disabled={!pendingLinkUrl.trim()}
+                        style={{
+                            padding: '6px 14px', borderRadius: 6, border: 'none', cursor: 'pointer',
+                            background: 'var(--primary)', color: '#fff', fontSize: 13, fontWeight: 500,
+                            opacity: pendingLinkUrl.trim() ? 1 : 0.5,
+                        }}
+                    >Add</button>
+                    <button
+                        onClick={() => { setPendingLinkWord(null); setPendingLinkUrl(''); }}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontSize: 14 }}
+                    >✕</button>
                 </div>
             )}
 
             {/* Footer toolbar */}
             <div className="itc-footer">
                 <div className="itc-footer__left">
-                    {/* Date picker */}
                     <DateTimePicker
                         value={deadline || ''}
                         onChange={val => setDeadline(val)}
                     />
-
-                    {/* Priority menu */}
                     <Menu
                         trigger={
                             <button className="itc-chip" style={{ '--chip-color': activePriority.color } as React.CSSProperties}>
-                                <span
-                                    className="itc-chip__dot"
-                                    style={{ background: activePriority.color, boxShadow: `0 0 6px ${activePriority.color}` }}
-                                />
+                                <span className="itc-chip__dot" style={{ background: activePriority.color, boxShadow: `0 0 6px ${activePriority.color}` }} />
                                 {activePriority.label}
                             </button>
                         }
@@ -250,34 +279,16 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
                             onClick: () => setPriority(opt.id as 'low' | 'medium' | 'high' | 'critical'),
                         }))}
                     />
-
-                    {/* Link toggle button */}
-                    {!showLinkManager && (
-                        <button
-                            className="itc-chip"
-                            onClick={() => setShowLinkManager(true)}
-                            title="Add external links"
-                            style={{ '--chip-color': '#6366f1' } as React.CSSProperties}
-                        >
-                            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>link</span>
-                            Links
-                        </button>
-                    )}
                 </div>
 
                 <div className="itc-footer__right">
-                    <button className="itc-btn itc-btn--ghost" onClick={handleCancel}>
-                        Cancel
-                    </button>
+                    <button className="itc-btn itc-btn--ghost" onClick={handleCancel}>Cancel</button>
                     <button
                         className="itc-btn itc-btn--primary"
                         disabled={!title.trim() || isSubmitting}
                         onClick={handleCreate}
                     >
-                        {isSubmitting
-                            ? <span className="itc-spinner" />
-                            : <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span>
-                        }
+                        {isSubmitting ? <span className="itc-spinner" /> : <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span>}
                         {isSubmitting ? 'Adding…' : 'Add task'}
                     </button>
                 </div>

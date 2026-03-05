@@ -15,7 +15,7 @@ export interface Task {
         title: string;
         completed: boolean;
     }[];
-    externalLinks?: { id: string; url: string; title: string }[];
+    externalLinks?: { id: string; text: string; url: string }[];
     createdAt: string;
     updatedAt: string;
 }
