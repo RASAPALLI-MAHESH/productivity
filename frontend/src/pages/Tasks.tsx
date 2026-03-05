@@ -53,6 +53,7 @@ export function Tasks() {
     // Keyboard shortcuts
     useEffect(() => {
         const handleKeys = (e: KeyboardEvent) => {
+            // "a" key to add task
             if (
                 e.key === 'a' &&
                 document.activeElement?.tagName !== 'INPUT' &&
@@ -61,13 +62,13 @@ export function Tasks() {
                 e.preventDefault();
                 setIsAddingTask(true);
             }
+            // Cmd+K or Ctrl+K or "/" to search
             if (
-                e.key === '/' &&
-                document.activeElement?.tagName !== 'INPUT' &&
-                document.activeElement?.tagName !== 'TEXTAREA'
+                (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') ||
+                (e.key.toLowerCase() === 'k' && (e.metaKey || e.ctrlKey))
             ) {
                 e.preventDefault();
-                (document.querySelector('.search-input') as HTMLInputElement)?.focus();
+                (document.querySelector('.search-input--elite') as HTMLInputElement)?.focus();
             }
         };
         window.addEventListener('keydown', handleKeys);
@@ -167,11 +168,11 @@ export function Tasks() {
                     <input
                         type="text"
                         className="search-input--elite"
-                        placeholder="Search tasks... (/)"
+                        placeholder="Search tasks..."
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
                     />
-                    <kbd className="kbd-hint">/</kbd>
+                    <kbd className="kbd-hint">⌘ K</kbd>
                 </div>
 
                 <div className="filter-group--elite">
