@@ -96,13 +96,22 @@ export function Settings() {
             margin: { left: 14, right: 14 }
         });
 
-        // Footer
+        // Footer and Border
         const pageCount = doc.getNumberOfPages();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+
         for (let i = 1; i <= pageCount; i++) {
             doc.setPage(i);
+
+            // Draw Border
+            doc.setDrawColor(30, 64, 175); // Brand border
+            doc.setLineWidth(1);
+            doc.rect(5, 5, pageWidth - 10, pageHeight - 10);
+
             doc.setFontSize(10);
             doc.setTextColor('#9ca3af');
-            doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+            doc.text(`Page ${i} of ${pageCount}`, pageWidth / 2, pageHeight - 12, { align: 'center' });
         }
 
         doc.save(`Productiv_Export_${exportDate.replace(/\//g, '-')}.pdf`);
@@ -156,15 +165,17 @@ export function Settings() {
                             <div className="settings-row-info" style={{ flex: 1 }}>
                                 <span className="settings-row-label">Display Name</span>
                                 {isEditingName ? (
-                                    <input
-                                        autoFocus
-                                        className="search-input"
-                                        style={{ marginTop: 8, paddingLeft: 12 }}
-                                        value={editName}
-                                        onChange={e => setEditName(e.target.value)}
-                                        onKeyDown={e => e.key === 'Enter' && handleSaveName()}
-                                        onBlur={handleSaveName}
-                                    />
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: 8 }}>
+                                        <input
+                                            autoFocus
+                                            className="search-input"
+                                            style={{ paddingLeft: 12, flex: 1, marginTop: 0 }}
+                                            value={editName}
+                                            onChange={e => setEditName(e.target.value)}
+                                            onKeyDown={e => e.key === 'Enter' && handleSaveName()}
+                                        />
+                                        <button className="btn btn-primary btn-sm" onClick={handleSaveName}>Save</button>
+                                    </div>
                                 ) : (
                                     <span className="settings-row-desc">{user?.displayName || 'Not set'}</span>
                                 )}
@@ -179,14 +190,18 @@ export function Settings() {
                             <div className="settings-row-info" style={{ flex: 1 }}>
                                 <span className="settings-row-label">Bio</span>
                                 {isEditingBio ? (
-                                    <textarea
-                                        autoFocus
-                                        className="search-input"
-                                        style={{ marginTop: 8, paddingLeft: 12, minHeight: 60, paddingTop: 8 }}
-                                        value={editBio}
-                                        onChange={e => setEditBio(e.target.value)}
-                                        onBlur={handleSaveBio}
-                                    />
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: 8 }}>
+                                        <textarea
+                                            autoFocus
+                                            className="search-input"
+                                            style={{ paddingLeft: 12, minHeight: 60, paddingTop: 8, marginTop: 0 }}
+                                            value={editBio}
+                                            onChange={e => setEditBio(e.target.value)}
+                                        />
+                                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                            <button className="btn btn-primary btn-sm" onClick={handleSaveBio}>Save</button>
+                                        </div>
+                                    </div>
                                 ) : (
                                     <span className="settings-row-desc">{profile?.bio || 'Write a short bio about what drives you...'}</span>
                                 )}
