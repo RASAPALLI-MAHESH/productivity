@@ -266,7 +266,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                     console.warn('Auth initialization timed out, forcing initialized state');
                     set({ initialized: true });
                 }
-            }, 12000);
+            }, 3000);
 
             try {
                 const res = await client.post<ApiResponse<AuthResponse>>('/auth/refresh', {});

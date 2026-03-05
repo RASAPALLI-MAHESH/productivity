@@ -45,9 +45,9 @@ function App() {
         document.documentElement.setAttribute('data-theme', theme);
     }, [theme]);
 
-    if (!initialized) {
-        return <AppLoader />;
-    }
+    // NOTE: We no longer block all rendering on `!initialized`.
+    // Public pages (Landing, Login, Signup) render instantly.
+    // Only ProtectedRoute gates on auth initialization.
 
     return (
         <ErrorBoundary>
@@ -56,17 +56,26 @@ function App() {
                 <CookieConsent />
                 <Suspense fallback={<AppLoader />}>
                     <Routes>
-                        {/* Public auth routes */}
-                        <Route path="/" element={user ? <Navigate to="/tasks" replace /> : <Landing />} />
-                        <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
-                        <Route path="/signup" element={user ? <Navigate to="/" replace /> : <Signup />} />
+                        {/* Public auth routes — render instantly, no auth wait */}
+                        <Route path="/" element={
+                            !initialized ? <Landing /> :
+                                user ? <Navigate to="/tasks" replace /> : <Landing />
+                        } />
+                        <Route path="/login" element={
+                            !initialized ? <Login /> :
+                                user ? <Navigate to="/" replace /> : <Login />
+                        } />
+                        <Route path="/signup" element={
+                            !initialized ? <Signup /> :
+                                user ? <Navigate to="/" replace /> : <Signup />
+                        } />
                         <Route path="/verify-otp" element={<VerifyOtp />} />
                         <Route path="/forgot-password" element={<ForgotPassword />} />
                         <Route path="/reset-password" element={<ResetPassword />} />
                         <Route path="/account-locked" element={<AccountLocked />} />
                         <Route path="/email-not-verified" element={<EmailNotVerified />} />
 
-                        {/* Protected routes */}
+                        {/* Protected routes — ProtectedRoute handles auth loading */}
                         <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
                             <Route path="tasks" element={profile && !profile.onboarded ? <Navigate to="/onboarding" replace /> : <Tasks />} />
                             <Route path="habits" element={profile && !profile.onboarded ? <Navigate to="/onboarding" replace /> : <Habits />} />

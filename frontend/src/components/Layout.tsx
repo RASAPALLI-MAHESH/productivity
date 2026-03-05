@@ -38,13 +38,9 @@ export function Layout() {
 
     return (
         <div className={layoutClass}>
-            {!focusMode && (
-                <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} isMobile={isMobile} />
-            )}
-
-            {/* Mobile backdrop */}
-            {isMobile && sidebarOpen && (
-                <div className="sidebar-backdrop visible" onClick={toggleSidebar} />
+            {/* Sidebar only on desktop — mobile uses bottom navigation bar */}
+            {!focusMode && !isMobile && (
+                <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} isMobile={false} />
             )}
 
             {/* Main content area */}

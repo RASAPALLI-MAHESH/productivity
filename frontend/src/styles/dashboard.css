@@ -1675,6 +1675,17 @@
     padding: 16px 8px 16px 12px;
 }
 
+/* Mobile: stack deadline card content vertically */
+@media (max-width: 768px) {
+    .deadline-card-layout {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 14px;
+    }
+}
+
 .urgency-badge {
     font-size: 10px;
     font-weight: 700;
@@ -4506,4 +4517,3 @@
 .theme-card.active .theme-card__radio-inner {
     transform: scale(1);
 }
-

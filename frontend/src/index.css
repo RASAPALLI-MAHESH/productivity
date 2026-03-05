@@ -4,7 +4,7 @@
    Do NOT add rules here; import them below.
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* Google Fonts are loaded in index.html — do not duplicate here */
 
 /* ── 1. Foundation ── */
 @import './styles/tokens.css';
@@ -57,6 +57,8 @@
 /* Login, signup, OTP, locked screens */
 @import './styles/cookie.css';
 /* Cookie consent banner */
+@import './styles/onboarding.css';
+/* Onboarding wizard */
 
 /* ── 5. Dashboard (Elite) ── */
 @import './styles/dashboard.css';

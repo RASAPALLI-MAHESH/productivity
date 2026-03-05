@@ -5,7 +5,7 @@
    AMOLED Dark + Light Theme. Material Icons.
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* Google Fonts are loaded in index.html — do not duplicate here */
 
 /* ============================================
    1. DESIGN TOKENS
@@ -39,8 +39,40 @@
     /* Calm semantic red */
     --error-light: rgba(255, 69, 58, 0.1);
     --success: #32d74b;
+    --success-light: rgba(50, 215, 75, 0.1);
+    --success-subtle: rgba(50, 215, 75, 0.05);
     --warning: #ff9f0a;
+    --warning-light: rgba(255, 159, 10, 0.1);
+    --warning-subtle: rgba(255, 159, 10, 0.05);
     --info: #0a84ff;
+    --info-light: rgba(10, 132, 255, 0.1);
+
+    /* Productiv Elite Colors (Dark) */
+    --p-accent: #3f8cff;
+    --p-accent-muted: rgba(63, 140, 255, 0.08);
+    --p-success: #32d74b;
+    --p-success-muted: rgba(50, 215, 75, 0.08);
+    --p-warning: #ff9f0a;
+    --p-warning-muted: rgba(255, 159, 10, 0.08);
+    --p-error: #ff453a;
+    --p-error-muted: rgba(255, 69, 58, 0.08);
+    --p-border: #1f1f1f;
+    --p-border-hover: #2a2a2a;
+
+    /* Semantic Accent Aliases */
+    --critical: #ff453a;
+    --critical-subtle: rgba(255, 69, 58, 0.05);
+    --accent: #3f8cff;
+    --accent-glow: rgba(63, 140, 255, 0.1);
+    --accent-subtle: rgba(63, 140, 255, 0.05);
+    --accent-critical: #ff453a;
+    --accent-warning: #ff9f0a;
+    --accent-success: #32d74b;
+    --danger: #ff453a;
+    --secondary: #3f8cff;
+    --bg-card-hover: #161616;
+    --border-glass: #1f1f1f;
+    --bg-glass: #0f0f0f;
 
     /* --- Spacing: Elite 8px System --- */
     --space-1: 8px;
@@ -56,6 +88,10 @@
     --radius-md: 6px;
     --radius-lg: 8px;
     --radius-xl: 12px;
+    --radius-full: 9999px;
+
+    /* Habit-specific */
+    --habit-grid-gap: 16px;
 
     /* --- Shadows: Zero Noise --- */
     --shadow-sm: none;
@@ -182,4 +218,3 @@
     --s-5: 40px;
     --s-inline: 12px;
 }
-
