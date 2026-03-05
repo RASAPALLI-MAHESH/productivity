@@ -37,7 +37,7 @@ export const HabitAnalyticsDrawer: React.FC<HabitAnalyticsDrawerProps> = ({ habi
                 <div className="drawer-header">
                     <h2>{habit.name} <span className="drawer-category">{habit.category}</span></h2>
                     <button className="drawer-close" onClick={onClose}>
-                        <span className="material-icons">close</span>
+                        <span className="material-symbols-outlined">close</span>
                     </button>
                 </div>
 
@@ -71,7 +71,7 @@ export const HabitAnalyticsDrawer: React.FC<HabitAnalyticsDrawerProps> = ({ habi
                     </div>
 
                     <div className="drawer-section insight-box">
-                        <span className="material-icons">auto_awesome</span>
+                        <span className="material-symbols-outlined">auto_awesome</span>
                         <p>
                             {habit.currentStreak >= 5
                                 ? "Excellent momentum! You're building a solid behavioral pipeline."
