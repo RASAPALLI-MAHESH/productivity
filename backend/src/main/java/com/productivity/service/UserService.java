@@ -104,6 +104,18 @@ public class UserService {
         log.info("Onboarding completed for user: {}", uid);
         return toDTO(user);
     }
+
+    public UserDTO updateProfile(String uid, String displayName, String bio, String photoURL) throws ExecutionException, InterruptedException {
+        Map<String, Object> updates = new HashMap<>();
+        if (displayName != null) updates.put("displayName", displayName);
+        if (bio != null) updates.put("bio", bio);
+        if (photoURL != null) updates.put("photoURL", photoURL);
+        updates.put("updatedAt", Timestamp.now());
+        
+        User user = userRepository.update(uid, updates);
+        log.info("Profile updated for user: {}", uid);
+        return toDTO(user);
+    }
     
     public void verifyUser(String uid) throws ExecutionException, InterruptedException {
          Map<String, Object> updates = new HashMap<>();

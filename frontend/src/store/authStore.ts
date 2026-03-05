@@ -39,6 +39,7 @@ interface AuthState {
     initAuth: () => () => void;
     fetchProfile: () => Promise<void>;
     completeOnboarding: (bio: string) => Promise<void>;
+    updateProfile: (data: { displayName?: string; bio?: string; photoURL?: string }) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -307,6 +308,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         try {
             const res = await client.post<ApiResponse<User>>('/users/onboarding', { bio });
             set({ profile: res.data.data, loading: false });
+        } catch (err) {
+            set({ loading: false });
+            throw err;
+        }
+    },
+
+    // ─── Update Profile ─────────────────────────────
+    updateProfile: async (data: { displayName?: string; bio?: string; photoURL?: string }) => {
+        set({ loading: true });
+        try {
+            const res = await client.put<ApiResponse<User>>('/users/me', data);
+            set({ profile: res.data.data, user: res.data.data, loading: false });
         } catch (err) {
             set({ loading: false });
             throw err;

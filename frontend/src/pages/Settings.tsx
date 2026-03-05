@@ -1,59 +1,204 @@
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-
+import { useAppStore } from '../store/appStore';
 import { ThemeToggle } from '../components/ThemeToggle';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export function Settings() {
-    const { user, profile, logout } = useAuthStore();
-
+    const { user, profile, logout, updateProfile } = useAuthStore();
+    const { tasks, habits } = useAppStore();
     const navigate = useNavigate();
+
+    const [isEditingName, setIsEditingName] = useState(false);
+    const [editName, setEditName] = useState(user?.displayName || '');
+    const [isEditingBio, setIsEditingBio] = useState(false);
+    const [editBio, setEditBio] = useState(profile?.bio || '');
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     const handleLogout = async () => {
         await logout();
         navigate('/login');
     };
 
+    const handleSaveName = async () => {
+        if (!editName.trim()) return setIsEditingName(false);
+        await updateProfile({ displayName: editName });
+        setIsEditingName(false);
+    };
+
+    const handleSaveBio = async () => {
+        await updateProfile({ bio: editBio });
+        setIsEditingBio(false);
+    };
+
+    const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            const base64String = reader.result as string;
+            await updateProfile({ photoURL: base64String });
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleExportPDF = () => {
+        const doc = new jsPDF();
+        const brandColor = '#1e40af';
+
+        // Title
+        doc.setFontSize(22);
+        doc.setTextColor(brandColor);
+        doc.text('Productiv Export', 14, 22);
+
+        // Subtitle
+        doc.setFontSize(12);
+        doc.setTextColor('#4b5563');
+        const exportDate = new Date().toLocaleDateString();
+        doc.text(`Data archive for ${user?.displayName || user?.email} — ${exportDate}`, 14, 30);
+
+        // Tasks Table
+        doc.setFontSize(16);
+        doc.setTextColor('#111827');
+        doc.text('Tasks', 14, 45);
+
+        autoTable(doc, {
+            startY: 50,
+            head: [['Title', 'Status', 'Priority', 'Deadline']],
+            body: tasks.map(t => [
+                t.title,
+                t.status === 'done' ? 'Completed' : 'Pending',
+                t.priority,
+                t.deadline ? new Date(t.deadline).toLocaleDateString() : 'None',
+            ]),
+            headStyles: { fillColor: brandColor },
+            styles: { fontSize: 10 },
+            margin: { left: 14, right: 14 }
+        });
+
+        // Habits Table
+        const finalY = (doc as any).lastAutoTable.finalY || 50;
+        doc.text('Habits', 14, finalY + 15);
+
+        autoTable(doc, {
+            startY: finalY + 20,
+            head: [['Habit Name', 'Category', 'Current Streak']],
+            body: habits.map(h => [
+                h.name,
+                h.category,
+                `${h.currentStreak} days`,
+            ]),
+            headStyles: { fillColor: '#10b981' }, // Green for habits
+            styles: { fontSize: 10 },
+            margin: { left: 14, right: 14 }
+        });
+
+        // Footer
+        const pageCount = doc.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setFontSize(10);
+            doc.setTextColor('#9ca3af');
+            doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
+        }
+
+        doc.save(`Productiv_Export_${exportDate.replace(/\//g, '-')}.pdf`);
+    };
+
+    const avatarLetter = user?.displayName?.[0] || user?.email?.[0] || 'U';
+
     return (
-        <div className="settings-page">
-            {/* ── Page Header ── */}
+        <div className="tasks-page">
             <header className="page-header--elite">
                 <div className="page-title-group">
                     <h1 className="page-title">Settings</h1>
-                    <p className="page-subtitle--elite">Manage your account and preferences</p>
+                    <p className="page-subtitle--elite" style={{ display: 'block' }}>Manage your account and preferences</p>
                 </div>
             </header>
 
-            <div className="settings-container--elite">
-                {/* Profile Section */}
-                <section className="settings-section-card">
+            <div className="content-container">
+                <section className="settings-section-card" style={{ marginBottom: '32px' }}>
                     <div className="settings-section-header">
                         <h2 className="settings-section-title">Profile</h2>
                     </div>
                     <div className="settings-section-content">
-                        <div className="settings-row">
+
+                        {/* Avatar Picker */}
+                        <div className="settings-row" style={{ alignItems: 'flex-start', padding: '24px 16px' }}>
                             <div className="settings-row-info">
+                                <span className="settings-row-label">Profile Picture</span>
+                                <span className="settings-row-desc">Click your avatar to upload a custom photo.</span>
+                            </div>
+                            <div
+                                style={{
+                                    width: 64, height: 64, borderRadius: '50%', background: 'var(--primary-light)',
+                                    color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    fontSize: 24, fontWeight: 600, cursor: 'pointer', overflow: 'hidden', border: '1px solid var(--border)',
+                                    backgroundImage: user?.photoURL ? `url(${user.photoURL})` : 'none',
+                                    backgroundSize: 'cover', backgroundPosition: 'center'
+                                }}
+                                onClick={() => fileInputRef.current?.click()}
+                                title="Change Avatar"
+                            >
+                                {!user?.photoURL && avatarLetter.toUpperCase()}
+                            </div>
+                            <input
+                                type="file" ref={fileInputRef} onChange={handleAvatarUpload}
+                                accept="image/png, image/jpeg, image/webp" style={{ display: 'none' }}
+                            />
+                        </div>
+
+                        {/* Display Name Edit */}
+                        <div className="settings-row">
+                            <div className="settings-row-info" style={{ flex: 1 }}>
                                 <span className="settings-row-label">Display Name</span>
-                                <span className="settings-row-desc">{user?.displayName || 'Not set'}</span>
+                                {isEditingName ? (
+                                    <input
+                                        autoFocus
+                                        className="search-input"
+                                        style={{ marginTop: 8, paddingLeft: 12 }}
+                                        value={editName}
+                                        onChange={e => setEditName(e.target.value)}
+                                        onKeyDown={e => e.key === 'Enter' && handleSaveName()}
+                                        onBlur={handleSaveName}
+                                    />
+                                ) : (
+                                    <span className="settings-row-desc">{user?.displayName || 'Not set'}</span>
+                                )}
                             </div>
+                            {!isEditingName && (
+                                <button className="btn btn-secondary btn-sm" onClick={() => setIsEditingName(true)}>Edit</button>
+                            )}
                         </div>
+
+                        {/* Bio Edit */}
                         <div className="settings-row">
-                            <div className="settings-row-info">
-                                <span className="settings-row-label">Email Address</span>
-                                <span className="settings-row-desc">{user?.email}</span>
+                            <div className="settings-row-info" style={{ flex: 1 }}>
+                                <span className="settings-row-label">Bio</span>
+                                {isEditingBio ? (
+                                    <textarea
+                                        autoFocus
+                                        className="search-input"
+                                        style={{ marginTop: 8, paddingLeft: 12, minHeight: 60, paddingTop: 8 }}
+                                        value={editBio}
+                                        onChange={e => setEditBio(e.target.value)}
+                                        onBlur={handleSaveBio}
+                                    />
+                                ) : (
+                                    <span className="settings-row-desc">{profile?.bio || 'Write a short bio about what drives you...'}</span>
+                                )}
                             </div>
+                            {!isEditingBio && (
+                                <button className="btn btn-secondary btn-sm" onClick={() => setIsEditingBio(true)}>Edit</button>
+                            )}
                         </div>
-                        {profile?.bio && (
-                            <div className="settings-row">
-                                <div className="settings-row-info">
-                                    <span className="settings-row-label">Bio</span>
-                                    <span className="settings-row-desc">{profile.bio}</span>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </section>
 
-                {/* Preferences Section */}
-                <section className="settings-section-card">
+                <section className="settings-section-card" style={{ marginBottom: '32px' }}>
                     <div className="settings-section-header">
                         <h2 className="settings-section-title">Preferences</h2>
                     </div>
@@ -65,17 +210,10 @@ export function Settings() {
                             </div>
                             <ThemeToggle variant="full" />
                         </div>
-                        <div className="settings-row">
-                            <div className="settings-row-info">
-                                <span className="settings-row-label">Pagination</span>
-                                <span className="settings-row-desc">Current limit: 20 tasks per page</span>
-                            </div>
-                        </div>
                     </div>
                 </section>
 
-                {/* Data Section */}
-                <section className="settings-section-card">
+                <section className="settings-section-card" style={{ marginBottom: '32px' }}>
                     <div className="settings-section-header">
                         <h2 className="settings-section-title">Data Management</h2>
                     </div>
@@ -83,15 +221,17 @@ export function Settings() {
                         <div className="settings-row">
                             <div className="settings-row-info">
                                 <span className="settings-row-label">Export Data</span>
-                                <span className="settings-row-desc">Download a complete archive of your tasks and habits in JSON format</span>
+                                <span className="settings-row-desc">Download a beautifully formatted PDF archive of all your tasks and habits.</span>
                             </div>
-                            <button className="btn btn-secondary btn-sm">Export</button>
+                            <button className="btn btn-primary btn-sm" onClick={handleExportPDF}>
+                                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>download</span>
+                                Export PDF
+                            </button>
                         </div>
                     </div>
                 </section>
 
-                {/* Account Section */}
-                <section className="settings-section-card">
+                <section className="settings-section-card settings-danger-card">
                     <div className="settings-section-header">
                         <h2 className="settings-section-title">Account</h2>
                     </div>
@@ -99,40 +239,16 @@ export function Settings() {
                         <div className="settings-row">
                             <div className="settings-row-info">
                                 <span className="settings-row-label">Session Control</span>
-                                <span className="settings-row-desc">Securely sign out of your current session on this device</span>
+                                <span className="settings-row-desc">Securely sign out of your current session on this device.</span>
                             </div>
                             <button className="btn btn-secondary btn-sm" onClick={handleLogout}>Sign Out</button>
                         </div>
-                    </div>
-                </section>
-
-                {/* Danger Zone */}
-                <section className="settings-section-card settings-danger-card">
-                    <div className="settings-section-header">
-                        <h2 className="settings-section-title">Danger Zone</h2>
-                    </div>
-                    <div className="settings-section-content">
                         <div className="settings-row">
                             <div className="settings-row-info">
                                 <span className="settings-row-label" style={{ color: 'var(--error)' }}>Delete Account</span>
-                                <span className="settings-row-desc">Permanently erase your account, tasks, habits, and all associated data. This action is irreversible.</span>
+                                <span className="settings-row-desc">Permanently erase your account, tasks, habits, and all associated data.</span>
                             </div>
-                            <button className="btn btn-danger btn-sm">Delete Forever</button>
-                        </div>
-                    </div>
-                </section>
-
-                {/* About Section */}
-                <section className="settings-section-card">
-                    <div className="settings-section-header">
-                        <h2 className="settings-section-title">About Productiv</h2>
-                    </div>
-                    <div className="settings-section-content">
-                        <div className="settings-row">
-                            <div className="settings-row-info">
-                                <span className="settings-row-label">Version</span>
-                                <span className="settings-row-desc">Elite Release v1.0.0</span>
-                            </div>
+                            <button className="btn btn-danger btn-sm">Delete</button>
                         </div>
                     </div>
                 </section>

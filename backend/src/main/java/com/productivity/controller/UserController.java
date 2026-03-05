@@ -41,4 +41,17 @@ public class UserController {
         UserDTO user = userService.completeOnboarding(uid, bio);
         return ResponseEntity.ok(ApiResponse.success(user, "Onboarding completed"));
     }
+
+    @PutMapping("/me")
+    @Operation(summary = "Update current user profile")
+    public ResponseEntity<ApiResponse<UserDTO>> updateProfile(
+            Authentication auth,
+            @RequestBody java.util.Map<String, String> body) throws ExecutionException, InterruptedException {
+        String uid = (String) auth.getPrincipal();
+        String displayName = body.get("displayName");
+        String bio = body.get("bio");
+        String photoURL = body.get("photoURL");
+        UserDTO user = userService.updateProfile(uid, displayName, bio, photoURL);
+        return ResponseEntity.ok(ApiResponse.success(user, "Profile updated successfully"));
+    }
 }
