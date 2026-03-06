@@ -58,4 +58,44 @@ public class EmailTemplateService {
                "</body>\n" +
                "</html>";
     }
+
+    public String getFarewellTemplate(String displayName) {
+        String name = displayName != null ? displayName : "there";
+        return "<!DOCTYPE html>\n" +
+               "<html lang=\"en\">\n" +
+               "<head>\n" +
+               "    <meta charset=\"UTF-8\">\n" +
+               "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+               "    <title>We're sorry to see you go</title>\n" +
+               "    <style>\n" +
+               "        body { font-family: 'Inter', -apple-system, sans-serif; line-height: 1.6; color: #374151; margin: 0; padding: 0; background-color: #f9fafb; }\n" +
+               "        .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; }\n" +
+               "        .header { background: linear-gradient(135deg, #4b5563 0%, #1f2937 100%); padding: 40px 20px; text-align: center; color: white; }\n" +
+               "        .content { padding: 40px; text-align: center; }\n" +
+               "        .farewell-icon { font-size: 48px; margin-bottom: 24px; }\n" +
+               "        h1 { margin: 0; font-size: 24px; font-weight: 700; color: white; }\n" +
+               "        p { font-size: 16px; color: #4b5563; margin-bottom: 24px; }\n" +
+               "        .footer { padding: 24px; background: #f9fafb; text-align: center; border-top: 1px solid #e5e7eb; }\n" +
+               "        .footer p { font-size: 12px; color: #9ca3af; margin: 0; }\n" +
+               "    </style>\n" +
+               "</head>\n" +
+               "<body>\n" +
+               "    <div class=\"container\">\n" +
+               "        <div class=\"header\">\n" +
+               "            <h1>Productiv</h1>\n" +
+               "        </div>\n" +
+               "        <div class=\"content\">\n" +
+               "            <div class=\"farewell-icon\">👋</div>\n" +
+               "            <h2 style=\"color: #111827; margin-top: 0;\">We're sorry to see you go, " + name + "</h2>\n" +
+               "            <p>Your account and all associated data have been permanently deleted as requested.</p>\n" +
+               "            <p>We're constantly striving to improve Productiv, and we'd love to know if there's anything we could have done better. If you ever decide to come back, our doors are always open.</p>\n" +
+               "            <p style=\"margin-bottom: 0;\">Wishing you the best on your productivity journey!</p>\n" +
+               "        </div>\n" +
+               "        <div class=\"footer\">\n" +
+               "            <p>© 2024 Productiv Inc. All rights reserved.</p>\n" +
+               "        </div>\n" +
+               "    </div>\n" +
+               "</body>\n" +
+               "</html>";
+    }
 }

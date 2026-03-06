@@ -55,7 +55,21 @@ public class UserRepository {
     }
 
     public void delete(String userId) throws ExecutionException, InterruptedException {
+        // Recursively delete subcollections (tasks and habits)
+        deleteCollection(userId, "tasks");
+        deleteCollection(userId, "habits");
+        
+        // Delete the user document itself
         getDocument(userId).delete().get();
-        log.info("User deleted from Firestore: {}", userId);
+        log.info("User and all subcollections deleted from Firestore: {}", userId);
+    }
+
+    private void deleteCollection(String userId, String collectionName) throws ExecutionException, InterruptedException {
+        CollectionReference collection = getDocument(userId).collection(collectionName);
+        QuerySnapshot snapshot = collection.get().get();
+        for (QueryDocumentSnapshot doc : snapshot.getDocuments()) {
+            doc.getReference().delete().get();
+        }
+        log.info("Deleted collection '{}' for user: {}", collectionName, userId);
     }
 }
