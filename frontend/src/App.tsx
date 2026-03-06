@@ -21,7 +21,7 @@ const Habits = lazy(() => import('./pages/Habits').then((m) => ({ default: m.Hab
 const Deadlines = lazy(() => import('./pages/Deadlines').then((m) => ({ default: m.Deadlines })));
 const Onboarding = lazy(() => import('./pages/Onboarding').then((m) => ({ default: m.Onboarding })));
 const Settings = lazy(() => import('./pages/Settings').then((m) => ({ default: m.Settings })));
-const LandingSaaS = lazy(() => import('./pages/LandingSaaS').then((m) => ({ default: m.LandingSaaS })));
+const Landing = lazy(() => import('./pages/Landing').then((m) => ({ default: m.Landing })));
 
 function AppLoader() {
     return (
@@ -58,8 +58,8 @@ function App() {
                     <Routes>
                         {/* Public auth routes — render instantly, no auth wait */}
                         <Route path="/" element={
-                            !initialized ? <LandingSaaS /> :
-                                user ? <Navigate to="/tasks" replace /> : <LandingSaaS />
+                            !initialized ? <Landing /> :
+                                user ? <Navigate to="/tasks" replace /> : <Landing />
                         } />
                         <Route path="/login" element={
                             !initialized ? <Login /> :

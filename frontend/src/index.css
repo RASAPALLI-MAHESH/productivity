@@ -62,11 +62,7 @@
 @import './styles/dashboard.css';
 /* Elite dashboard redesign */
 @import './styles/landing.css';
-/* Standard Landing Page */
-@import './styles/landing-premium.css';
-/* Million-Dollar Premium Landing Page */
-@import './styles/saas-elite.css';
-/* World-Class SaaS Landing Page */
+/* Landing Page */
 
 /* ── 6. Responsive ── */
 @import './styles/responsive.css';
