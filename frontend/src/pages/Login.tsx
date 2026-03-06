@@ -72,7 +72,8 @@ export function Login() {
             <div className="auth-divider animate-slide-up-fade stagger-2">or sign in with email</div>
 
             <form onSubmit={handleSubmit}>
-                <div className="input-group">
+                <div className="input-group animate-slide-up-fade stagger-3">
+                    <label className="input-label" htmlFor="email">Email address</label>
                     <input
                         id="email"
                         type="email"
@@ -84,10 +85,10 @@ export function Login() {
                         autoComplete="email"
                         autoFocus
                     />
-                    <label className="input-label" htmlFor="email">Email address</label>
                 </div>
 
-                <div className="input-group">
+                <div className="input-group animate-slide-up-fade stagger-4">
+                    <label className="input-label" htmlFor="password">Password</label>
                     <div style={{ position: 'relative', width: '100%' }}>
                         <input
                             id="password"
@@ -113,7 +114,6 @@ export function Login() {
                             </span>
                         </button>
                     </div>
-                    <label className="input-label" htmlFor="password">Password</label>
                 </div>
 
                 <div className="custom-checkbox-row">

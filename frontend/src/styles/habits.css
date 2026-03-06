@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    HABITS PAGE - ELITE SAAS REDESIGN (Minimal & Dark)
    ========================================================================== */
 
@@ -169,13 +169,13 @@
 }
 
 .habit-check:hover {
-    border-color: var(--primary, #3b82f6);
-    background: rgba(59, 130, 246, 0.08);
+    border-color: var(--primary, #18c337);
+    background: rgba(10, 193, 19, 0.08);
 }
 
 .habit-check.completed {
-    background: var(--primary, #3b82f6);
-    border-color: var(--primary, #3b82f6);
+    background: var(--primary, #09c810);
+    border-color: var(--primary, #12c521);
     color: white;
     animation: checkPop 220ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -509,22 +509,72 @@
     width: 300px;
     min-width: 300px;
     border-left-color: var(--border);
+    align-self: flex-start;
+    overflow: visible;
 }
 
 .insight-panel-inner {
     width: 300px;
-    padding: 40px 24px;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 28px;
-    height: 100%;
-    overflow-y: auto;
-    scrollbar-width: none;
+    gap: 0;
+    min-height: 0;
+    height: auto;
+    overflow: visible;
+    flex-shrink: 0;
 }
 
-.insight-panel-inner::-webkit-scrollbar {
-    display: none;
+/* Panel header: title + Hide insights button at top right */
+.insight-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--bg-primary);
 }
+
+.insight-panel-header-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0;
+}
+
+.insight-panel-hide-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary, rgba(255, 255, 255, 0.03));
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 150ms ease;
+}
+
+.insight-panel-hide-btn:hover {
+    background: var(--bg-elevated, rgba(255, 255, 255, 0.06));
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+}
+
+.insight-panel-hide-btn .material-symbols-outlined {
+    font-size: 16px;
+}
+
+.insight-panel-inner .insight-section {
+    padding: 20px 20px;
+}
+
 
 /* Panel Toggle Button */
 .panel-toggle-btn {
@@ -568,6 +618,168 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+.insight-panel-inner .insight-section:first-of-type {
+    padding-top: 16px;
+}
+
+/* ── Habits panel: Date & time (calendar + time picker) ── */
+.habits-panel-calendar-section {
+    border-bottom: 1px solid var(--border);
+}
+
+.habits-panel-calendar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.habits-panel-calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.habits-panel-calendar-month {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.habits-panel-calendar-nav {
+    display: flex;
+    gap: 2px;
+}
+
+.habits-panel-calendar-nav-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 6px;
+    background: var(--bg-secondary, rgba(255, 255, 255, 0.03));
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 150ms ease;
+    padding: 0;
+}
+
+.habits-panel-calendar-nav-btn:hover {
+    background: var(--bg-elevated, rgba(255, 255, 255, 0.06));
+    color: var(--text-primary);
+}
+
+.habits-panel-calendar-nav-btn .material-symbols-outlined {
+    font-size: 16px;
+}
+
+.habits-panel-calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    text-align: center;
+}
+
+.habits-panel-weekday {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.habits-panel-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.habits-panel-day {
+    aspect-ratio: 1;
+    min-height: 28px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 150ms ease;
+    padding: 0;
+}
+
+.habits-panel-day:hover:not(:disabled):not(.empty) {
+    background: var(--bg-tertiary, rgba(255, 255, 255, 0.04));
+    color: var(--text-primary);
+}
+
+.habits-panel-day.empty {
+    cursor: default;
+    visibility: hidden;
+}
+
+.habits-panel-day.today {
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.habits-panel-day.selected {
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+}
+
+.habits-panel-day.selected.today {
+    border-color: var(--primary);
+}
+
+.habits-panel-time {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 4px;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+}
+
+.habits-panel-time-icon {
+    font-size: 16px !important;
+    color: var(--text-muted);
+}
+
+.habits-panel-time-select {
+    background: var(--bg-secondary, rgba(255, 255, 255, 0.03));
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 12px;
+    padding: 4px 6px;
+    outline: none;
+    cursor: pointer;
+    font-family: inherit;
+    min-width: 44px;
+}
+
+.habits-panel-time-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.habits-panel-time-ampm {
+    min-width: 48px;
+}
+
+.habits-panel-time-sep {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
 }
 
 .insight-section-title {

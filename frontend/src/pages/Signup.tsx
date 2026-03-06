@@ -68,27 +68,10 @@ export function Signup() {
             error={error}
             footer={footerNode}
         >
-            <div className="auth-social-buttons mb-4 animate-slide-up-fade stagger-1">
-                <button
-                    type="button"
-                    className="btn-social"
-                    onClick={handleGoogleSignup}
-                    disabled={loading}
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-                        <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
-                        <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
-                        <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
-                        <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
-                    </svg>
-                    Continue with Google
-                </button>
-            </div>
-
-            <div className="auth-divider animate-slide-up-fade stagger-2">or continue with email</div>
-
-            <form onSubmit={handleSubmit}>
-                <div className="input-group">
+            <form onSubmit={handleSubmit} className="auth-form-signup">
+                <div className="auth-divider animate-slide-up-fade stagger-1">or continue with email</div>
+                <div className="input-group animate-slide-up-fade stagger-3">
+                    <label className="input-label" htmlFor="displayName">Full name</label>
                     <input
                         id="displayName"
                         type="text"
@@ -99,10 +82,10 @@ export function Signup() {
                         required
                         autoFocus
                     />
-                    <label className="input-label" htmlFor="displayName">Full name</label>
                 </div>
 
-                <div className="input-group">
+                <div className="input-group animate-slide-up-fade stagger-4">
+                    <label className="input-label" htmlFor="email">Email address</label>
                     <input
                         id="email"
                         type="email"
@@ -113,10 +96,10 @@ export function Signup() {
                         required
                         autoComplete="email"
                     />
-                    <label className="input-label" htmlFor="email">Email address</label>
                 </div>
 
-                <div className="input-group">
+                <div className="input-group animate-slide-up-fade stagger-5">
+                    <label className="input-label" htmlFor="password">Password</label>
                     <div style={{ position: 'relative', width: '100%' }}>
                         <input
                             id="password"
@@ -140,28 +123,28 @@ export function Signup() {
                             <span className="material-symbols-outlined">{showPassword ? 'visibility_off' : 'visibility'}</span>
                         </button>
                     </div>
-                    <label className="input-label" htmlFor="password">Password</label>
                     {/* Strength Meter */}
                     {password && (
-                        <div style={{ marginTop: 6, paddingLeft: 4 }}>
-                            <div style={{ display: 'flex', gap: 4 }}>
+                        <div style={{ marginTop: 4, paddingLeft: 4 }}>
+                            <div style={{ display: 'flex', gap: 3 }}>
                                 {[1, 2, 3, 4, 5].map((i) => (
                                     <div key={i} style={{
-                                        flex: 1, height: 4,
+                                        flex: 1, height: 3,
                                         borderRadius: 'var(--radius-sm)',
                                         background: i <= strength.score ? strength.color : 'var(--border)',
                                         transition: 'background 200ms ease',
                                     }} />
                                 ))}
                             </div>
-                            <span style={{ fontSize: 'var(--font-size-xs)', color: strength.color, marginTop: 4, display: 'inline-block' }}>
+                            <span style={{ fontSize: '11px', color: strength.color, marginTop: 2, display: 'inline-block' }}>
                                 {strength.label}
                             </span>
                         </div>
                     )}
                 </div>
 
-                <div className="input-group">
+                <div className="input-group animate-slide-up-fade stagger-6">
+                    <label className="input-label" htmlFor="confirmPassword">Confirm password</label>
                     <input
                         id="confirmPassword"
                         type={showPassword ? 'text' : 'password'}
@@ -173,7 +156,6 @@ export function Signup() {
                         autoComplete="new-password"
                         style={{ borderColor: !passwordsMatch ? 'var(--error)' : undefined }}
                     />
-                    <label className="input-label" htmlFor="confirmPassword">Confirm password</label>
                     {!passwordsMatch && (
                         <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--error)', marginTop: 4 }}>
                             Passwords do not match
@@ -181,7 +163,7 @@ export function Signup() {
                     )}
                 </div>
 
-                <div className="custom-checkbox-row" style={{ marginTop: 'var(--space-2)' }}>
+                <div className="custom-checkbox-row custom-checkbox-row-terms">
                     <label className="custom-checkbox-label">
                         <input
                             type="checkbox"
@@ -194,13 +176,29 @@ export function Signup() {
                     </label>
                 </div>
 
-                <button
-                    type="submit"
-                    className="btn-primary"
-                    disabled={loading || !acceptTerms || !passwordsMatch}
-                >
-                    {loading ? 'Creating account...' : 'Create account'}
-                </button>
+                <div className="auth-buttons-row animate-slide-up-fade stagger-1">
+                    <button
+                        type="button"
+                        className="btn-social btn-social-compact"
+                        onClick={handleGoogleSignup}
+                        disabled={loading}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                            <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+                            <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+                            <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+                            <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+                        </svg>
+                        Google
+                    </button>
+                    <button
+                        type="submit"
+                        className="btn-primary btn-primary-compact"
+                        disabled={loading || !acceptTerms || !passwordsMatch}
+                    >
+                        {loading ? 'Creating...' : 'Create account'}
+                    </button>
+                </div>
             </form>
         </AuthLayout>
     );

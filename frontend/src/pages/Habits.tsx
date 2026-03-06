@@ -14,6 +14,11 @@ export function Habits() {
 
     const [activeAnalyticsHabitId, setActiveAnalyticsHabitId] = useState<string | null>(null);
     const [panelOpen, setPanelOpen] = useState(true);
+    const [panelCalendarMonth, setPanelCalendarMonth] = useState(() => new Date());
+    const [panelSelectedDate, setPanelSelectedDate] = useState<Date | null>(() => new Date());
+    const [panelTimeHour, setPanelTimeHour] = useState(9);
+    const [panelTimeMinute, setPanelTimeMinute] = useState(0);
+    const [panelTimeAmpm, setPanelTimeAmpm] = useState<'am' | 'pm'>('am');
 
     useEffect(() => {
         fetchDashboard();
@@ -83,6 +88,35 @@ export function Habits() {
         }).length;
     }, [habits]);
     const completionRate = totalHabits > 0 ? Math.round((completedToday / totalHabits) * 100) : 0;
+
+    // Panel calendar: current month grid
+    const panelCalendarDays = useMemo(() => {
+        const y = panelCalendarMonth.getFullYear();
+        const m = panelCalendarMonth.getMonth();
+        const first = new Date(y, m, 1).getDay();
+        const daysInMonth = new Date(y, m + 1, 0).getDate();
+        const days: (number | null)[] = [];
+        for (let i = 0; i < first; i++) days.push(null);
+        for (let i = 1; i <= daysInMonth; i++) days.push(i);
+        return days;
+    }, [panelCalendarMonth]);
+
+    const panelSelectDate = (day: number) => {
+        const d = new Date(panelCalendarMonth.getFullYear(), panelCalendarMonth.getMonth(), day);
+        setPanelSelectedDate(d);
+    };
+
+    const isToday = (day: number | null) => {
+        if (!day) return false;
+        const now = new Date();
+        return panelCalendarMonth.getFullYear() === now.getFullYear() &&
+            panelCalendarMonth.getMonth() === now.getMonth() && day === now.getDate();
+    };
+    const isSelected = (day: number | null) => {
+        if (!day || !panelSelectedDate) return false;
+        return panelCalendarMonth.getFullYear() === panelSelectedDate.getFullYear() &&
+            panelCalendarMonth.getMonth() === panelSelectedDate.getMonth() && day === panelSelectedDate.getDate();
+    };
 
     // Loading
     if (loading && habits.length === 0) {
@@ -190,16 +224,16 @@ export function Habits() {
                                 <option value="personal">Personal</option>
                             </select>
 
-                            {/* Panel Toggle */}
-                            <button
-                                className="panel-toggle-btn"
-                                onClick={() => setPanelOpen(prev => !prev)}
-                                title={panelOpen ? 'Hide insights (I)' : 'Show insights (I)'}
-                            >
-                                <span className="material-symbols-outlined">
-                                    {panelOpen ? 'right_panel_close' : 'right_panel_open'}
-                                </span>
-                            </button>
+                            {/* Show insights when panel closed (panel toggle lives in right panel) */}
+                            {!panelOpen && (
+                                <button
+                                    className="panel-toggle-btn"
+                                    onClick={() => setPanelOpen(true)}
+                                    title="Show insights (I)"
+                                >
+                                    <span className="material-symbols-outlined">right_panel_open</span>
+                                </button>
+                            )}
                         </div>
                     </div>
 
@@ -229,11 +263,103 @@ export function Habits() {
                     )}
                 </div>
 
-                {/* ── Right Insight Panel (Collapsible) ── */}
+                {/* ── Right Insight Panel (Today's Progress, Statistics, Shortcuts) ── */}
                 <aside className={`habits-insight-panel${panelOpen ? ' open' : ''}`}>
                     <div className="insight-panel-inner">
+                        <div className="insight-panel-header">
+                            <h3 className="insight-panel-header-title">Today&apos;s Progress</h3>
+                            <button
+                                type="button"
+                                className="insight-panel-hide-btn"
+                                onClick={() => setPanelOpen(false)}
+                                title="Hide insights (I)"
+                                aria-label="Hide insights panel"
+                            >
+                                <span className="material-symbols-outlined">chevron_right</span>
+                                <span>Hide</span>
+                            </button>
+                        </div>
+
+                        <div className="insight-section habits-panel-calendar-section">
+                            <h3 className="insight-section-title">Date &amp; time</h3>
+                            <div className="habits-panel-calendar">
+                                <div className="habits-panel-calendar-header">
+                                    <span className="habits-panel-calendar-month">
+                                        {panelCalendarMonth.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                                    </span>
+                                    <div className="habits-panel-calendar-nav">
+                                        <button
+                                            type="button"
+                                            className="habits-panel-calendar-nav-btn"
+                                            onClick={() => setPanelCalendarMonth(new Date(panelCalendarMonth.getFullYear(), panelCalendarMonth.getMonth() - 1))}
+                                            aria-label="Previous month"
+                                        >
+                                            <span className="material-symbols-outlined">chevron_left</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="habits-panel-calendar-nav-btn"
+                                            onClick={() => setPanelCalendarMonth(new Date(panelCalendarMonth.getFullYear(), panelCalendarMonth.getMonth() + 1))}
+                                            aria-label="Next month"
+                                        >
+                                            <span className="material-symbols-outlined">chevron_right</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="habits-panel-calendar-weekdays">
+                                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => <span key={d} className="habits-panel-weekday">{d}</span>)}
+                                </div>
+                                <div className="habits-panel-calendar-grid">
+                                    {panelCalendarDays.map((day, i) => (
+                                        <button
+                                            key={i}
+                                            type="button"
+                                            className={`habits-panel-day ${day === null ? 'empty' : ''} ${day !== null && isToday(day) ? 'today' : ''} ${day !== null && isSelected(day) ? 'selected' : ''}`}
+                                            disabled={day === null}
+                                            onClick={() => day !== null && panelSelectDate(day)}
+                                        >
+                                            {day ?? ''}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="habits-panel-time">
+                                    <span className="material-symbols-outlined habits-panel-time-icon">schedule</span>
+                                    <select
+                                        className="habits-panel-time-select"
+                                        value={panelTimeHour}
+                                        onChange={(e) => setPanelTimeHour(Number(e.target.value))}
+                                        aria-label="Hour"
+                                    >
+                                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(h => (
+                                            <option key={h} value={h}>{h}</option>
+                                        ))}
+                                    </select>
+                                    <span className="habits-panel-time-sep">:</span>
+                                    <select
+                                        className="habits-panel-time-select"
+                                        value={panelTimeMinute}
+                                        onChange={(e) => setPanelTimeMinute(Number(e.target.value))}
+                                        aria-label="Minute"
+                                    >
+                                        {[0, 15, 30, 45].map(m => (
+                                            <option key={m} value={m}>{m.toString().padStart(2, '0')}</option>
+                                        ))}
+                                    </select>
+                                    <select
+                                        className="habits-panel-time-select habits-panel-time-ampm"
+                                        value={panelTimeAmpm}
+                                        onChange={(e) => setPanelTimeAmpm(e.target.value as 'am' | 'pm')}
+                                        aria-label="AM/PM"
+                                    >
+                                        <option value="am">AM</option>
+                                        <option value="pm">PM</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="insight-section">
-                            <h3 className="insight-section-title">Today's Progress</h3>
+                            <h3 className="insight-section-title">Progress</h3>
                             <div className="insight-progress-wrap">
                                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
                                     <span style={{ color: 'var(--text-secondary)' }}>{completedToday} of {totalHabits}</span>

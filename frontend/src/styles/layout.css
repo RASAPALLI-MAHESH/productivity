@@ -1,4 +1,4 @@
-﻿/* layout.css */
+/* layout.css */
 
 /* ============================================
    4. LAYOUT
@@ -299,4 +299,15 @@
     align-items: baseline;
     gap: var(--space-2);
     cursor: pointer;
+}
+
+/* Priority: hide on hover so Edit/Delete actions are visible */
+.elite-row__priority {
+    transition: opacity 0.2s ease;
+    flex-shrink: 0;
+}
+
+.elite-row:hover .elite-row__priority {
+    opacity: 0;
+    pointer-events: none;
 }
