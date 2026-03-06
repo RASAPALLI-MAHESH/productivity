@@ -53,4 +53,9 @@ public class UserRepository {
         }
         return Optional.empty();
     }
+
+    public void delete(String userId) throws ExecutionException, InterruptedException {
+        getDocument(userId).delete().get();
+        log.info("User deleted from Firestore: {}", userId);
+    }
 }

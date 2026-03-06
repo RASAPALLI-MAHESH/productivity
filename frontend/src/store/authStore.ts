@@ -41,6 +41,7 @@ interface AuthState {
     fetchProfile: () => Promise<void>;
     completeOnboarding: (bio: string) => Promise<void>;
     updateProfile: (data: { displayName?: string; bio?: string; photoURL?: string }) => Promise<void>;
+    deleteAccount: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -367,6 +368,24 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 user: currentUser ? { ...currentUser, ...updatedData } : updatedData,
                 profile: currentProfile ? { ...currentProfile, ...updatedData } : updatedData,
                 loading: false,
+            });
+        } catch (err) {
+            set({ loading: false });
+            throw err;
+        }
+    },
+    // ─── Delete Account ─────────────────────────────
+    deleteAccount: async () => {
+        set({ loading: true });
+        try {
+            await client.delete('/users/me');
+            clearTokens();
+            set({
+                user: null,
+                profile: null,
+                authStep: 'idle',
+                loading: false,
+                initialized: true,
             });
         } catch (err) {
             set({ loading: false });

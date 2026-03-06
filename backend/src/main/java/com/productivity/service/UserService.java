@@ -139,6 +139,11 @@ public class UserService {
         userRepository.update(uid, updates);
     }
 
+    public void deleteUser(String uid) throws ExecutionException, InterruptedException {
+        userRepository.delete(uid);
+        log.info("Account permanently deleted for user: {}", uid);
+    }
+
     public UserDTO toDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setUid(user.getUid());

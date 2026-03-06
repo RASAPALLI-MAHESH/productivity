@@ -119,6 +119,20 @@ export function Settings() {
         doc.save(`Productiv_Export_${exportDate.replace(/\//g, '-')}.pdf`);
     };
 
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteConfirmEmail, setDeleteConfirmEmail] = useState('');
+    const { deleteAccount, loading: authLoading } = useAuthStore();
+
+    const handleDeleteAccount = async () => {
+        if (deleteConfirmEmail.toLowerCase() !== user?.email?.toLowerCase()) return;
+        try {
+            await deleteAccount();
+            navigate('/login');
+        } catch (err) {
+            console.error('Account deletion failed', err);
+        }
+    };
+
     const avatarLetter = user?.displayName?.[0] || user?.email?.[0] || 'U';
 
     return (
@@ -260,15 +274,68 @@ export function Settings() {
                             </div>
                             <button className="btn btn-secondary btn-sm" onClick={handleLogout}>Sign Out</button>
                         </div>
-                        <div className="settings-row">
+                        <div className="settings-row" style={{ borderBottom: 'none' }}>
                             <div className="settings-row-info">
                                 <span className="settings-row-label" style={{ color: 'var(--error)' }}>Delete Account</span>
                                 <span className="settings-row-desc">Permanently erase your account, tasks, habits, and all associated data.</span>
                             </div>
-                            <button className="btn btn-danger btn-sm">Delete</button>
+                            <button className="btn btn-danger btn-sm" onClick={() => setShowDeleteModal(true)}>Delete Account</button>
                         </div>
                     </div>
                 </section>
+
+                {/* Account Deletion Confirmation Modal */}
+                {showDeleteModal && (
+                    <div className="modal-overlay" style={{ display: 'flex' }} onClick={() => setShowDeleteModal(false)}>
+                        <div className="modal-container dangerous" style={{ maxWidth: 450, padding: '32px' }} onClick={e => e.stopPropagation()}>
+                            <div className="modal-header">
+                                <h2 className="modal-title" style={{ color: 'var(--error)' }}>Delete Account Permanently?</h2>
+                                <button className="modal-close" onClick={() => setShowDeleteModal(false)}>
+                                    <span className="material-symbols-outlined">close</span>
+                                </button>
+                            </div>
+                            <div className="modal-body" style={{ marginTop: '16px' }}>
+                                <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '24px' }}>
+                                    This action is **irreversible**. You will lose access to your tasks, habits, and all profile data instantly.
+                                </p>
+
+                                <div style={{ background: 'var(--danger-light)', padding: '16px', borderRadius: '8px', border: '1px solid var(--error-alpha)', marginBottom: '24px' }}>
+                                    <p style={{ margin: 0, fontSize: '13px', color: 'var(--error)', fontWeight: 500 }}>
+                                        To confirm, please type your email address: <br />
+                                        <strong style={{ fontSize: '14px' }}>{user?.email}</strong>
+                                    </p>
+                                </div>
+
+                                <input
+                                    className="search-input"
+                                    style={{ paddingLeft: 12, width: '100%', marginBottom: '24px' }}
+                                    placeholder="your-email@example.com"
+                                    value={deleteConfirmEmail}
+                                    onChange={e => setDeleteConfirmEmail(e.target.value)}
+                                    autoFocus
+                                />
+
+                                <div style={{ display: 'flex', gap: '12px' }}>
+                                    <button
+                                        className="btn btn-secondary"
+                                        style={{ flex: 1 }}
+                                        onClick={() => setShowDeleteModal(false)}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        className="btn btn-danger"
+                                        style={{ flex: 1.5 }}
+                                        disabled={deleteConfirmEmail.toLowerCase() !== user?.email?.toLowerCase() || authLoading}
+                                        onClick={handleDeleteAccount}
+                                    >
+                                        {authLoading ? 'Deleting...' : 'Permanently Delete'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

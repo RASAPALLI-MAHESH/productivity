@@ -54,4 +54,13 @@ public class UserController {
         UserDTO user = userService.updateProfile(uid, displayName, bio, photoURL);
         return ResponseEntity.ok(ApiResponse.success(user, "Profile updated successfully"));
     }
+
+    @DeleteMapping("/me")
+    @Operation(summary = "Delete current user account")
+    public ResponseEntity<ApiResponse<Void>> deleteAccount(Authentication auth)
+            throws ExecutionException, InterruptedException {
+        String uid = (String) auth.getPrincipal();
+        userService.deleteUser(uid);
+        return ResponseEntity.ok(ApiResponse.success(null, "Account deleted successfully"));
+    }
 }
