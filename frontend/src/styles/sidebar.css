@@ -23,7 +23,8 @@
 /* Collapsed sidebar */
 .sidebar.collapsed {
     width: var(--sidebar-collapsed);
-    padding: 24px 12px;
+    padding: 24px 0;
+    /* Remove horizontal padding to help centering */
 }
 
 /* ---- Header ---- */
@@ -35,6 +36,7 @@
     margin-bottom: 32px;
     min-height: 40px;
     transition: all 0.4s var(--ease-out);
+    width: 100%;
 }
 
 .sidebar.collapsed .sidebar-header {
@@ -99,6 +101,11 @@
     flex-shrink: 0;
 }
 
+.sidebar.collapsed .sidebar-toggle {
+    margin: 0 auto;
+    /* Explicit centering */
+}
+
 .sidebar-toggle:hover {
     background: var(--bg-tertiary);
     color: var(--text-primary);
@@ -141,6 +148,14 @@
     white-space: nowrap;
 }
 
+.sidebar.collapsed .sidebar-link {
+    padding: 0;
+    justify-content: center;
+    width: 100%;
+    height: 44px;
+    margin-bottom: 4px;
+}
+
 .sidebar-link:hover {
     background: var(--bg-tertiary);
     color: var(--text-primary);
@@ -167,14 +182,6 @@
     opacity: 1;
 }
 
-.sidebar.collapsed .sidebar-link {
-    padding: 0;
-    justify-content: center;
-    width: 100%;
-    height: 44px;
-    margin-bottom: 4px;
-}
-
 .sidebar.collapsed .sidebar-link .link-label {
     opacity: 0;
     width: 0;
@@ -184,6 +191,7 @@
 /* ---- Footer ---- */
 .sidebar-footer {
     padding-top: 16px;
+    padding-bottom: 16px;
     margin-top: auto;
     width: 100%;
     border-top: 1px solid var(--border);
@@ -245,7 +253,7 @@
 }
 
 .sidebar.collapsed .sidebar-user {
-    padding: 4px;
+    padding: 0;
     justify-content: center;
 }
 
