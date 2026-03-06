@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 export function LandingSaaS() {
     const observerRef = useRef<IntersectionObserver | null>(null);
     const [scrolled, setScrolled] = useState(false);
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [animatedMetrics, setAnimatedMetrics] = useState<Set<string>>(new Set());
 
     useEffect(() => {
@@ -20,7 +19,7 @@ export function LandingSaaS() {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
-                        
+
                         // Animate metrics when visible
                         const element = entry.target as HTMLElement;
                         if (element.classList.contains('metric-elite-number')) {
@@ -67,7 +66,7 @@ export function LandingSaaS() {
                 current = target;
                 clearInterval(timer);
             }
-            
+
             if (metricId === 'rating') {
                 element.textContent = current.toFixed(1) + suffix;
             } else if (metricId === 'uptime') {
@@ -100,14 +99,14 @@ export function LandingSaaS() {
                         </div>
                         <span>Productiv</span>
                     </Link>
-                    
+
                     <div className="nav-elite-center">
                         <a href="#features" className="nav-elite-link">Features</a>
                         <a href="#habits" className="nav-elite-link">Habits</a>
                         <a href="#deadlines" className="nav-elite-link">Deadlines</a>
                         <a href="#pricing" className="nav-elite-link">Pricing</a>
                     </div>
-                    
+
                     <div className="nav-elite-actions">
                         <Link to="/login" className="btn-elite-ghost">Login</Link>
                         <Link to="/signup" className="btn-elite-primary btn-elite-glow">Get Started</Link>
@@ -135,20 +134,20 @@ export function LandingSaaS() {
                             }}>
                                 ✨ New: AI-powered productivity insights
                             </div>
-                            
+
                             <h1 className="text-elite-hero" style={{ marginBottom: '24px' }}>
                                 Finally, a productivity system that actually works.
                             </h1>
-                            
-                            <p className="text-elite-body" style={{ 
-                                color: 'var(--text-elite-secondary)', 
+
+                            <p className="text-elite-body" style={{
+                                color: 'var(--text-elite-secondary)',
                                 marginBottom: '40px',
                                 fontSize: '20px',
                                 lineHeight: 1.6
                             }}>
                                 Manage tasks, build habits, and track deadlines in one powerful productivity command center designed for focus and speed.
                             </p>
-                            
+
                             <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
                                 <Link to="/signup" className="btn-elite-primary btn-elite-glow" style={{ fontSize: '16px', padding: '16px 32px' }}>
                                     Get Started Free
@@ -159,7 +158,7 @@ export function LandingSaaS() {
                                 </Link>
                             </div>
                         </div>
-                        
+
                         <div className="animate-elite-scale-in" style={{ position: 'relative' }}>
                             {/* Dashboard Mockup */}
                             <div style={{
@@ -187,7 +186,7 @@ export function LandingSaaS() {
                                     </div>
                                     <span style={{ fontSize: '14px', color: 'var(--text-elite-secondary)' }}>Productiv Dashboard</span>
                                 </div>
-                                
+
                                 {/* Task List */}
                                 <div style={{ marginBottom: '24px' }}>
                                     <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: 'var(--text-elite-primary)' }}>Today's Focus</div>
@@ -230,7 +229,7 @@ export function LandingSaaS() {
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 {/* Habit Tracker */}
                                 <div style={{ marginBottom: '24px' }}>
                                     <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: 'var(--text-elite-primary)' }}>Habit Streak 🔥 7 days</div>
@@ -253,7 +252,7 @@ export function LandingSaaS() {
                                         ))}
                                     </div>
                                 </div>
-                                
+
                                 {/* Deadlines */}
                                 <div>
                                     <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: 'var(--text-elite-primary)' }}>Upcoming Deadlines</div>
@@ -311,7 +310,7 @@ export function LandingSaaS() {
                             Powerful features that help you achieve your best work
                         </p>
                     </div>
-                    
+
                     <div className="grid-elite grid-elite-3">
                         <div className="feature-elite animate-elite-slide-up">
                             <div className="feature-elite-icon">⚡</div>
@@ -320,7 +319,7 @@ export function LandingSaaS() {
                                 Sub-100ms interactions with keyboard-first design. Built for speed and precision.
                             </p>
                         </div>
-                        
+
                         <div className="feature-elite animate-elite-slide-up" style={{ animationDelay: '100ms' }}>
                             <div className="feature-elite-icon">🔥</div>
                             <h3 className="feature-elite-title">Smart Habits</h3>
@@ -328,7 +327,7 @@ export function LandingSaaS() {
                                 Build consistent routines with visual streak tracking and intelligent reminders.
                             </p>
                         </div>
-                        
+
                         <div className="feature-elite animate-elite-slide-up" style={{ animationDelay: '200ms' }}>
                             <div className="feature-elite-icon">🎯</div>
                             <h3 className="feature-elite-title">Deadline Intelligence</h3>
@@ -336,7 +335,7 @@ export function LandingSaaS() {
                                 Never miss important dates with smart deadline tracking and automated insights.
                             </p>
                         </div>
-                        
+
                         <div className="feature-elite animate-elite-slide-up" style={{ animationDelay: '300ms' }}>
                             <div className="feature-elite-icon">⌨️</div>
                             <h3 className="feature-elite-title">Keyboard-First Workflow</h3>
@@ -344,7 +343,7 @@ export function LandingSaaS() {
                                 Navigate everything with powerful keyboard shortcuts. Never touch your mouse.
                             </p>
                         </div>
-                        
+
                         <div className="feature-elite animate-elite-slide-up" style={{ animationDelay: '400ms' }}>
                             <div className="feature-elite-icon">📊</div>
                             <h3 className="feature-elite-title">Productivity Analytics</h3>
@@ -352,7 +351,7 @@ export function LandingSaaS() {
                                 Understand your patterns with detailed productivity insights and progress tracking.
                             </p>
                         </div>
-                        
+
                         <div className="feature-elite animate-elite-slide-up" style={{ animationDelay: '500ms' }}>
                             <div className="feature-elite-icon">🎨</div>
                             <h3 className="feature-elite-title">Focus Mode</h3>
@@ -375,7 +374,7 @@ export function LandingSaaS() {
                             A unified workspace that adapts to your workflow
                         </p>
                     </div>
-                    
+
                     <div className="animate-elite-scale-in">
                         <div style={{
                             background: 'var(--bg-elite-elevated)',
@@ -414,17 +413,17 @@ export function LandingSaaS() {
                             <div className="metric-elite-number" data-metric="users">0</div>
                             <div className="metric-elite-label">Active Users</div>
                         </div>
-                        
+
                         <div className="metric-elite animate-elite-fade-in" style={{ animationDelay: '100ms' }}>
                             <div className="metric-elite-number" data-metric="tasks">0</div>
                             <div className="metric-elite-label">Tasks Completed</div>
                         </div>
-                        
+
                         <div className="metric-elite animate-elite-fade-in" style={{ animationDelay: '200ms' }}>
                             <div className="metric-elite-number" data-metric="uptime">0</div>
                             <div className="metric-elite-label">Uptime</div>
                         </div>
-                        
+
                         <div className="metric-elite animate-elite-fade-in" style={{ animationDelay: '300ms' }}>
                             <div className="metric-elite-number" data-metric="rating">0</div>
                             <div className="metric-elite-label">User Rating</div>
@@ -444,7 +443,7 @@ export function LandingSaaS() {
                             See what our users have to say about Productiv
                         </p>
                     </div>
-                    
+
                     <div className="grid-elite grid-elite-3">
                         <div className="testimonial-elite animate-elite-slide-up">
                             <div className="testimonial-elite-content">
@@ -458,7 +457,7 @@ export function LandingSaaS() {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className="testimonial-elite animate-elite-slide-up" style={{ animationDelay: '100ms' }}>
                             <div className="testimonial-elite-content">
                                 "The keyboard-first workflow changed everything. I can now manage my entire day without touching the mouse."
@@ -471,7 +470,7 @@ export function LandingSaaS() {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className="testimonial-elite animate-elite-slide-up" style={{ animationDelay: '200ms' }}>
                             <div className="testimonial-elite-content">
                                 "Finally, a productivity app that understands how real people work. The habit tracking is game-changing."
@@ -495,8 +494,8 @@ export function LandingSaaS() {
                         <h2 className="text-elite-h1" style={{ marginBottom: '16px' }}>
                             Ready to transform your productivity?
                         </h2>
-                        <p className="text-elite-body" style={{ 
-                            color: 'var(--text-elite-secondary)', 
+                        <p className="text-elite-body" style={{
+                            color: 'var(--text-elite-secondary)',
                             fontSize: '20px',
                             marginBottom: '40px',
                             maxWidth: '600px',
@@ -524,7 +523,7 @@ export function LandingSaaS() {
                                 <li><a href="#" style={{ color: 'var(--text-elite-secondary)', textDecoration: 'none', fontSize: '14px' }}>Roadmap</a></li>
                             </ul>
                         </div>
-                        
+
                         <div>
                             <h4 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px', color: 'var(--text-elite-primary)' }}>Resources</h4>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -533,7 +532,7 @@ export function LandingSaaS() {
                                 <li><a href="#" style={{ color: 'var(--text-elite-secondary)', textDecoration: 'none', fontSize: '14px' }}>API Docs</a></li>
                             </ul>
                         </div>
-                        
+
                         <div>
                             <h4 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px', color: 'var(--text-elite-primary)' }}>Company</h4>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -542,7 +541,7 @@ export function LandingSaaS() {
                                 <li><a href="#" style={{ color: 'var(--text-elite-secondary)', textDecoration: 'none', fontSize: '14px' }}>Contact</a></li>
                             </ul>
                         </div>
-                        
+
                         <div>
                             <h4 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px', color: 'var(--text-elite-primary)' }}>Legal</h4>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -552,10 +551,10 @@ export function LandingSaaS() {
                             </ul>
                         </div>
                     </div>
-                    
-                    <div style={{ 
-                        display: 'flex', 
-                        justifyContent: 'space-between', 
+
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
                         alignItems: 'center',
                         paddingTop: '32px',
                         borderTop: '1px solid var(--border-elite)'

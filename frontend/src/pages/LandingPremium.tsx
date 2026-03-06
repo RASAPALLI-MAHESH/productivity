@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 export function LandingPremium() {
     const observerRef = useRef<IntersectionObserver | null>(null);
     const [scrolled, setScrolled] = useState(false);
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [completedTasks, setCompletedTasks] = useState<Set<number>>(new Set([1]));
     const [completedDays, setCompletedDays] = useState<Set<number>>(new Set([0, 1, 2, 3, 4, 5, 6]));
 
@@ -34,7 +33,7 @@ export function LandingPremium() {
                 if (entry.isIntersecting) {
                     const element = entry.target as HTMLElement;
                     const text = element.textContent;
-                    
+
                     if (text?.includes('+')) {
                         const number = parseInt(text.replace(/\D/g, ''));
                         animateCounter(element, number, 2000, '+');
@@ -45,7 +44,7 @@ export function LandingPremium() {
                         const number = parseInt(text || '0');
                         animateCounter(element, number, 2000);
                     }
-                    
+
                     statsObserver.unobserve(element);
                 }
             });
@@ -65,7 +64,7 @@ export function LandingPremium() {
         const start = 0;
         const increment = target / (duration / 16);
         let current = start;
-        
+
         const timer = setInterval(() => {
             current += increment;
             if (current >= target) {
@@ -109,14 +108,14 @@ export function LandingPremium() {
                         <div className="landing-logo-icon-premium">P</div>
                         <span>Productiv</span>
                     </Link>
-                    
+
                     <div className="landing-nav-center-premium">
                         <a href="#features" className="landing-nav-link-premium">Features</a>
                         <a href="#habits" className="landing-nav-link-premium">Habits</a>
                         <a href="#deadlines" className="landing-nav-link-premium">Deadlines</a>
                         <a href="#pricing" className="landing-nav-link-premium">Pricing</a>
                     </div>
-                    
+
                     <div className="landing-nav-actions-premium">
                         <Link to="/login" className="landing-btn-premium-secondary">Login</Link>
                         <Link to="/signup" className="landing-btn-premium-primary">
@@ -134,15 +133,15 @@ export function LandingPremium() {
                         <div className="landing-hero-badge-premium scroll-animate">
                             ✨ The future of productivity is here
                         </div>
-                        
+
                         <h1 className="landing-hero-title-premium scroll-animate">
                             Finally, a productivity system that actually works.
                         </h1>
-                        
+
                         <p className="landing-hero-subtitle-premium scroll-animate">
                             Manage tasks, build habits, and track deadlines in one powerful productivity command center designed for peak performance.
                         </p>
-                        
+
                         <div className="landing-hero-actions-premium scroll-animate">
                             <Link to="/signup" className="landing-btn-premium-primary">
                                 Start for free
@@ -153,7 +152,7 @@ export function LandingPremium() {
                             </Link>
                         </div>
                     </div>
-                    
+
                     <div className="landing-hero-right-premium">
                         <div className="landing-product-preview-premium">
                             <div className="landing-product-mockup-premium">
@@ -167,24 +166,24 @@ export function LandingPremium() {
                                         Productiv Dashboard
                                     </span>
                                 </div>
-                                
+
                                 <div className="landing-mockup-content-premium">
                                     <div className="landing-task-list-premium">
-                                        <div 
+                                        <div
                                             className={`landing-task-item-premium ${completedTasks.has(0) ? 'completed' : ''}`}
                                             onClick={() => handleTaskClick(0)}
                                         >
                                             <div className={`landing-task-checkbox-premium ${completedTasks.has(0) ? 'checked' : ''}`}></div>
                                             <span className="landing-task-text-premium">Complete project proposal</span>
                                         </div>
-                                        <div 
+                                        <div
                                             className={`landing-task-item-premium ${completedTasks.has(1) ? 'completed' : ''}`}
                                             onClick={() => handleTaskClick(1)}
                                         >
                                             <div className={`landing-task-checkbox-premium ${completedTasks.has(1) ? 'checked' : ''}`}></div>
                                             <span className="landing-task-text-premium">Review design mockups</span>
                                         </div>
-                                        <div 
+                                        <div
                                             className={`landing-task-item-premium ${completedTasks.has(2) ? 'completed' : ''}`}
                                             onClick={() => handleTaskClick(2)}
                                         >
@@ -192,7 +191,7 @@ export function LandingPremium() {
                                             <span className="landing-task-text-premium">Team standup meeting</span>
                                         </div>
                                     </div>
-                                    
+
                                     <div className="landing-habit-streak-premium">
                                         <div className="landing-streak-header-premium">
                                             <span className="landing-streak-fire-premium">🔥</span>
@@ -228,7 +227,7 @@ export function LandingPremium() {
                             Powerful features that help you achieve your best work
                         </p>
                     </div>
-                    
+
                     <div className="landing-features-grid-premium">
                         <div className="landing-feature-card-premium scroll-animate">
                             <div className="landing-feature-icon-premium">⚡</div>
@@ -237,7 +236,7 @@ export function LandingPremium() {
                                 Sub-100ms interactions with keyboard-first design. Built for speed and precision.
                             </p>
                         </div>
-                        
+
                         <div className="landing-feature-card-premium scroll-animate">
                             <div className="landing-feature-icon-premium">🔥</div>
                             <h3 className="landing-feature-title-premium">Smart Habits</h3>
@@ -245,7 +244,7 @@ export function LandingPremium() {
                                 Build consistent routines with visual streak tracking and intelligent reminders.
                             </p>
                         </div>
-                        
+
                         <div className="landing-feature-card-premium scroll-animate">
                             <div className="landing-feature-icon-premium">🎯</div>
                             <h3 className="landing-feature-title-premium">Deadline Intelligence</h3>
@@ -253,7 +252,7 @@ export function LandingPremium() {
                                 Never miss important dates with smart deadline tracking and automated insights.
                             </p>
                         </div>
-                        
+
                         <div className="landing-feature-card-premium scroll-animate">
                             <div className="landing-feature-icon-premium">⌨️</div>
                             <h3 className="landing-feature-title-premium">Keyboard First</h3>
@@ -261,7 +260,7 @@ export function LandingPremium() {
                                 Navigate everything with powerful keyboard shortcuts. Never touch your mouse.
                             </p>
                         </div>
-                        
+
                         <div className="landing-feature-card-premium scroll-animate">
                             <div className="landing-feature-icon-premium">📊</div>
                             <h3 className="landing-feature-title-premium">Deep Analytics</h3>
@@ -269,7 +268,7 @@ export function LandingPremium() {
                                 Understand your patterns with detailed productivity insights and progress tracking.
                             </p>
                         </div>
-                        
+
                         <div className="landing-feature-card-premium scroll-animate">
                             <div className="landing-feature-icon-premium">🎨</div>
                             <h3 className="landing-feature-title-premium">Beautiful Design</h3>
@@ -288,17 +287,17 @@ export function LandingPremium() {
                         <div className="landing-stat-number-premium">50K+</div>
                         <div className="landing-stat-label-premium">Active Users</div>
                     </div>
-                    
+
                     <div className="landing-stat-card-premium scroll-animate">
                         <div className="landing-stat-number-premium">1M+</div>
                         <div className="landing-stat-label-premium">Tasks Completed</div>
                     </div>
-                    
+
                     <div className="landing-stat-card-premium scroll-animate">
                         <div className="landing-stat-number-premium">99.9%</div>
                         <div className="landing-stat-label-premium">Uptime</div>
                     </div>
-                    
+
                     <div className="landing-stat-card-premium scroll-animate">
                         <div className="landing-stat-number-premium">4.9★</div>
                         <div className="landing-stat-label-premium">User Rating</div>
