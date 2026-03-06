@@ -55,21 +55,30 @@ public class UserRepository {
     }
 
     public void delete(String userId) throws ExecutionException, InterruptedException {
-        // Recursively delete subcollections (tasks and habits)
-        deleteCollection(userId, "tasks");
-        deleteCollection(userId, "habits");
+        // Recursively delete subcollections
+        // 1. Tasks
+        deleteCollection(getDocument(userId), "tasks");
         
-        // Delete the user document itself
-        getDocument(userId).delete().get();
-        log.info("User and all subcollections deleted from Firestore: {}", userId);
+        // 2. Habits (including their subcollections like logs)
+        DocumentReference userRef = getDocument(userId);
+        CollectionReference habitsCol = userRef.collection("habits");
+        QuerySnapshot habitsSnapshot = habitsCol.get().get();
+        for (QueryDocumentSnapshot habitDoc : habitsSnapshot.getDocuments()) {
+            deleteCollection(habitDoc.getReference(), "logs");
+            habitDoc.getReference().delete().get();
+        }
+        
+        // 3. Delete the user document itself
+        userRef.delete().get();
+        log.info("Full data cleanup completed for user: {}", userId);
     }
 
-    private void deleteCollection(String userId, String collectionName) throws ExecutionException, InterruptedException {
-        CollectionReference collection = getDocument(userId).collection(collectionName);
+    private void deleteCollection(DocumentReference docRef, String collectionName) throws ExecutionException, InterruptedException {
+        CollectionReference collection = docRef.collection(collectionName);
         QuerySnapshot snapshot = collection.get().get();
         for (QueryDocumentSnapshot doc : snapshot.getDocuments()) {
             doc.getReference().delete().get();
         }
-        log.info("Deleted collection '{}' for user: {}", collectionName, userId);
+        log.info("Deleted collection '{}' for path: {}", collectionName, docRef.getPath());
     }
 }

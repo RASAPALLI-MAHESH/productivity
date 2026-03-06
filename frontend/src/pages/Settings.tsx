@@ -132,9 +132,10 @@ export function Settings() {
             await deleteAccount();
             alert('Your account has been deleted.');
             navigate('/', { replace: true });
-        } catch (err) {
+        } catch (err: any) {
             console.error('Account deletion failed', err);
-            alert('Failed to delete account. Please try again.');
+            const message = err.response?.data?.message || err.message || 'Unknown error';
+            alert(`Failed to delete account: ${message}`);
         }
     };
 
