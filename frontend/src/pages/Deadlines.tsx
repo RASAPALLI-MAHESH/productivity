@@ -90,7 +90,7 @@ export function Deadlines() {
     const [activeId, setActiveId] = useState<string | null>(null);
 
     useEffect(() => {
-        fetchTasks({ page: 0, size: 500, sortBy: 'deadline', sortDirection: 'asc' }).catch(() => {});
+        fetchTasks({ page: 0, size: 500, sortBy: 'deadline', sortDirection: 'asc' }).catch(() => { });
     }, [fetchTasks]);
 
     const tasksWithDeadlines = useMemo(() => {
@@ -107,7 +107,6 @@ export function Deadlines() {
         const tomorrowStr = tomorrowDate.toDateString();
         const weekEnd = new Date(weekStart);
         weekEnd.setDate(weekEnd.getDate() + 6);
-        const weekEndStr = weekEnd.toDateString();
 
         const overdue: Task[] = [];
         const today: Task[] = [];
