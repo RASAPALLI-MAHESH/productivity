@@ -25,14 +25,16 @@ public class OtpService {
     private static final int OTP_EXPIRATION_MINUTES = 5;
     
     private final EmailService emailService;
+    private final EmailTemplateService emailTemplateService;
     
     // In-memory store for now (ConcurrentHashMap). Replace with Redis in production.
     // Key: email, Value: OtpData
     private final Map<String, OtpData> otpStore = new ConcurrentHashMap<>();
     private final ScheduledExecutorService cleanupExecutor = Executors.newSingleThreadScheduledExecutor();
 
-    public OtpService(EmailService emailService) {
+    public OtpService(EmailService emailService, EmailTemplateService emailTemplateService) {
         this.emailService = emailService;
+        this.emailTemplateService = emailTemplateService;
         // Periodic cleanup every minute
         cleanupExecutor.scheduleAtFixedRate(this::removeExpiredOtps, 1, 1, TimeUnit.MINUTES);
     }
@@ -44,7 +46,7 @@ public class OtpService {
         
         // Send via EmailService
         String subject = "Your Verification Code: " + otp;
-        String htmlContent = "<html><body><h1>Your code is " + otp + "</h1><p>This code expires in 5 minutes.</p></body></html>";
+        String htmlContent = emailTemplateService.getOtpTemplate(otp);
         
         try {
             emailService.sendHtmlMessage(email, subject, htmlContent);
