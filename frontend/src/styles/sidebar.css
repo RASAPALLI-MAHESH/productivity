@@ -57,12 +57,7 @@
 }
 
 .sidebar.collapsed .sidebar-logo {
-    opacity: 0;
-    width: 0;
-    margin: 0;
-    padding: 0;
-    visibility: hidden;
-    transition: opacity 0.1s ease, width 0.3s ease, visibility 0s 0.1s;
+    display: none;
 }
 
 .sidebar-logo .logo-icon {
@@ -102,8 +97,8 @@
 }
 
 .sidebar.collapsed .sidebar-toggle {
-    margin: 0 auto;
-    /* Explicit centering */
+    margin: 0;
+    /* Remove auto margin to stay centered by flex parent */
 }
 
 .sidebar-toggle:hover {
@@ -183,8 +178,6 @@
 }
 
 .sidebar.collapsed .sidebar-link .link-label {
-    opacity: 0;
-    width: 0;
     display: none;
 }
 
