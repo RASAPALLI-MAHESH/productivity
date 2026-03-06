@@ -2,365 +2,108 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productiv - Finally, a productivity system that actually works</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="A production-grade cloud productivity application for tasks, habits, and deadlines" />
+
+  <!-- Preconnect to font origins for faster DNS/TLS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Inter font with display=swap for instant text rendering -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Material Symbols — load non-blocking so it doesn't delay first paint -->
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+    media="print" onload="this.media='all'" />
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      rel="stylesheet" />
+  </noscript>
+
+  <title>Productiv — Focus. Track. Achieve.</title>
+
+  <!-- Inline critical CSS for instant skeleton loader -->
+  <style>
+    .app-skeleton {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #0a0a0f;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .app-skeleton-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      animation: skeleton-pulse 1.2s ease-in-out infinite;
+    }
+
+    .app-skeleton-text {
+      font-size: 18px;
+      font-weight: 600;
+      color: #e2e2e8;
+      letter-spacing: -0.01em;
+      opacity: 0.9;
+    }
+
+    .app-skeleton-bar {
+      width: 120px;
+      height: 3px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, transparent, #6366f1, transparent);
+      animation: skeleton-shimmer 1.5s ease-in-out infinite;
+    }
+
+    @keyframes skeleton-pulse {
+
+      0%,
+      100% {
+        opacity: 0.6;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+    }
+
+    @keyframes skeleton-shimmer {
+      0% {
+        opacity: 0.3;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0.3;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-left">
-                <div class="logo">Productiv</div>
-            </div>
-            <div class="nav-center">
-                <a href="#features" class="nav-link">Features</a>
-                <a href="#habits" class="nav-link">Habits</a>
-                <a href="#deadlines" class="nav-link">Deadlines</a>
-                <a href="#pricing" class="nav-link">Pricing</a>
-            </div>
-            <div class="nav-right">
-                <button class="btn-secondary">Login</button>
-                <button class="btn-primary">Get Started</button>
-            </div>
-            <div class="mobile-menu-toggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-container">
-            <div class="hero-content">
-                <div class="hero-left">
-                    <h1 class="hero-title">Finally, a productivity system that actually works.</h1>
-                    <p class="hero-subtitle">Manage tasks, build habits, and track deadlines in one powerful
-                        productivity command center.</p>
-                    <div class="hero-buttons">
-                        <button class="btn-primary btn-large">Start for free</button>
-                        <button class="btn-secondary btn-large">View demo</button>
-                    </div>
-                </div>
-                <div class="hero-right">
-                    <div class="product-preview">
-                        <div class="preview-header">
-                            <div class="preview-dots">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
-                            <div class="preview-title">Productiv Dashboard</div>
-                        </div>
-                        <div class="preview-content">
-                            <div class="task-list">
-                                <div class="task-item">
-                                    <div class="task-checkbox"></div>
-                                    <span class="task-text">Complete project proposal</span>
-                                </div>
-                                <div class="task-item completed">
-                                    <div class="task-checkbox checked"></div>
-                                    <span class="task-text">Review design mockups</span>
-                                </div>
-                                <div class="task-item">
-                                    <div class="task-checkbox"></div>
-                                    <span class="task-text">Team standup meeting</span>
-                                </div>
-                            </div>
-                            <div class="habit-streak">
-                                <div class="streak-header">🔥 7 day streak</div>
-                                <div class="streak-days">
-                                    <div class="day completed">M</div>
-                                    <div class="day completed">T</div>
-                                    <div class="day completed">W</div>
-                                    <div class="day completed">T</div>
-                                    <div class="day completed">F</div>
-                                    <div class="day completed">S</div>
-                                    <div class="day completed">S</div>
-                                </div>
-                            </div>
-                            <div class="deadline-card">
-                                <div class="deadline-title">Upcoming Deadline</div>
-                                <div class="deadline-task">Q4 Report</div>
-                                <div class="deadline-time">2 days remaining</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Product Preview Section -->
-    <section class="product-preview-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Everything you need to stay productive</h2>
-                <p>Powerful features designed to help you achieve more</p>
-            </div>
-            <div class="preview-cards">
-                <div class="preview-card">
-                    <div class="card-image">
-                        <div class="mini-ui tasks-ui">
-                            <div class="ui-header">Tasks</div>
-                            <div class="ui-items">
-                                <div class="ui-item">✓ Design review</div>
-                                <div class="ui-item">Code review</div>
-                                <div class="ui-item">Documentation</div>
-                            </div>
-                        </div>
-                    </div>
-                    <h3>Task Management</h3>
-                    <p>Organize and prioritize your work with intelligent task management that adapts to your workflow.
-                    </p>
-                </div>
-                <div class="preview-card">
-                    <div class="card-image">
-                        <div class="mini-ui habits-ui">
-                            <div class="ui-header">Habits</div>
-                            <div class="habit-calendar">
-                                <div class="habit-day filled"></div>
-                                <div class="habit-day filled"></div>
-                                <div class="habit-day filled"></div>
-                                <div class="habit-day"></div>
-                                <div class="habit-day filled"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <h3>Habit Tracking</h3>
-                    <p>Build consistent routines with visual streak tracking and smart reminders that keep you
-                        motivated.</p>
-                </div>
-                <div class="preview-card">
-                    <div class="card-image">
-                        <div class="mini-ui deadlines-ui">
-                            <div class="ui-header">Deadlines</div>
-                            <div class="deadline-item">
-                                <div class="deadline-bar"></div>
-                                <span>Project Launch</span>
-                            </div>
-                        </div>
-                    </div>
-                    <h3>Deadline Intelligence</h3>
-                    <p>Never miss important dates with smart deadline tracking and automated reminders.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features-section" id="features">
-        <div class="container">
-            <div class="section-header">
-                <h2>Designed for power users</h2>
-                <p>Features that make productivity effortless</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Lightning fast task management</h3>
-                    <p>Add, organize, and complete tasks in seconds with our streamlined interface.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔥</div>
-                    <h3>Habit streak tracking</h3>
-                    <p>Build momentum with visual streaks and achievement celebrations.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔔</div>
-                    <h3>Smart deadline reminders</h3>
-                    <p>Intelligent notifications that help you stay ahead of your commitments.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⌨️</div>
-                    <h3>Keyboard-first workflow</h3>
-                    <p>Navigate and control everything with powerful keyboard shortcuts.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h3>Clean distraction-free interface</h3>
-                    <p>Focus on what matters with a minimal design that eliminates clutter.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Powerful productivity insights</h3>
-                    <p>Understand your patterns with detailed analytics and progress tracking.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- How Productiv Works -->
-    <section class="how-it-works">
-        <div class="container">
-            <div class="section-header">
-                <h2>How Productiv Works</h2>
-                <p>Get started in three simple steps</p>
-            </div>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Capture tasks instantly</h3>
-                    <p>Quickly add tasks from anywhere with our fast capture system.</p>
-                </div>
-                <div class="step-connector"></div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Build consistent habits</h3>
-                    <p>Develop routines that stick with visual progress tracking.</p>
-                </div>
-                <div class="step-connector"></div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Achieve focused productivity</h3>
-                    <p>Stay on track and accomplish more with intelligent insights.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Productivity Visualization -->
-    <section class="visualization-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>See your productivity soar</h2>
-                <p>Beautiful insights that motivate you to do more</p>
-            </div>
-            <div class="dashboard-preview">
-                <div class="dashboard-header">
-                    <div class="dashboard-title">Productivity Dashboard</div>
-                    <div class="dashboard-period">Last 30 days</div>
-                </div>
-                <div class="dashboard-content">
-                    <div class="dashboard-stats">
-                        <div class="stat-card">
-                            <div class="stat-number">142</div>
-                            <div class="stat-label">Tasks Completed</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">21</div>
-                            <div class="stat-label">Day Streak</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">89%</div>
-                            <div class="stat-label">On-Time Rate</div>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <div class="chart-bars">
-                            <div class="chart-bar" style="height: 60%"></div>
-                            <div class="chart-bar" style="height: 80%"></div>
-                            <div class="chart-bar" style="height: 45%"></div>
-                            <div class="chart-bar" style="height: 90%"></div>
-                            <div class="chart-bar" style="height: 70%"></div>
-                            <div class="chart-bar" style="height: 85%"></div>
-                            <div class="chart-bar" style="height: 95%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Social Proof -->
-    <section class="social-proof">
-        <div class="container">
-            <div class="social-proof-header">
-                <h2>Trusted by developers, students, and creators worldwide.</h2>
-            </div>
-            <div class="testimonials">
-                <div class="testimonial">
-                    <div class="testimonial-content">"Productiv transformed how I manage my daily tasks. The interface
-                        is clean and the features are exactly what I needed."</div>
-                    <div class="testimonial-author">
-                        <div class="author-name">Sarah Chen</div>
-                        <div class="author-title">Software Developer</div>
-                    </div>
-                </div>
-                <div class="testimonial">
-                    <div class="testimonial-content">"The habit tracking feature helped me build routines I've been
-                        struggling with for years. Highly recommended!"</div>
-                    <div class="testimonial-author">
-                        <div class="author-name">Michael Rodriguez</div>
-                        <div class="author-title">Graduate Student</div>
-                    </div>
-                </div>
-                <div class="testimonial">
-                    <div class="testimonial-content">"Finally, a productivity tool that doesn't get in my way. It's
-                        fast, intuitive, and powerful."</div>
-                    <div class="testimonial-author">
-                        <div class="author-name">Emma Thompson</div>
-                        <div class="author-title">Content Creator</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Final CTA -->
-    <section class="final-cta">
-        <div class="container">
-            <div class="cta-content">
-                <h2>Take control of your productivity today.</h2>
-                <p>Join thousands of users who have already transformed their workflow.</p>
-                <button class="btn-primary btn-large">Get Started Free</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>Product</h4>
-                    <ul>
-                        <li><a href="#">Features</a></li>
-                        <li><a href="#">Pricing</a></li>
-                        <li><a href="#">Integrations</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Resources</h4>
-                    <ul>
-                        <li><a href="#">Docs</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Tutorials</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">Careers</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Legal</h4>
-                    <ul>
-                        <li><a href="#">Privacy</a></li>
-                        <li><a href="#">Terms</a></li>
-                        <li><a href="#">Security</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <div class="footer-logo">Productiv</div>
-                <div class="footer-copyright">© 2024 Productiv. All rights reserved.</div>
-            </div>
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
+  <!-- Branded skeleton visible instantly before JS loads -->
+  <div id="root">
+    <div class="app-skeleton">
+      <div class="app-skeleton-logo"></div>
+      <div class="app-skeleton-text">Productiv</div>
+      <div class="app-skeleton-bar"></div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 
 </html>
