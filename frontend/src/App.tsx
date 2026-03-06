@@ -21,7 +21,7 @@ const Habits = lazy(() => import('./pages/Habits').then((m) => ({ default: m.Hab
 const Deadlines = lazy(() => import('./pages/Deadlines').then((m) => ({ default: m.Deadlines })));
 const Onboarding = lazy(() => import('./pages/Onboarding').then((m) => ({ default: m.Onboarding })));
 const Settings = lazy(() => import('./pages/Settings').then((m) => ({ default: m.Settings })));
-const Landing = lazy(() => import('./pages/Landing').then((m) => ({ default: m.Landing })));
+// const Landing = lazy(() => import('./pages/Landing').then((m) => ({ default: m.Landing })));
 
 function AppLoader() {
     return (
@@ -58,16 +58,15 @@ function App() {
                     <Routes>
                         {/* Public auth routes — render instantly, no auth wait */}
                         <Route path="/" element={
-                            !initialized ? <Landing /> :
-                                user ? <Navigate to="/tasks" replace /> : <Landing />
+                            user ? <Navigate to="/tasks" replace /> : <Navigate to="/login" replace />
                         } />
                         <Route path="/login" element={
                             !initialized ? <Login /> :
-                                user ? <Navigate to="/" replace /> : <Login />
+                                user ? <Navigate to="/tasks" replace /> : <Login />
                         } />
                         <Route path="/signup" element={
                             !initialized ? <Signup /> :
-                                user ? <Navigate to="/" replace /> : <Signup />
+                                user ? <Navigate to="/tasks" replace /> : <Signup />
                         } />
                         <Route path="/verify-otp" element={<VerifyOtp />} />
                         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -81,7 +80,7 @@ function App() {
                             <Route path="habits" element={profile && !profile.onboarded ? <Navigate to="/onboarding" replace /> : <Habits />} />
                             <Route path="deadlines" element={profile && !profile.onboarded ? <Navigate to="/onboarding" replace /> : <Deadlines />} />
                             <Route path="settings" element={profile && !profile.onboarded ? <Navigate to="/onboarding" replace /> : <Settings />} />
-                            <Route path="onboarding" element={profile?.onboarded ? <Navigate to="/" replace /> : <Onboarding />} />
+                            <Route path="onboarding" element={profile?.onboarded ? <Navigate to="/tasks" replace /> : <Onboarding />} />
                         </Route>
 
                         {/* Catch all */}

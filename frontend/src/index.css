@@ -61,8 +61,6 @@
 /* ── 5. Dashboard (Elite) ── */
 @import './styles/dashboard.css';
 /* Elite dashboard redesign */
-@import './styles/landing.css';
-/* Landing Page */
 
 /* ── 6. Responsive ── */
 @import './styles/responsive.css';
