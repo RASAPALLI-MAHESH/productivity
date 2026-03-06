@@ -374,8 +374,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             throw err;
         }
     },
+    // ─── Delete Account ─────────────────────────────
     deleteAccount: async () => {
-        set({ loading: true, error: null });
+        set({ loading: true });
         try {
             await client.delete('/users/me');
             clearTokens();
@@ -386,9 +387,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 loading: false,
                 initialized: true,
             });
-        } catch (err: unknown) {
-            const message = extractErrorMessage(err, 'Failed to delete account');
-            set({ error: message, loading: false });
+        } catch (err) {
+            set({ loading: false });
             throw err;
         }
     },

@@ -140,14 +140,8 @@ public class UserService {
     }
 
     public void deleteUser(String uid) throws ExecutionException, InterruptedException {
-        User user = userRepository.findById(uid).orElse(null);
-        if (user != null && user.getEmail() != null) {
-            String farewellHtml = emailTemplateService.getFarewellTemplate(user.getDisplayName());
-            emailService.sendHtmlMessage(user.getEmail(), "Account Deleted - We're sorry to see you go", farewellHtml);
-        }
-        
         userRepository.delete(uid);
-        log.info("Account and all associated data permanently deleted for user: {}", uid);
+        log.info("Account permanently deleted for user: {}", uid);
     }
 
     public UserDTO toDTO(User user) {

@@ -124,18 +124,12 @@ export function Settings() {
     const { deleteAccount, loading: authLoading } = useAuthStore();
 
     const handleDeleteAccount = async () => {
-        if (deleteConfirmEmail.toLowerCase() !== user?.email?.toLowerCase()) {
-            alert('Email mismatch. Please type exactly as shown.');
-            return;
-        }
+        if (deleteConfirmEmail.toLowerCase() !== user?.email?.toLowerCase()) return;
         try {
             await deleteAccount();
-            alert('Your account has been deleted.');
-            navigate('/', { replace: true });
-        } catch (err: any) {
+            navigate('/login');
+        } catch (err) {
             console.error('Account deletion failed', err);
-            const message = err.response?.data?.message || err.message || 'Unknown error';
-            alert(`Failed to delete account: ${message}`);
         }
     };
 
