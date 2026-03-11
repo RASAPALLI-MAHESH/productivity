@@ -13,7 +13,7 @@ export function Sidebar({ isOpen, onToggle, isMobile }: SidebarProps) {
 
     const handleLogout = async () => {
         await logout();
-        navigate('/login');
+        navigate('/');
     };
 
     const navItems = [

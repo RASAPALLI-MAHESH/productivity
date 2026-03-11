@@ -117,19 +117,10 @@ export const TaskRow = memo(({ task, onToggle, onEdit, onDelete }: TaskRowProps)
 
     return (
         <>
-            <div className={`elite-row ${isDone ? 'elite-row--done' : ''}`}>
-                {/* Action Bar */}
-                <div className="elite-row__actions">
-                    <button className="elite-row__action-btn" title="Edit"
-                        onClick={(e) => { e.stopPropagation(); onEdit?.(task); }}>
-                        <span className="material-symbols-outlined">edit_note</span>
-                    </button>
-                    <button className="elite-row__action-btn elite-row__action-btn--delete" title="Delete"
-                        onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}>
-                        <span className="material-symbols-outlined">delete</span>
-                    </button>
-                </div>
-
+            <div 
+                className={`elite-row ${isDone ? 'elite-row--done' : ''}`}
+                style={{ '--accent-color': pc.color, borderLeftColor: pc.color } as React.CSSProperties}
+            >
                 {/* Checkbox */}
                 <button
                     className={`elite-row__checkbox ${isDone ? 'elite-row__checkbox--checked' : ''}`}
@@ -142,7 +133,7 @@ export const TaskRow = memo(({ task, onToggle, onEdit, onDelete }: TaskRowProps)
                 </button>
 
                 {/* Content Body */}
-                <div className="elite-row__body">
+                <div className="elite-row__body" onClick={() => onEdit?.(task)}>
                     <div className="elite-row__main">
                         <span className="elite-row__title">
                             {renderLinkedText(task.title, links, handleLinkClick)}
@@ -158,25 +149,29 @@ export const TaskRow = memo(({ task, onToggle, onEdit, onDelete }: TaskRowProps)
                     <div className="elite-row__meta">
                         {deadlineDate && (
                             <span className={`elite-tag ${isOverdue ? 'elite-tag--overdue' : ''}`}>
-                                <span className="material-symbols-outlined">event</span>
+                                <span className="material-symbols-outlined">schedule</span>
                                 {formatDate(deadlineDate)}
                             </span>
                         )}
                         {task.energyLevel && (
                             <span className={`elite-tag elite-tag--energy-${task.energyLevel}`}>
-                                <span className="material-symbols-outlined">
-                                    {task.energyLevel === 'low' ? 'battery_low' : task.energyLevel === 'medium' ? 'battery_50' : 'battery_full'}
-                                </span>
+                                <span className="material-symbols-outlined">bolt</span>
                                 {task.energyLevel}
                             </span>
                         )}
                     </div>
                 </div>
 
-                {/* Priority */}
-                <div className="elite-row__priority">
-                    <span className="elite-row__priority-dot" style={{ background: pc.color }} />
-                    <span className="elite-row__priority-label">{pc.label}</span>
+                {/* Action Bar */}
+                <div className="elite-row__actions">
+                    <button className="elite-row__action-btn" title="Edit"
+                        onClick={(e) => { e.stopPropagation(); onEdit?.(task); }}>
+                        <span className="material-symbols-outlined">edit</span>
+                    </button>
+                    <button className="elite-row__action-btn elite-row__action-btn--delete" title="Delete"
+                        onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}>
+                        <span className="material-symbols-outlined">delete_outline</span>
+                    </button>
                 </div>
             </div>
 
