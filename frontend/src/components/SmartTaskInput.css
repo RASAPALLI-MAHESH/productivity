@@ -1,0 +1,263 @@
+/* Smart Task Input - Todoist-style natural language entry */
+
+.smart-task-input {
+    position: relative;
+    width: 100%;
+}
+
+.smart-task-input__form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.smart-task-input__form:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.smart-task-input__icon {
+    flex-shrink: 0;
+    color: var(--primary);
+}
+
+.smart-task-input__icon .material-symbols-outlined {
+    font-size: 24px;
+}
+
+.smart-task-input__field {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--text);
+    outline: none;
+}
+
+.smart-task-input__field::placeholder {
+    color: var(--text-muted);
+}
+
+.smart-task-input__clear,
+.smart-task-input__submit {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.smart-task-input__clear {
+    background: transparent;
+    color: var(--text-muted);
+}
+
+.smart-task-input__clear:hover {
+    background: var(--hover);
+    color: var(--text);
+}
+
+.smart-task-input__submit {
+    background: var(--primary);
+    color: white;
+}
+
+.smart-task-input__submit:hover:not(:disabled) {
+    background: var(--primary-hover);
+    transform: translateX(2px);
+}
+
+.smart-task-input__submit:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.smart-task-input__clear .material-symbols-outlined,
+.smart-task-input__submit .material-symbols-outlined {
+    font-size: 18px;
+}
+
+/* Preview Area */
+.smart-task-input__preview {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 12px 16px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.smart-task-preview__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.smart-task-preview__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.smart-task-preview__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+}
+
+.smart-task-preview__tag .material-symbols-outlined {
+    font-size: 14px;
+}
+
+.smart-task-preview__tag--date {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+}
+
+.smart-task-preview__tag--project {
+    background: rgba(139, 92, 246, 0.1);
+    border-color: rgba(139, 92, 246, 0.2);
+    color: #8b5cf6;
+}
+
+.smart-task-preview__tag--label {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.smart-task-preview__tag--priority {
+    font-weight: 600;
+}
+
+.smart-task-preview__tag--p1 {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.smart-task-preview__tag--p2 {
+    background: rgba(249, 115, 22, 0.1);
+    border-color: rgba(249, 115, 22, 0.2);
+    color: #f97316;
+}
+
+.smart-task-preview__tag--p3 {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+}
+
+.smart-task-preview__tag--p4 {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text-secondary);
+}
+
+.smart-task-preview__tag--reminder {
+    background: rgba(234, 179, 8, 0.1);
+    border-color: rgba(234, 179, 8, 0.2);
+    color: #ca8a04;
+}
+
+.smart-task-preview__tag--recurring {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.2);
+    color: #6366f1;
+}
+
+/* Hints */
+.smart-task-input__hints {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 0 4px;
+}
+
+.smart-task-input__hints .hint {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 2px 8px;
+    background: var(--surface);
+    border-radius: 4px;
+    opacity: 0.7;
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .smart-task-input__form {
+    background: var(--surface);
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .smart-task-input__form:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+[data-theme="dark"] .smart-task-input__preview {
+    background: var(--surface);
+}
+
+[data-theme="dark"] .smart-task-preview__tag {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .smart-task-input__form {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+    
+    .smart-task-input__field {
+        font-size: 14px;
+    }
+    
+    .smart-task-input__hints {
+        display: none;
+    }
+    
+    .smart-task-preview__tags {
+        gap: 6px;
+    }
+    
+    .smart-task-preview__tag {
+        padding: 3px 8px;
+        font-size: 11px;
+    }
+}
