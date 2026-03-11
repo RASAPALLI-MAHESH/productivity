@@ -90,39 +90,6 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
         }
     };
 
-    // Apply parsed values to form fields
-    const applyParsedValues = () => {
-        if (!parsed) return;
-        
-        // Set the clean title
-        if (parsed.title) {
-            setTitle(parsed.title);
-        }
-        
-        // Set priority from parsed value
-        if (parsed.priority) {
-            const priorityMap: Record<number, 'low' | 'medium' | 'high' | 'critical'> = {
-                1: 'critical',
-                2: 'high',
-                3: 'medium',
-                4: 'low',
-            };
-            setPriority(priorityMap[parsed.priority] || 'medium');
-        }
-        
-        // Set deadline from parsed date/time
-        if (parsed.dueDate) {
-            let deadlineStr = parsed.dueDate;
-            if (parsed.dueTime) {
-                deadlineStr += `T${parsed.dueTime}:00`;
-            }
-            setDeadline(deadlineStr);
-        }
-        
-        // Clear raw input after applying
-        setRawInput('');
-    };
-
     // Detect #link in description
     const handleDescChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const val = e.target.value;
