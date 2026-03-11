@@ -3639,6 +3639,112 @@
     color: var(--text-muted);
 }
 
+/* ── Smart Parse Preview ── */
+.itc-smart-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--primary-light);
+    border-radius: 8px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.itc-smart-preview__header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.itc-smart-preview__header .material-symbols-outlined {
+    font-size: 14px;
+}
+
+.itc-smart-preview__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.itc-smart-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+}
+
+.itc-smart-tag .material-symbols-outlined {
+    font-size: 14px;
+}
+
+.itc-smart-tag--title {
+    font-style: italic;
+    color: var(--text-primary);
+}
+
+.itc-smart-tag--date {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+}
+
+.itc-smart-tag--p1 {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.itc-smart-tag--p2 {
+    background: rgba(249, 115, 22, 0.1);
+    border-color: rgba(249, 115, 22, 0.2);
+    color: #f97316;
+}
+
+.itc-smart-tag--p3 {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+}
+
+.itc-smart-tag--p4 {
+    background: var(--bg-card);
+    border-color: var(--border);
+    color: var(--text-secondary);
+}
+
+.itc-smart-tag--recurring {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.2);
+    color: #6366f1;
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .itc-smart-preview {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+[data-theme="dark"] .itc-smart-tag {
+    background: rgba(255, 255, 255, 0.05);
+}
+
 /* ── Footer toolbar ── */
 .itc-footer {
     display: flex;

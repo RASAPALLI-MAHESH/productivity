@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useAppStore } from '../store/appStore';
 import { DateTimePicker } from './DateTimePicker';
 import { Menu } from './Menu';
+import { parseTask, hasParseableContent } from '../lib/taskParser';
 
 interface InlineTaskCreateProps {
     autoOpen?: boolean;
@@ -29,6 +30,7 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
     const [deadline, setDeadline] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [externalLinks, setExternalLinks] = useState<ExternalLink[]>([]);
+    const [rawInput, setRawInput] = useState(''); // Store raw input for natural language parsing
 
     // Link popup state
     const [pendingLinkWord, setPendingLinkWord] = useState<string | null>(null);
@@ -37,6 +39,14 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
     const { createTask, fetchTasks } = useAppStore();
     const titleRef = useRef<HTMLTextAreaElement>(null);
     const linkUrlRef = useRef<HTMLInputElement>(null);
+
+    // Parse input for smart suggestions
+    const parsed = useMemo(() => {
+        if (!rawInput) return null;
+        return parseTask(rawInput);
+    }, [rawInput]);
+
+    const hasParsed = useMemo(() => hasParseableContent(rawInput), [rawInput]);
 
     useEffect(() => {
         if (autoOpen) setIsExpanded(true);
@@ -54,9 +64,11 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
         }
     }, [pendingLinkWord]);
 
-    // Detect #link in title
+    // Detect #link in title and smart parse
     const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const val = e.target.value;
+        setRawInput(val); // Store raw input for parsing
+        
         const linkIndex = val.indexOf('#link');
         if (linkIndex !== -1) {
             // Find the word/text before #link
@@ -68,12 +80,47 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
             if (linkedWord.trim()) {
                 setPendingLinkWord(linkedWord);
                 setTitle(beforeLink + afterLink);
+                setRawInput(beforeLink + afterLink);
             } else {
                 setTitle(beforeLink + afterLink);
+                setRawInput(beforeLink + afterLink);
             }
         } else {
             setTitle(val);
         }
+    };
+
+    // Apply parsed values to form fields
+    const applyParsedValues = () => {
+        if (!parsed) return;
+        
+        // Set the clean title
+        if (parsed.title) {
+            setTitle(parsed.title);
+        }
+        
+        // Set priority from parsed value
+        if (parsed.priority) {
+            const priorityMap: Record<number, 'low' | 'medium' | 'high' | 'critical'> = {
+                1: 'critical',
+                2: 'high',
+                3: 'medium',
+                4: 'low',
+            };
+            setPriority(priorityMap[parsed.priority] || 'medium');
+        }
+        
+        // Set deadline from parsed date/time
+        if (parsed.dueDate) {
+            let deadlineStr = parsed.dueDate;
+            if (parsed.dueTime) {
+                deadlineStr += `T${parsed.dueTime}:00`;
+            }
+            setDeadline(deadlineStr);
+        }
+        
+        // Clear raw input after applying
+        setRawInput('');
     };
 
     // Detect #link in description
@@ -121,18 +168,43 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
         setExternalLinks([]);
         setPendingLinkWord(null);
         setPendingLinkUrl('');
+        setRawInput('');
         onClose?.();
     };
 
     const handleCreate = async () => {
-        if (!title.trim()) return;
+        // Use parsed title if available, otherwise raw title
+        const finalTitle = (parsed?.title || title).trim();
+        if (!finalTitle) return;
+        
+        // Determine final priority (parsed takes precedence if set)
+        let finalPriority = priority;
+        if (parsed?.priority) {
+            const priorityMap: Record<number, 'low' | 'medium' | 'high' | 'critical'> = {
+                1: 'critical',
+                2: 'high',
+                3: 'medium',
+                4: 'low',
+            };
+            finalPriority = priorityMap[parsed.priority] || priority;
+        }
+        
+        // Determine final deadline (parsed takes precedence if set)
+        let finalDeadline = deadline;
+        if (parsed?.dueDate) {
+            finalDeadline = parsed.dueDate;
+            if (parsed.dueTime) {
+                finalDeadline += `T${parsed.dueTime}:00`;
+            }
+        }
+        
         setIsSubmitting(true);
         try {
             await createTask({
-                title: title.trim(),
+                title: finalTitle,
                 description: description.trim(),
-                priority,
-                deadline,
+                priority: finalPriority,
+                deadline: finalDeadline,
                 status: 'todo',
                 subtasks: [],
                 externalLinks: externalLinks.length > 0 ? externalLinks : undefined,
@@ -142,6 +214,7 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
             setPriority('medium');
             setDeadline(null);
             setExternalLinks([]);
+            setRawInput('');
             setIsExpanded(false);
             onClose?.();
             // Force refresh task list to clear empty state
@@ -203,12 +276,48 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
             <textarea
                 ref={titleRef}
                 className="itc-title"
-                placeholder="Task name — type word#link to hyperlink a word"
+                placeholder="Try: 'Design meeting tomorrow 3pm p1' or type word#link"
                 value={title}
                 onChange={handleTitleChange}
                 onKeyDown={handleKeyDown}
                 rows={1}
             />
+            
+            {/* Smart Parse Preview */}
+            {hasParsed && parsed && (
+                <div className="itc-smart-preview">
+                    <div className="itc-smart-preview__header">
+                        <span className="material-symbols-outlined">auto_awesome</span>
+                        <span>Smart detected:</span>
+                    </div>
+                    <div className="itc-smart-preview__tags">
+                        {parsed.title && (
+                            <span className="itc-smart-tag itc-smart-tag--title">
+                                "{parsed.title}"
+                            </span>
+                        )}
+                        {parsed.dueDate && (
+                            <span className="itc-smart-tag itc-smart-tag--date">
+                                <span className="material-symbols-outlined">event</span>
+                                {parsed.dueDate}{parsed.dueTime && ` ${parsed.dueTime}`}
+                            </span>
+                        )}
+                        {parsed.priority && (
+                            <span className={`itc-smart-tag itc-smart-tag--p${parsed.priority}`}>
+                                <span className="material-symbols-outlined">flag</span>
+                                P{parsed.priority}
+                            </span>
+                        )}
+                        {parsed.recurring && (
+                            <span className="itc-smart-tag itc-smart-tag--recurring">
+                                <span className="material-symbols-outlined">repeat</span>
+                                {parsed.recurring}
+                            </span>
+                        )}
+                    </div>
+                </div>
+            )}
+            
             {renderPreview(title)}
 
             {/* Description input */}
