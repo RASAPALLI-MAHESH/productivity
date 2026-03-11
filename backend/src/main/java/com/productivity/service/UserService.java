@@ -5,6 +5,7 @@ import com.productivity.dto.UserDTO;
 import com.productivity.exception.ResourceNotFoundException;
 import com.productivity.model.User;
 import com.productivity.repository.UserRepository;
+import com.productivity.service.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,11 @@ public class UserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, EmailService emailService) {
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     public UserDTO createOrUpdateUser(String uid, String email, String displayName, String photoURL)
@@ -140,8 +143,23 @@ public class UserService {
     }
 
     public void deleteUser(String uid) throws ExecutionException, InterruptedException {
+        User user = userRepository.findById(uid).orElse(null);
+        String email = user != null ? user.getEmail() : null;
+        String displayName = user != null ? user.getDisplayName() : null;
+
         userRepository.delete(uid);
         log.info("Account permanently deleted for user: {}", uid);
+
+        if (email != null) {
+            emailService.sendSimpleMessage(
+                email,
+                "Your Productiv Account Has Been Deleted",
+                "Hi " + (displayName != null ? displayName : "there") + ",<br><br>" +
+                "Your Productiv account has been permanently deleted and all associated data has been removed.<br><br>" +
+                "If you did not request this deletion, please contact our support immediately.<br><br>" +
+                "The Productiv Team"
+            );
+        }
     }
 
     public UserDTO toDTO(User user) {
