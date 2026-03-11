@@ -86,7 +86,7 @@ client.interceptors.response.use(
                     { withCredentials: true }
                 );
 
-                const newToken = data.data.accessToken;
+                const newToken = data.data.tokens.accessToken;
                 setAccessToken(newToken);
                 processQueue(null, newToken);
 
