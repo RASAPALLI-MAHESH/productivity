@@ -3799,6 +3799,34 @@
     flex-shrink: 0;
 }
 
+/* Auto-detected indicator - glowing border */
+.itc-chip--auto {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2), 0 0 8px rgba(99, 102, 241, 0.3);
+    animation: autoGlow 1.5s ease-in-out infinite;
+}
+
+.itc-chip-wrapper {
+    display: inline-flex;
+}
+
+.itc-chip-wrapper--auto .date-input,
+.itc-chip-wrapper--auto .date-trigger,
+.itc-chip-wrapper--auto button {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2), 0 0 8px rgba(99, 102, 241, 0.3) !important;
+    animation: autoGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes autoGlow {
+    0%, 100% { 
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2), 0 0 8px rgba(99, 102, 241, 0.3);
+    }
+    50% { 
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3), 0 0 12px rgba(99, 102, 241, 0.4);
+    }
+}
+
 /* ── Action buttons ── */
 .itc-btn {
     display: inline-flex;

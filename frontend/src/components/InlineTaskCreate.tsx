@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAppStore } from '../store/appStore';
 import { DateTimePicker } from './DateTimePicker';
 import { Menu } from './Menu';
-import { parseTask, hasParseableContent } from '../lib/taskParser';
+import { parseTask } from '../lib/taskParser';
 
 interface InlineTaskCreateProps {
     autoOpen?: boolean;
@@ -30,7 +30,9 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
     const [deadline, setDeadline] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [externalLinks, setExternalLinks] = useState<ExternalLink[]>([]);
-    const [rawInput, setRawInput] = useState(''); // Store raw input for natural language parsing
+    
+    // Track which fields were auto-detected (for visual indicator)
+    const [autoDetected, setAutoDetected] = useState<{ priority: boolean; deadline: boolean }>({ priority: false, deadline: false });
 
     // Link popup state
     const [pendingLinkWord, setPendingLinkWord] = useState<string | null>(null);
@@ -39,14 +41,6 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
     const { createTask, fetchTasks } = useAppStore();
     const titleRef = useRef<HTMLTextAreaElement>(null);
     const linkUrlRef = useRef<HTMLInputElement>(null);
-
-    // Parse input for smart suggestions
-    const parsed = useMemo(() => {
-        if (!rawInput) return null;
-        return parseTask(rawInput);
-    }, [rawInput]);
-
-    const hasParsed = useMemo(() => hasParseableContent(rawInput), [rawInput]);
 
     useEffect(() => {
         if (autoOpen) setIsExpanded(true);
@@ -67,7 +61,6 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
     // Detect #link in title and smart parse
     const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const val = e.target.value;
-        setRawInput(val); // Store raw input for parsing
         
         const linkIndex = val.indexOf('#link');
         if (linkIndex !== -1) {
@@ -80,13 +73,39 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
             if (linkedWord.trim()) {
                 setPendingLinkWord(linkedWord);
                 setTitle(beforeLink + afterLink);
-                setRawInput(beforeLink + afterLink);
             } else {
                 setTitle(beforeLink + afterLink);
-                setRawInput(beforeLink + afterLink);
             }
         } else {
             setTitle(val);
+            
+            // Smart parse and auto-apply values
+            const parsed = parseTask(val);
+            const newAutoDetected = { priority: false, deadline: false };
+            
+            // Auto-apply priority
+            if (parsed.priority) {
+                const priorityMap: Record<number, 'low' | 'medium' | 'high' | 'critical'> = {
+                    1: 'critical',
+                    2: 'high',
+                    3: 'medium',
+                    4: 'low',
+                };
+                setPriority(priorityMap[parsed.priority] || 'medium');
+                newAutoDetected.priority = true;
+            }
+            
+            // Auto-apply deadline
+            if (parsed.dueDate) {
+                let deadlineStr = parsed.dueDate;
+                if (parsed.dueTime) {
+                    deadlineStr += `T${parsed.dueTime}:00`;
+                }
+                setDeadline(deadlineStr);
+                newAutoDetected.deadline = true;
+            }
+            
+            setAutoDetected(newAutoDetected);
         }
     };
 
@@ -135,43 +154,23 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
         setExternalLinks([]);
         setPendingLinkWord(null);
         setPendingLinkUrl('');
-        setRawInput('');
+        setAutoDetected({ priority: false, deadline: false });
         onClose?.();
     };
 
     const handleCreate = async () => {
-        // Use parsed title if available, otherwise raw title
-        const finalTitle = (parsed?.title || title).trim();
+        // Parse to get clean title (without date/priority syntax)
+        const parsed = parseTask(title);
+        const finalTitle = parsed.title.trim();
         if (!finalTitle) return;
-        
-        // Determine final priority (parsed takes precedence if set)
-        let finalPriority = priority;
-        if (parsed?.priority) {
-            const priorityMap: Record<number, 'low' | 'medium' | 'high' | 'critical'> = {
-                1: 'critical',
-                2: 'high',
-                3: 'medium',
-                4: 'low',
-            };
-            finalPriority = priorityMap[parsed.priority] || priority;
-        }
-        
-        // Determine final deadline (parsed takes precedence if set)
-        let finalDeadline = deadline;
-        if (parsed?.dueDate) {
-            finalDeadline = parsed.dueDate;
-            if (parsed.dueTime) {
-                finalDeadline += `T${parsed.dueTime}:00`;
-            }
-        }
         
         setIsSubmitting(true);
         try {
             await createTask({
                 title: finalTitle,
                 description: description.trim(),
-                priority: finalPriority,
-                deadline: finalDeadline,
+                priority,
+                deadline,
                 status: 'todo',
                 subtasks: [],
                 externalLinks: externalLinks.length > 0 ? externalLinks : undefined,
@@ -181,7 +180,7 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
             setPriority('medium');
             setDeadline(null);
             setExternalLinks([]);
-            setRawInput('');
+            setAutoDetected({ priority: false, deadline: false });
             setIsExpanded(false);
             onClose?.();
             // Force refresh task list to clear empty state
@@ -250,41 +249,6 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
                 rows={1}
             />
             
-            {/* Smart Parse Preview */}
-            {hasParsed && parsed && (
-                <div className="itc-smart-preview">
-                    <div className="itc-smart-preview__header">
-                        <span className="material-symbols-outlined">auto_awesome</span>
-                        <span>Smart detected:</span>
-                    </div>
-                    <div className="itc-smart-preview__tags">
-                        {parsed.title && (
-                            <span className="itc-smart-tag itc-smart-tag--title">
-                                "{parsed.title}"
-                            </span>
-                        )}
-                        {parsed.dueDate && (
-                            <span className="itc-smart-tag itc-smart-tag--date">
-                                <span className="material-symbols-outlined">event</span>
-                                {parsed.dueDate}{parsed.dueTime && ` ${parsed.dueTime}`}
-                            </span>
-                        )}
-                        {parsed.priority && (
-                            <span className={`itc-smart-tag itc-smart-tag--p${parsed.priority}`}>
-                                <span className="material-symbols-outlined">flag</span>
-                                P{parsed.priority}
-                            </span>
-                        )}
-                        {parsed.recurring && (
-                            <span className="itc-smart-tag itc-smart-tag--recurring">
-                                <span className="material-symbols-outlined">repeat</span>
-                                {parsed.recurring}
-                            </span>
-                        )}
-                    </div>
-                </div>
-            )}
-            
             {renderPreview(title)}
 
             {/* Description input */}
@@ -339,13 +303,15 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
             {/* Footer toolbar */}
             <div className="itc-footer">
                 <div className="itc-footer__left">
-                    <DateTimePicker
-                        value={deadline || ''}
-                        onChange={val => setDeadline(val)}
-                    />
+                    <div className={`itc-chip-wrapper ${autoDetected.deadline ? 'itc-chip-wrapper--auto' : ''}`}>
+                        <DateTimePicker
+                            value={deadline || ''}
+                            onChange={val => { setDeadline(val); setAutoDetected(prev => ({ ...prev, deadline: false })); }}
+                        />
+                    </div>
                     <Menu
                         trigger={
-                            <button className="itc-chip" style={{ '--chip-color': activePriority.color } as React.CSSProperties}>
+                            <button className={`itc-chip ${autoDetected.priority ? 'itc-chip--auto' : ''}`} style={{ '--chip-color': activePriority.color } as React.CSSProperties}>
                                 <span className="itc-chip__dot" style={{ background: activePriority.color, boxShadow: `0 0 6px ${activePriority.color}` }} />
                                 {activePriority.label}
                             </button>
@@ -354,7 +320,7 @@ export function InlineTaskCreate({ autoOpen = false, onClose }: InlineTaskCreate
                             id: opt.id,
                             label: opt.label,
                             icon: 'fiber_manual_record',
-                            onClick: () => setPriority(opt.id as 'low' | 'medium' | 'high' | 'critical'),
+                            onClick: () => { setPriority(opt.id as 'low' | 'medium' | 'high' | 'critical'); setAutoDetected(prev => ({ ...prev, priority: false })); },
                         }))}
                     />
                 </div>
