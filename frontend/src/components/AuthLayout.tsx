@@ -6,9 +6,10 @@ interface AuthLayoutProps {
     subtitle: string;
     error?: string | null;
     footer?: ReactNode;
+    icon?: ReactNode;
 }
 
-export function AuthLayout({ children, title, subtitle, error, footer }: AuthLayoutProps) {
+export function AuthLayout({ children, title, subtitle, error, footer, icon }: AuthLayoutProps) {
     return (
         <div className="auth-container">
             {/* Split Pane: Brand Section (Hidden on Mobile) */}
@@ -90,6 +91,7 @@ export function AuthLayout({ children, title, subtitle, error, footer }: AuthLay
                 <div className="auth-card">
                     <div className="auth-card-inner">
                         <div className="auth-card-header animate-slide-up-fade stagger-1">
+                            {icon && <div className="auth-card-icon">{icon}</div>}
                             <h2>{title}</h2>
                             <p>{subtitle}</p>
                         </div>
