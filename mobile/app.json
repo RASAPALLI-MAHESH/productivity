@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "Productiv",
+    "slug": "productiv-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0F0F0F"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.productiv.mobile"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0F0F0F"
+      },
+      "package": "com.productiv.mobile"
+    },
+    "newArchEnabled": true,
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0F0F0F",
+          "image": "./assets/splash.png"
+        }
+      ],
+      "expo-font",
+      "expo-router"
+    ],
+    "extra": {
+      "apiBaseUrl": "https://productivity-node.onrender.com/api/v1",
+      "eas": {
+        "projectId": "3bf739ab-d3c3-4230-a0e8-b91b825954ae"
+      }
+    },
+    "owner": "rasapallimahesh"
+  }
+}

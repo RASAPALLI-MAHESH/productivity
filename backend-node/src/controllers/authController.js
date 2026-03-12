@@ -181,7 +181,8 @@ async function googleAuth(req, res, next) {
 // POST /api/v1/auth/refresh
 async function refresh(req, res, next) {
   try {
-    const refreshToken = req.cookies?.refresh_token;
+    // Accept token from httpOnly cookie (web) OR request body (mobile)
+    const refreshToken = req.cookies?.refresh_token || req.body?.refreshToken;
     if (!refreshToken || !jwtUtil.isTokenValid(refreshToken)) {
       return error(res, 'Invalid refresh token', 401);
     }
