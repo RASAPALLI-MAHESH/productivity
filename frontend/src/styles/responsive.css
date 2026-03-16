@@ -1,42 +1,34 @@
-﻿/* responsive.css */
+/* responsive.css */
 
 /* ============================================
    28. RESPONSIVE
    ============================================ */
 
-/* Tablet & Below */
+/* ============================================
+   TABLET & BELOW (sidebar becomes drawer)
+   ============================================ */
 @media (max-width: 1023px) {
-    .sidebar {
-        transform: translateX(-100%);
-        width: 240px;
-    }
-
-    .sidebar.mobile-open {
-        transform: translateX(0);
-        box-shadow: var(--shadow-xl);
-    }
-
-    .sidebar-backdrop.visible {
-        display: block;
-    }
-
     .main-content {
         margin-left: 0 !important;
         padding: var(--space-3);
+        padding-top: calc(56px + var(--space-3)); /* Account for mobile top bar */
+        padding-bottom: calc(68px + var(--space-3)); /* Account for mobile bottom bar */
         max-width: 100% !important;
     }
 
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
+    .content-container {
+        padding-bottom: 0; /* Remove double padding */
+    }
 }
-
-
-
 
 /* ============================================
    MOBILE TWEAKS & SEARCH
    ============================================ */
+
 /* Premium Theme Toggle Animation */
 .theme-toggle-animated {
     width: 40px;
@@ -104,7 +96,6 @@
     padding-left: 36px;
     padding-right: 12px;
     background: var(--bg-tertiary);
-    /* Slightly distinct from card */
     border: 1px solid transparent;
     border-radius: var(--radius-md);
     color: var(--text-primary);
@@ -121,7 +112,6 @@
 
 .mobile-search-trigger {
     display: none;
-    /* Desktop hidden */
 }
 
 .btn-icon-only {
@@ -142,10 +132,8 @@
         position: relative;
         overflow: visible;
         justify-content: flex-end;
-        position: static;
     }
 
-    /* When search is CLOSED on mobile */
     .task-search-container {
         display: none;
     }
@@ -167,10 +155,8 @@
         background: var(--bg-tertiary);
     }
 
-    /* When search is OPEN on mobile */
     .page-header.search-active {
         padding: 8px 16px;
-        /* Tighter padding */
     }
 
     .page-header.search-active .page-title,
@@ -178,7 +164,6 @@
     .page-header.search-active .mobile-search-trigger,
     .page-header.search-active .btn-primary {
         display: none;
-        /* Hide everything else */
     }
 
     .page-header.search-active .tasks-header-actions {
@@ -218,13 +203,10 @@
     }
 }
 
-/* Mobile */
+/* ============================================
+   SMALL MOBILE (≤ 639px) — Extra tweaks
+   ============================================ */
 @media (max-width: 639px) {
-    .main-content {
-        padding: var(--space-2);
-        padding-bottom: 80px;
-    }
-
     .stats-grid {
         grid-template-columns: 1fr;
     }
@@ -247,22 +229,25 @@
         width: 100%;
     }
 
-    .bottom-bar {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 64px;
-        background: var(--bg-primary);
-        border-top: 1px solid var(--border);
-        justify-content: space-around;
-        align-items: center;
-        z-index: 100;
-    }
-
     .habit-grid {
         grid-template-columns: 1fr;
+    }
+
+    /* Stack insight cards on very small screens */
+    .insight-cards-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@keyframes expandSearch {
+    from {
+        opacity: 0;
+        transform: scaleX(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scaleX(1);
     }
 }
 
@@ -277,7 +262,12 @@
     color: var(--text-primary);
 }
 
-/* Mobile menu toggle button — REMOVED: bottom navigation bar handles mobile nav */
+/* Legacy bottom-bar class — now fully replaced by .mobile-bottom-bar */
+.bottom-bar {
+    display: none !important;
+}
+
+/* Legacy mobile-menu-btn — removed */
 .mobile-menu-btn {
     display: none !important;
 }

@@ -1,53 +1,35 @@
-﻿/* mobile-fab.css */
+/* mobile-fab.css */
 
 /* ============================================
-   17. MOBILE FAB + BOTTOM SHEET (Tasks)
+   17. MOBILE BOTTOM SHEET (Tasks) — Todoist Style
    ============================================ */
+
+/* Desktop-only helper class */
 .desktop-only {
     display: block;
 }
 
-.mobile-fab {
-    display: none;
-    /* Hidden on desktop */
-}
-
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
     .desktop-only {
         display: none;
     }
+}
 
-    /* Floating Action Button */
-    .mobile-fab {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: fixed;
-        bottom: 90px;
-        /* Above bottom nav */
-        right: 20px;
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        background: var(--primary);
-        color: var(--bg-primary);
-        border: none;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-hover);
-        cursor: pointer;
-        z-index: 500;
-        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .mobile-fab:active {
-        transform: scale(0.92);
-    }
-
-    .mobile-fab span {
-        font-size: 28px !important;
+/* Kbd hint — hide on mobile */
+@media (max-width: 1023px) {
+    .kbd-hint {
+        display: none !important;
     }
 }
 
-/* Bottom Sheet (visible on all sizes to allow dismiss) */
+/* Legacy FAB — removed (replaced by center button in bottom bar) */
+.mobile-fab {
+    display: none !important;
+}
+
+/* ============================================
+   BOTTOM SHEET BACKDROP
+   ============================================ */
 .mobile-sheet-backdrop {
     position: fixed;
     inset: 0;
@@ -61,37 +43,34 @@
 }
 
 @keyframes sheetBackdropIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
+/* ============================================
+   TODOIST-STYLE TASK SHEET
+   ============================================ */
 .mobile-task-sheet {
     width: 100%;
-    max-width: 600px;
+    max-width: 640px;
     margin: 0 auto;
     background: var(--bg-secondary);
     border-top: 1px solid var(--border-hover);
-    border-radius: 24px 24px 0 0;
-    padding: 16px 20px 40px;
+    border-radius: 20px 20px 0 0;
+    padding: 12px 16px calc(24px + env(safe-area-inset-bottom));
     animation: sheetSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
+}
+
+.todoist-sheet {
+    gap: 0;
 }
 
 @keyframes sheetSlideUp {
-    from {
-        transform: translateY(100%);
-    }
-
-    to {
-        transform: translateY(0);
-    }
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
 }
 
 .mobile-sheet-handle {
@@ -99,9 +78,201 @@
     height: 4px;
     background: var(--border-hover);
     border-radius: 99px;
-    margin: 0 auto 8px;
+    margin: 0 auto 12px;
 }
 
+/* ---- Title Row ---- */
+.mts-title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 4px 0 8px;
+}
+
+.mts-check-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 0 0;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    opacity: 0.5;
+}
+
+.mts-title-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 17px;
+    font-weight: 500;
+    font-family: var(--font-family);
+    outline: none;
+    padding: 0;
+    line-height: 1.4;
+}
+
+.mts-title-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* ---- Description ---- */
+.mts-desc-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-family: var(--font-family);
+    padding: 0 0 8px 34px;
+    resize: none;
+    line-height: 1.5;
+}
+
+.mts-desc-input::placeholder {
+    color: var(--text-muted);
+}
+
+.mts-add-desc-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 13px;
+    padding: 0 0 8px 34px;
+    transition: color var(--duration-fast);
+}
+
+.mts-add-desc-btn:hover {
+    color: var(--text-secondary);
+}
+
+/* ---- Schedule Row ---- */
+.mts-schedule-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 8px 0;
+    border-top: 1px solid var(--border);
+}
+
+.mts-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    align-self: center;
+    white-space: nowrap;
+}
+
+/* ---- Priority Row ---- */
+.mts-priority-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 8px 0;
+    border-top: 1px solid var(--border);
+}
+
+.mts-priority-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* ---- Chips ---- */
+.mts-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: var(--radius-full, 999px);
+    background: var(--bg-tertiary);
+    border: 1.5px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+    white-space: nowrap;
+}
+
+.mts-chip:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+}
+
+.mts-chip--date.active.green {
+    background: rgba(16, 185, 129, 0.12);
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.mts-chip--date.active.amber {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: #f59e0b;
+    color: #f59e0b;
+}
+
+.mts-chip--date.active.blue {
+    background: rgba(99, 102, 241, 0.12);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.mts-chip--priority.active {
+    background: color-mix(in srgb, var(--chip-color, var(--primary)) 15%, transparent);
+    border-color: var(--chip-color, var(--primary));
+    color: var(--chip-color, var(--primary));
+}
+
+.mts-priority-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ---- Deadline Banner ---- */
+.mts-deadline-banner {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--primary-light);
+    border-radius: var(--radius-md);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-top: -4px;
+}
+
+.mts-deadline-clear {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--primary);
+    padding: 0;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    opacity: 0.7;
+    transition: opacity var(--duration-fast);
+}
+
+.mts-deadline-clear:hover {
+    opacity: 1;
+}
+
+/* ---- Action Buttons ---- */
 .mobile-sheet-title {
     font-size: 18px;
     font-weight: 700;
@@ -164,7 +335,9 @@
 .mobile-sheet-actions {
     display: flex;
     gap: 12px;
-    margin-top: 4px;
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
 }
 
 .mobile-sheet-cancel {
@@ -191,7 +364,7 @@
     border-radius: var(--radius-lg);
     border: none;
     background: var(--primary);
-    color: var(--bg-primary);
+    color: #fff;
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
@@ -207,4 +380,3 @@
     opacity: 0.4;
     cursor: not-allowed;
 }
-

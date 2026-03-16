@@ -19,7 +19,7 @@ export function Sidebar({ isOpen, onToggle, isMobile }: SidebarProps) {
     const navItems = [
         { to: '/tasks', icon: 'task_alt', label: 'Tasks' },
         { to: '/habits', icon: 'local_fire_department', label: 'Habits' },
-        { to: '/deadlines', icon: 'schedule', label: 'Deadlines' },
+        { to: '/deadlines', icon: 'flag', label: 'Deadlines' },
         { to: '/settings', icon: 'settings', label: 'Settings' },
     ];
 
@@ -27,84 +27,67 @@ export function Sidebar({ isOpen, onToggle, isMobile }: SidebarProps) {
         'sidebar',
         !isOpen && !isMobile ? 'collapsed' : '',
         isMobile && isOpen ? 'mobile-open' : '',
+        isMobile && !isOpen ? 'mobile-hidden' : '',
     ].filter(Boolean).join(' ');
 
     return (
-        <>
-            {/* Desktop & Mobile Sidebar */}
-            <aside className={sidebarClass}>
-                <div className="sidebar-header">
-                    <div className="sidebar-logo">
-                        <div className="logo-icon">
-                            <span className="material-symbols-outlined icon-filled" style={{ fontSize: 20 }}>bolt</span>
-                        </div>
-                        <h1>Productiv</h1>
+        <aside className={sidebarClass}>
+            <div className="sidebar-header">
+                <div className="sidebar-logo">
+                    <div className="logo-icon">
+                        <span className="material-symbols-outlined icon-filled" style={{ fontSize: 20 }}>bolt</span>
                     </div>
-                    {!isMobile && (
-                        <button className="sidebar-toggle" onClick={onToggle} aria-label="Toggle sidebar" title={isOpen ? "Collapse sidebar" : "Expand sidebar"}>
-                            <span className="material-symbols-outlined">
-                                {isOpen ? 'menu_open' : 'menu'}
-                            </span>
-                        </button>
-                    )}
-                    {isMobile && (
-                        <button className="sidebar-toggle" onClick={onToggle} aria-label="Close sidebar">
-                            <span className="material-symbols-outlined">close</span>
-                        </button>
-                    )}
+                    <h1>Productiv</h1>
                 </div>
-
-                <nav className="sidebar-nav">
-                    {navItems.map((item) => (
-                        <NavLink
-                            key={item.to}
-                            to={item.to}
-                            className={({ isActive }: { isActive: boolean }) => `sidebar-link ${isActive ? 'active' : ''}`}
-                            end={item.to === '/'}
-                            onClick={() => isMobile && onToggle()}
-                            title={!isOpen ? item.label : undefined}
-                        >
-                            <span className="link-icon material-symbols-outlined">{item.icon}</span>
-                            <span className="link-label">{item.label}</span>
-                        </NavLink>
-                    ))}
-                </nav>
-
-                <div className="sidebar-footer">
-                    <div className="sidebar-user" onClick={() => navigate('/settings')} title={!isOpen ? (user?.displayName || user?.email || 'User') : undefined}>
-                        <div className="user-avatar">
-                            {user?.displayName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
-                        </div>
-                        <div className="user-info">
-                            <div className="user-name">{user?.displayName || 'User'}</div>
-                            <div className="user-email">{user?.email}</div>
-                        </div>
-                    </div>
-                    <button
-                        className="sidebar-link logout-link"
-                        onClick={handleLogout}
-                        title={!isOpen ? 'Logout' : undefined}
-                    >
-                        <span className="link-icon material-symbols-outlined">logout</span>
-                        <span className="link-label">Logout</span>
+                {!isMobile && (
+                    <button className="sidebar-toggle" onClick={onToggle} aria-label="Toggle sidebar" title={isOpen ? "Collapse sidebar" : "Expand sidebar"}>
+                        <span className="material-symbols-outlined">
+                            {isOpen ? 'menu_open' : 'menu'}
+                        </span>
                     </button>
-                </div>
-            </aside>
+                )}
+                {isMobile && (
+                    <button className="sidebar-toggle" onClick={onToggle} aria-label="Close sidebar">
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
+                )}
+            </div>
 
-            {/* Mobile Bottom Bar */}
-            <nav className="bottom-bar">
+            <nav className="sidebar-nav">
                 {navItems.map((item) => (
                     <NavLink
                         key={item.to}
                         to={item.to}
-                        className={({ isActive }: { isActive: boolean }) => `bottom-bar-link ${isActive ? 'active' : ''}`}
+                        className={({ isActive }: { isActive: boolean }) => `sidebar-link ${isActive ? 'active' : ''}`}
                         end={item.to === '/'}
+                        onClick={() => isMobile && onToggle()}
+                        title={!isOpen ? item.label : undefined}
                     >
-                        <span className="link-icon"><span className="material-symbols-outlined">{item.icon}</span></span>
-                        <span>{item.label}</span>
+                        <span className="link-icon material-symbols-outlined">{item.icon}</span>
+                        <span className="link-label">{item.label}</span>
                     </NavLink>
                 ))}
             </nav>
-        </>
+
+            <div className="sidebar-footer">
+                <div className="sidebar-user" onClick={() => navigate('/settings')} title={!isOpen ? (user?.displayName || user?.email || 'User') : undefined}>
+                    <div className="user-avatar">
+                        {user?.displayName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
+                    </div>
+                    <div className="user-info">
+                        <div className="user-name">{user?.displayName || 'User'}</div>
+                        <div className="user-email">{user?.email}</div>
+                    </div>
+                </div>
+                <button
+                    className="sidebar-link logout-link"
+                    onClick={handleLogout}
+                    title={!isOpen ? 'Logout' : undefined}
+                >
+                    <span className="link-icon material-symbols-outlined">logout</span>
+                    <span className="link-label">Logout</span>
+                </button>
+            </div>
+        </aside>
     );
 }

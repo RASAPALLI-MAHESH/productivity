@@ -1172,3 +1172,116 @@
         transform: translateX(-50%) translateY(0);
     }
 }
+
+/* ==========================================================================
+   MOBILE RESPONSIVE — Habits Page
+   ========================================================================== */
+@media (max-width: 1023px) {
+    /* On mobile, the habits layout stacks vertically */
+    .habits-layout {
+        flex-direction: column;
+        overflow: visible;
+    }
+
+    .habits-main-content {
+        padding: 16px 16px 24px;
+        overflow: visible;
+    }
+
+    .habits-layout.panel-open .habits-main-content {
+        padding-right: 16px;
+    }
+
+    .habits-header {
+        margin-bottom: 20px;
+        gap: 12px;
+    }
+
+    .habits-header h1 {
+        font-size: 24px;
+    }
+
+    .habits-header-meta {
+        font-size: 12px;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    /* Hide the insight panel entirely on mobile — accessed via toggle button */
+    .habits-insight-panel,
+    .habits-insight-panel.open {
+        width: 100% !important;
+        min-width: 0 !important;
+        border-left: none !important;
+        border-top: 1px solid var(--border);
+        align-self: auto;
+        overflow: hidden;
+        height: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: height 0.3s ease, opacity 0.3s ease;
+    }
+
+    .habits-insight-panel.open {
+        height: auto;
+        opacity: 1;
+        pointer-events: auto;
+        padding-bottom: 24px;
+    }
+
+    .insight-panel-inner {
+        width: 100%;
+    }
+
+    /* Always show panel toggle button on mobile */
+    .panel-toggle-btn {
+        display: flex !important;
+    }
+
+    /* Habit row — simplify on mobile */
+    .habit-row {
+        grid-template-columns: 36px 1fr auto;
+        padding: 10px 14px;
+        gap: 12px;
+    }
+
+    /* Hide matrix on very small screens */
+    .habit-matrix {
+        display: none;
+    }
+
+    /* Habit actions always visible on mobile (no hover) */
+    .habit-actions {
+        opacity: 1;
+        pointer-events: auto;
+        position: static;
+        transform: none;
+        background: none;
+        padding-left: 0;
+    }
+
+    /* Toast position above bottom bar */
+    .habit-delete-toast {
+        bottom: 80px;
+    }
+}
+
+@media (max-width: 640px) {
+    .habits-controls {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .habits-filter-select {
+        flex: 1;
+        min-width: 100px;
+    }
+
+    .habits-search-input {
+        width: 100% !important;
+    }
+
+    .insight-panel-inner {
+        padding: 0;
+    }
+}

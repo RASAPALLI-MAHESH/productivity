@@ -778,6 +778,12 @@
     animation: slideUpFade 300ms ease;
 }
 
+@media (max-width: 1023px) {
+    .undo-toast {
+        bottom: 80px; /* Above mobile bottom bar */
+    }
+}
+
 .undo-toast-content {
     display: flex;
     align-items: center;
